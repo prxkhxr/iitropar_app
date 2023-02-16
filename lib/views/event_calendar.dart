@@ -15,11 +15,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _currentDay = DateTime.now();
   DateTime? _selectedDate;
+  bool recurringEvent = false;
 
   Map<String, List> mySelectedEvents = {};
+  Map<String, List> weeklyEvents = {};
 
   final titleController = TextEditingController();
   final descpController = TextEditingController();
+  final timeController = TextEditingController();
 
   @override
   void initState() {
@@ -35,8 +38,19 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   List _listOfDayEvents(DateTime datetime) {
     if (mySelectedEvents[DateFormat('yyyy-MM-dd').format(datetime)] != null) {
-      return mySelectedEvents[DateFormat('yyyy-MM-dd').format(datetime)]!;
+      if (weeklyEvents[datetime.weekday.toString()] != null) {
+        List<dynamic> l = [
+          ...mySelectedEvents[DateFormat('yyyy-MM-dd').format(datetime)]!,
+          ...weeklyEvents[datetime.weekday.toString()]!
+        ];
+        return l;
+      } else {
+        return mySelectedEvents[DateFormat('yyyy-MM-dd').format(datetime)]!;
+      }
     } else {
+      if (weeklyEvents[datetime.weekday.toString()] != null) {
+        return weeklyEvents[datetime.weekday.toString()]!;
+      }
       return [];
     }
   }
@@ -44,79 +58,118 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   _showAddEventDialog() async {
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          "Add New Event",
-          textAlign: TextAlign.center,
-        ),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleController,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                labelText: 'Title',
+      builder: (context) => SingleChildScrollView(
+        child: AlertDialog(
+          title: const Text(
+            "Add New Event",
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                ),
               ),
-            ),
-            TextField(
-              controller: descpController,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                labelText: 'Description',
+              TextField(
+                controller: descpController,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                ),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-              onPressed: () {
-                titleController.clear();
-                descpController.clear();
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel")),
-          TextButton(
-              onPressed: () {
-                if (titleController.text.isEmpty ||
-                    descpController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Required title and description"),
-                    duration: Duration(seconds: 2),
-                  ));
-                  return;
-                } else {
-                  setState(() {
-                    if (mySelectedEvents[
-                            DateFormat('yyyy-MM-dd').format(_selectedDate!)] !=
-                        null) {
-                      mySelectedEvents[
-                              DateFormat('yyyy-MM-dd').format(_selectedDate!)]
-                          ?.add({
-                        "eventTitle": titleController.text,
-                        "eventDescp": descpController.text,
+              TextField(
+                controller: timeController,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                  labelText: 'Event time',
+                ),
+              ),
+              StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                return CheckboxListTile(
+                    value: recurringEvent,
+                    onChanged: (bool? newValue) {
+                      setState(() {
+                        recurringEvent = newValue!;
+                        // print(recurringEvent);
                       });
-                    } else {
-                      mySelectedEvents[
-                          DateFormat('yyyy-MM-dd').format(_selectedDate!)] = [
-                        {
-                          "eventTitle": titleController.text,
-                          "eventDescp": descpController.text,
-                        }
-                      ];
-                    }
-                  });
-
-                  print(json.encode(mySelectedEvents));
+                    },
+                    title: const Text("Recurring Event"));
+              })
+            ],
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
                   titleController.clear();
                   descpController.clear();
                   Navigator.pop(context);
-                  return;
-                }
-              },
-              child: const Text("Add Event")),
-        ],
+                },
+                child: const Text("Cancel")),
+            TextButton(
+                onPressed: () {
+                  if (titleController.text.isEmpty ||
+                      descpController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Required title and description"),
+                      duration: Duration(seconds: 2),
+                    ));
+                    return;
+                  } else {
+                    setState(() {
+                      if (recurringEvent == true) {
+                        print("yeps");
+                        int? day = _selectedDate?.weekday;
+                        if (weeklyEvents[day.toString()] != null) {
+                          weeklyEvents[day.toString()]?.add({
+                            "eventTitle": titleController.text,
+                            "eventDescp": descpController.text,
+                          });
+                        } else {
+                          weeklyEvents[day.toString()] = [
+                            {
+                              "eventTitle": titleController.text,
+                              "eventDescp": descpController.text,
+                            }
+                          ];
+                        }
+                      } else {
+                        if (mySelectedEvents[DateFormat('yyyy-MM-dd')
+                                .format(_selectedDate!)] !=
+                            null) {
+                          mySelectedEvents[
+                                  DateFormat('yyyy-MM-dd').format(_selectedDate!)]
+                              ?.add({
+                            "eventTitle": titleController.text,
+                            "eventDescp": descpController.text,
+                          });
+                        } else {
+                          mySelectedEvents[
+                              DateFormat('yyyy-MM-dd').format(_selectedDate!)] = [
+                            {
+                              "eventTitle": titleController.text,
+                              "eventDescp": descpController.text,
+                            }
+                          ];
+                        }
+                      }
+                    });
+                    print(json.encode(weeklyEvents));
+                    print(json.encode(mySelectedEvents));
+                    titleController.clear();
+                    descpController.clear();
+                    Navigator.pop(context);
+                    return;
+                  }
+                },
+                child: const Text("Add Event")),
+          ],
+        ),
       ),
     );
   }
@@ -127,16 +180,49 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+        title: const Text("Event Calendar"),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            IconButton(
-            onPressed: (){}, 
-            icon: const Icon(Icons.menu),
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.indigo,
+              ),
+              child: Text('Navigation Menu',
+                  style: TextStyle(color: Colors.white, fontSize: 20)),
             ),
-            Expanded(child: Container()),
-            const Text("Event Calendar"),
-            Expanded(child: Container()),
+            ListTile(
+              leading: const Icon(
+                Icons.home,
+              ),
+              title: const Text('Home'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).popAndPushNamed('/login');
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.calendar_month,
+              ),
+              title: const Text('Calendar'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).popAndPushNamed('/');
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.event,
+              ),
+              title: const Text('Events'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).popAndPushNamed('/events');
+              },
+            ),
           ],
         ),
       ),
@@ -184,7 +270,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddEventDialog(),
+        onPressed: () {
+          setState(() {
+            recurringEvent = false;
+          });
+          _showAddEventDialog();
+        },
         label: const Text("Add Event"),
       ),
     );
