@@ -15,15 +15,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'IIT Ropar App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.indigo,
       ),
-      initialRoute: '/login',
-      routes: {
-        '/': (context) => const EventCalendarScreen(),
-        '/login': (context) => const HomePage(),
-        '/events': (context) => const Events(),
-      }
+      initialRoute: '/',
+      
+      home: const HomePage(),
     );
   }
 }

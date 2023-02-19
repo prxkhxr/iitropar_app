@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:iitropar/utilities/navigation_drawer.dart';
 
 class EventCalendarScreen extends StatefulWidget {
   const EventCalendarScreen({super.key});
@@ -218,50 +219,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         centerTitle: true,
         title: const Text("Event Calendar"),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.indigo,
-              ),
-              child: Text('Navigation Menu',
-                  style: TextStyle(color: Colors.white, fontSize: 20)),
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.home,
-              ),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).popAndPushNamed('/login');
-              },
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.calendar_month,
-              ),
-              title: const Text('Calendar'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).popAndPushNamed('/');
-              },
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.event,
-              ),
-              title: const Text('Events'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).popAndPushNamed('/events');
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: const NavDrawer(),
       body: Column(
         children: [
           TableCalendar(
