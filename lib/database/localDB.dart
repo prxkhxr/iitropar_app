@@ -48,6 +48,16 @@ class EventDB {
         ));
   }
 
+  Future<void> addSingularEvent(SingularEvent se) async {
+    await _db!.execute(
+        "INSERT INTO singular VALUES (${se.title}, ${se.description}, ${se.date}, ${se.stime}, ${se.etime});");
+  }
+
+  Future<void> addRecurringEvent(RecurringEvent re) async {
+    await _db!.execute(
+        'INSERT INTO recurring VALUES ("${re.title}", "${re.description}", "${re.startDate}", "${re.endDate}, "${re.stime}", "${re.etime}");');
+  }
+
   Future<List<Event>> fetchRecurringEvents(DateTime d) async {
     String date = DateFormat('yyyy-MM-dd').format(d);
     int day = d.weekday;
