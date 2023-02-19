@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iitropar/views/events.dart';
 import 'package:iitropar/views/event_calendar.dart';
 import 'package:iitropar/views/home_page.dart';
+import 'package:iitropar/views/mess.dart';
 import 'package:iitropar/views/quicklinks.dart';
 
 class NavDrawer extends StatelessWidget {
@@ -77,7 +78,7 @@ class NavDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => const Events(), // PUT NAME OF CLASS HERE FOR ROUTING, OK JATIN?
+                  builder: (BuildContext context) =>  MessMenuPage(), // PUT NAME OF CLASS HERE FOR ROUTING, OK JATIN?
                 )
               );
             },
