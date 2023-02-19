@@ -11,12 +11,14 @@ class MenuItem {
 }
 
 class MessMenuPage extends StatefulWidget {
+  const MessMenuPage({super.key});
+
   @override
-  _MessMenuPageState createState() => _MessMenuPageState();
+  State<MessMenuPage> createState() => _MessMenuPageState();
 }
 
 class _MessMenuPageState extends State<MessMenuPage>
-    with SingleTickerProviderStateMixin {
+  with SingleTickerProviderStateMixin{
   final List<String> _daysOfWeek = [
     'Monday',
     'Tuesday',
@@ -90,11 +92,10 @@ class _MessMenuPageState extends State<MessMenuPage>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 7,
+      length: myTabs.length,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Mess Menu'),
-          backgroundColor: const Color.fromARGB(255, 58, 126, 245),
           bottom: const TabBar(
             unselectedLabelColor: Colors.white30,
             isScrollable: true,
@@ -110,13 +111,6 @@ class _MessMenuPageState extends State<MessMenuPage>
         body: TabBarView(
           children: [
             ..._daysOfWeek.map((day) => _buildMenuList(day)),
-            Text(
-              'Menu for ${_daysOfWeek[_selectedDayIndex]}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 24.0,
-              ),
-            ),
           ],
         ),
       ),

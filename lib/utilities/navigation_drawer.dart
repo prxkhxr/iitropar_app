@@ -78,7 +78,7 @@ class NavDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) =>  MessMenuPage(), // PUT NAME OF CLASS HERE FOR ROUTING, OK JATIN?
+                  builder: (BuildContext context) =>  const MessMenuPage(), // PUT NAME OF CLASS HERE FOR ROUTING, OK JATIN?
                 )
               );
             },
