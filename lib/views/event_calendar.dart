@@ -16,13 +16,13 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   DateTime _currentDay = DateTime.now();
   DateTime? _selectedDate;
   bool recurringEvent = false;
-
+  TimeOfDay startTime = TimeOfDay.now();
+  TimeOfDay endTime = TimeOfDay.now();
   Map<String, List> mySelectedEvents = {};
   Map<String, List> weeklyEvents = {};
 
   final titleController = TextEditingController();
   final descpController = TextEditingController();
-  final timeController = TextEditingController();
 
   @override
   void initState() {
@@ -35,6 +35,15 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   loadprevEvents() {
     mySelectedEvents = {};
   }
+
+  String formatTimeOfDay(TimeOfDay tod) {
+    final now =  DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    final format = DateFormat.jm();  //"6:00 AM"
+    return format.format(dt);
+  }
+
+  double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute/60.0;
 
   List _listOfDayEvents(DateTime datetime) {
     if (mySelectedEvents[DateFormat('yyyy-MM-dd').format(datetime)] != null) {
@@ -82,13 +91,40 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   labelText: 'Description',
                 ),
               ),
-              TextField(
-                controller: timeController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Event time',
-                ),
+              StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return TextButton(
+                      onPressed: () async {
+                        TimeOfDay? newTime = await showTimePicker(context: context, initialTime: startTime);
+                        if(newTime!=null){
+                          setState(() {
+                            startTime = newTime;
+                          });
+                        }
+                      },
+                      child: Text(
+                        "Start Time : ${formatTimeOfDay(startTime)}",
+                        style: const TextStyle(fontSize: 18),
+                      ));
+                }
               ),
+              StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return TextButton(
+                      onPressed: () async {
+                        TimeOfDay? newTime = await showTimePicker(context: context, initialTime: endTime);
+                        if(newTime!=null){
+                          setState(() {
+                            endTime = newTime;
+                          });
+                        }
+                      },
+                      child: Text(
+                        "End Time : ${formatTimeOfDay(endTime)}",
+                        style: const TextStyle(fontSize: 18),
+                      ));
+                }
+              ),    
               StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
                 return CheckboxListTile(
@@ -114,9 +150,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             TextButton(
                 onPressed: () {
                   if (titleController.text.isEmpty ||
-                      descpController.text.isEmpty) {
+                      descpController.text.isEmpty || toDouble(endTime) < toDouble(startTime)) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Required title and description"),
+                      content: Text("Required title and Description. Times must be entered properly."),
                       duration: Duration(seconds: 2),
                     ));
                     return;
@@ -142,15 +178,15 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                         if (mySelectedEvents[DateFormat('yyyy-MM-dd')
                                 .format(_selectedDate!)] !=
                             null) {
-                          mySelectedEvents[
-                                  DateFormat('yyyy-MM-dd').format(_selectedDate!)]
+                          mySelectedEvents[DateFormat('yyyy-MM-dd')
+                                  .format(_selectedDate!)]
                               ?.add({
                             "eventTitle": titleController.text,
                             "eventDescp": descpController.text,
                           });
                         } else {
-                          mySelectedEvents[
-                              DateFormat('yyyy-MM-dd').format(_selectedDate!)] = [
+                          mySelectedEvents[DateFormat('yyyy-MM-dd')
+                              .format(_selectedDate!)] = [
                             {
                               "eventTitle": titleController.text,
                               "eventDescp": descpController.text,
