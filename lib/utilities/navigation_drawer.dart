@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iitropar/views/events.dart';
 import 'package:iitropar/views/event_calendar.dart';
 import 'package:iitropar/views/home_page.dart';
+import 'package:iitropar/views/quicklinks.dart';
 
 class NavDrawer extends StatelessWidget {
   const NavDrawer({
@@ -62,6 +63,36 @@ class NavDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) => const Events(),
+                )
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.food_bank,
+            ),
+            title: const Text('Mess Menu'),
+            onTap: () {
+              Navigator.popUntil(context, ModalRoute.withName("/"));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const Events(), // PUT NAME OF CLASS HERE FOR ROUTING, OK JATIN?
+                )
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.link,
+            ),
+            title: const Text('Quick Links'),
+            onTap: () {
+              Navigator.popUntil(context, ModalRoute.withName("/"));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const QuickLinks(),
                 )
               );
             },

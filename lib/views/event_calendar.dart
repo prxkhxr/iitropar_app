@@ -78,6 +78,37 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
+              StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: (){
+                          setState(() {
+                            if(_selectedDate!=null){
+                              _selectedDate = _selectedDate!.subtract(const Duration(days:1));
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.arrow_left),
+                      ),
+                      Text(DateFormat('dd-MM-yyyy').format(_selectedDate!)),
+                      IconButton(
+                        onPressed: (){
+                          setState(() {
+                            if(_selectedDate!=null){
+                              _selectedDate = _selectedDate!.add(const Duration(days:1));
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.arrow_right),
+                      ),
+
+                    ],
+                  );
+                }
+              ),
               TextField(
                 controller: titleController,
                 textCapitalization: TextCapitalization.words,
