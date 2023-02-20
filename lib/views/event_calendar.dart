@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
+import 'package:iitropar/database/localDB.dart';
+import 'package:iitropar/database/Event.dart';
 
 class EventCalendarScreen extends StatefulWidget {
   const EventCalendarScreen({super.key});
@@ -29,7 +32,8 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   void initState() {
     super.initState();
     _selectedDate = _currentDay;
-
+    openEventDB();
+    
     loadprevEvents();
   }
 
@@ -247,7 +251,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        centerTitle: true,
         title: const Text("Event Calendar"),
       ),
       drawer: const NavDrawer(),
