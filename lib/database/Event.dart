@@ -1,5 +1,3 @@
-import 'package:path/path.dart' as p;
-
 class Event {
   String title;
   String description = '';
