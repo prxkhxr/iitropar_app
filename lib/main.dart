@@ -4,6 +4,7 @@ import 'package:iitropar/views/home_page.dart';
 import 'package:iitropar/views/events.dart';
 import 'package:iitropar/views/signin.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:iitropar/views/admin/home_page_admin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

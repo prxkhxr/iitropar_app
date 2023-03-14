@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitropar/views/admin/home_page_admin.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -18,6 +20,18 @@ class _SignInScreenState extends State<SignInScreen> {
       height: 240,
       color: Colors.black,
     );
+  }
+
+  void getUserScreen() {
+    var admin_email = ["2020csb1086@iitrpr.ac.in"];
+    if (FirebaseAuth.instance.currentUser != null &&
+        admin_email.contains(FirebaseAuth.instance.currentUser!.email)) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePageAdmin()));
+    } else {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
+    }
   }
 
   @override
@@ -57,10 +71,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         await FirebaseServices().signInWithGoogle();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomePage()));
+                        getUserScreen(); // navigate according to the email id
                       },
                       style: ButtonStyle(backgroundColor:
                           MaterialStateProperty.resolveWith((states) {

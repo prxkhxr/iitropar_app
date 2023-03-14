@@ -28,6 +28,9 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cloud_firestore:
+  image_picker: ^0.8.7
+  firebase_storage: ^11.0.15
   flutter:
     sdk: flutter
   table_calendar: ^3.0.9
@@ -35,6 +38,9 @@ dependencies:
   firebase_core: ^2.6.1 
   firebase_auth: ^4.2.8
   google_sign_in: ^6.0.0
+  file_picker: ^5.2.5
+  csv: ^5.0.1
+
 
 dependency_overrides:
   intl: ^0.16.1
