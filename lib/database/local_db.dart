@@ -11,6 +11,7 @@ Future<EventDB> openEventDB() async {
     if (inst.init == false) {
       inst._db = await openDatabase(
         p.join(await getDatabasesPath(), _dbName),
+        version: 1,
         onCreate: (db, version) async {
           await db.execute(
               "CREATE TABLE singular(title TEXT, desc TEXT, date TEXT, stime TEXT, etime TEXT, PRIMARY KEY(title, date, stime, etime)) WITHOUT ROWID;");
@@ -50,7 +51,7 @@ class EventDB {
 
   Future<void> addSingularEvent(SingularEvent se) async {
     await _db!.execute(
-        "INSERT INTO singular VALUES (${se.title}, ${se.description}, ${se.date}, ${se.stime}, ${se.etime});");
+        'INSERT INTO singular VALUES ("${se.title}", "${se.description}", "${se.date}", "${se.stime}", "${se.etime}");');
   }
 
   Future<void> addRecurringEvent(RecurringEvent re) async {
