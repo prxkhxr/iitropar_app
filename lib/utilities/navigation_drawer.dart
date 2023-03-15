@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/views/admin/home_page_admin.dart';
 import 'package:iitropar/views/events.dart';
 import 'package:iitropar/views/event_calendar.dart';
 import 'package:iitropar/views/home_page.dart';
 import 'package:iitropar/views/mess.dart';
 import 'package:iitropar/views/quicklinks.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NavDrawer extends StatelessWidget {
   const NavDrawer({
@@ -30,12 +32,21 @@ class NavDrawer extends StatelessWidget {
             title: const Text('Home'),
             onTap: () {
               Navigator.popUntil(context, ModalRoute.withName("/"));
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => const HomePage(),
-                )
-              );
+              if (FirebaseAuth.instance.currentUser != null &&
+                  FirebaseAuth.instance.currentUser!.email ==
+                      "2020csb1086@iitrpr.ac.in") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => const HomePageAdmin(),
+                    ));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => const HomePage(),
+                    ));
+              }
             },
           ),
           ListTile(
@@ -46,11 +57,11 @@ class NavDrawer extends StatelessWidget {
             onTap: () {
               Navigator.popUntil(context, ModalRoute.withName("/"));
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => const EventCalendarScreen(),
-                )
-              );
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        const EventCalendarScreen(),
+                  ));
             },
           ),
           ListTile(
@@ -61,11 +72,10 @@ class NavDrawer extends StatelessWidget {
             onTap: () {
               Navigator.popUntil(context, ModalRoute.withName("/"));
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => const Events(),
-                )
-              );
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => const Events(),
+                  ));
             },
           ),
           ListTile(
@@ -76,11 +86,11 @@ class NavDrawer extends StatelessWidget {
             onTap: () {
               Navigator.popUntil(context, ModalRoute.withName("/"));
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) =>  const MessMenuPage(), // PUT NAME OF CLASS HERE FOR ROUTING, OK JATIN?
-                )
-              );
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        const MessMenuPage(), // PUT NAME OF CLASS HERE FOR ROUTING, OK JATIN?
+                  ));
             },
           ),
           ListTile(
@@ -91,11 +101,10 @@ class NavDrawer extends StatelessWidget {
             onTap: () {
               Navigator.popUntil(context, ModalRoute.withName("/"));
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => const QuickLinks(),
-                )
-              );
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => const QuickLinks(),
+                  ));
             },
           ),
         ],

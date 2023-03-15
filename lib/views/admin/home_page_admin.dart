@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:iitropar/views/admin/add_event.dart';
+import 'package:iitropar/views/admin/add_event_csv.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
-import 'package:iitropar/utilities/firebase_services.dart';
-import 'package:iitropar/views/signin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitropar/views/signin.dart';
+import 'package:iitropar/utilities/firebase_services.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePageAdmin extends StatefulWidget {
+  const HomePageAdmin({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePageAdmin> createState() => _HomePageAdminState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageAdminState extends State<HomePageAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home Page"),
+        title: const Text("Admin Home Page"),
       ),
       drawer: const NavDrawer(),
       body: Center(
@@ -34,6 +34,20 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(builder: (context) => SignInScreen()));
               },
               child: Text("Logout"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddEvent()));
+              },
+              child: Text("Add Event"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => addEventcsv()));
+              },
+              child: Text("Add Event using CSV file"),
             ),
           ],
         ),
