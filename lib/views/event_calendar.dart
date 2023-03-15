@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:iitropar/database/Event.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +15,8 @@ class EventCalendarScreen extends StatefulWidget {
 }
 
 class _EventCalendarScreenState extends State<EventCalendarScreen> {
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _currentDay = DateTime.now();
-  DateTime? _selectedDate;
+  DateTime _focused = DateTime(2023, DateTime.february);
+  DateTime _selectedDate = DateTime.now();
   bool recurringEvent = false;
   TimeOfDay startTime = TimeOfDay.now();
   TimeOfDay endTime = TimeOfDay.now();
@@ -38,7 +36,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = _currentDay;
 
     mySelectedEvents = {};
     loadLocalDB();
@@ -46,24 +43,32 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   loadLocalDB() async {
     ldb = await fldb;
-    await loadDaysEvents(DateTime.now());
-    setState(() {});
+    await loadEvents(_selectedDate);
   }
 
-  loadDaysEvents(DateTime d) async {
-    if (ldb == null) return;
-
-    List<Event> l = await ldb!.fetchEvents(d);
-    setState(() {
-      mySelectedEvents[DateFormat('yyyy-MM-dd').format(d)] = l;
-    });
+  loadEvents(DateTime d) async {
+    var d1 = DateTime(d.year, d.month);
+    DateTime d2;
+    if (d.month == 12) {
+      d2 = DateTime(d.year + 1, 1);
+    } else {
+      d2 = DateTime(d.year, d.month + 1);
+    }
+    List<Event> l = List.empty(growable: true);
+    while (d1.compareTo(d2) < 0) {
+      l = await ldb!.fetchEvents(d1);
+      setState(() {
+        mySelectedEvents[DateFormat('yyyy-MM-dd').format(d1)] = l;
+      });
+      d1 = d1.add(const Duration(days: 1));
+    }
   }
 
   _insertREvent(RecurringEvent r) async {
     await fldb;
     setState(() {
       ldb!.addRecurringEvent(r);
-      loadDaysEvents(_selectedDate!);
+      loadEvents(_selectedDate);
     });
   }
 
@@ -71,7 +76,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     await fldb;
     setState(() {
       ldb!.addSingularEvent(s);
-      loadDaysEvents(_selectedDate!);
+      loadEvents(_selectedDate);
     });
   }
 
@@ -113,22 +118,18 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     IconButton(
                       onPressed: () {
                         setState(() {
-                          if (_selectedDate != null) {
-                            _selectedDate = _selectedDate!
-                                .subtract(const Duration(days: 1));
-                          }
+                          _selectedDate =
+                              _selectedDate.subtract(const Duration(days: 1));
                         });
                       },
                       icon: const Icon(Icons.arrow_left),
                     ),
-                    Text(DateFormat('dd-MM-yyyy').format(_selectedDate!)),
+                    Text(DateFormat('dd-MM-yyyy').format(_selectedDate)),
                     IconButton(
                       onPressed: () {
                         setState(() {
-                          if (_selectedDate != null) {
-                            _selectedDate =
-                                _selectedDate!.add(const Duration(days: 1));
-                          }
+                          _selectedDate =
+                              _selectedDate.add(const Duration(days: 1));
                         });
                       },
                       icon: const Icon(Icons.arrow_right),
@@ -237,7 +238,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       SingularEvent s = SingularEvent(
                         title: titleController.text,
                         description: descpController.text,
-                        date: _dateString(_selectedDate!),
+                        date: _dateString(_selectedDate),
                         stime: formatTimeOfDay(startTime),
                         etime: formatTimeOfDay(endTime),
                         creator: 'user',
@@ -269,35 +270,33 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       body: Column(
         children: [
           TableCalendar(
-            focusedDay: _currentDay,
+            focusedDay: _focused,
             firstDay: DateTime(2023),
-            lastDay: DateTime(2024),
-            calendarFormat: _calendarFormat,
+            lastDay: DateTime(2024).subtract(const Duration(days: 1)),
+            calendarFormat: CalendarFormat.month,
             onDaySelected: (selectedDay, focusedDay) {
-              loadDaysEvents(selectedDay);
               if (!isSameDay(_selectedDate, selectedDay)) {
                 setState(() {
                   _selectedDate = selectedDay;
-                  _currentDay = focusedDay;
+                  _focused = focusedDay;
                 });
               }
             },
             selectedDayPredicate: (day) {
               return isSameDay(_selectedDate, day);
             },
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              }
+            enabledDayPredicate: (day) {
+              return _focused.month == day.month;
             },
             onPageChanged: (focusedDay) {
-              _currentDay = focusedDay;
+              _focused = focusedDay;
+              loadEvents(focusedDay);
             },
             eventLoader: _listOfDayEvents,
+            availableCalendarFormats: const {CalendarFormat.month: 'Month'},
+            currentDay: DateTime(2023, DateTime.february),
           ),
-          ..._listOfDayEvents(_selectedDate!).map((myEvents) => ListTile(
+          ..._listOfDayEvents(_selectedDate).map((myEvents) => ListTile(
                 leading: const Icon(
                   Icons.done,
                   color: Colors.indigo,
