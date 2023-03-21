@@ -6,6 +6,7 @@ import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitropar/views/signin.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
+import 'package:iitropar/views/admin/registerClub.dart';
 
 class HomePageAdmin extends StatefulWidget {
   const HomePageAdmin({super.key});
@@ -56,6 +57,13 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                     MaterialPageRoute(builder: (context) => addCoursecsv()));
               },
               child: Text("Add Course List of students "),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => registerClub()));
+              },
+              child: Text("Register a club"),
             ),
           ],
         ),
