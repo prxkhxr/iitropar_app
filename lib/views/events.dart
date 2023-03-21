@@ -103,16 +103,23 @@ class _EventsState extends State<Events> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
                             DocumentSnapshot doc = snapshot.data!.docs[index];
-                            // String selected_date =
-                            return eventWidget(
-                                doc["eventTitle"],
-                                doc["eventType"],
-                                doc["eventDesc"],
-                                doc["eventVenue"],
-                                doc["eventDate"],
-                                doc["startTime"],
-                                doc["endTime"],
-                                doc["imgURL"]);
+                            String eventDate =
+                                "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}";
+                            print(eventDate);
+                            print(doc["eventDate"]);
+                            if (eventDate == doc["eventDate"])
+                              return eventWidget(
+                                  doc["eventTitle"],
+                                  doc["eventType"],
+                                  doc["eventDesc"],
+                                  doc["eventVenue"],
+                                  doc["eventDate"],
+                                  doc["startTime"],
+                                  doc["endTime"],
+                                  doc["imgURL"]);
+                            else {
+                              return Container();
+                            }
                           });
                     } else {
                       return Text('No Event');
@@ -135,7 +142,7 @@ class _EventsState extends State<Events> {
               },
               icon: const Icon(Icons.arrow_left),
             ),
-            Text(DateFormat('dd-MM-yyyy').format(_selectedDate)),
+            Text(DateFormat('dd-MM-yyyy').format(_selectedDate!)),
             IconButton(
               onPressed: () {
                 setState(() {

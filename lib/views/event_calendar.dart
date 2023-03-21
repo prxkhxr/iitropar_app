@@ -15,7 +15,7 @@ class EventCalendarScreen extends StatefulWidget {
 }
 
 class _EventCalendarScreenState extends State<EventCalendarScreen> {
-  DateTime _focused = DateTime(2023, DateTime.february);
+  DateTime _focused = DateTime.now();
   DateTime _selectedDate = DateTime.now();
   bool recurringEvent = false;
   TimeOfDay startTime = TimeOfDay.now();

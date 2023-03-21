@@ -27,4 +27,14 @@ class firebaseDatabase {
         .then((value) => print("event added"))
         .catchError((error) => print("failed to add event: $error"));
   }
+
+  static void addCourseFB(String entryNumber, List<dynamic> Courses) {
+    DocumentReference ref_event_nr =
+        FirebaseFirestore.instance.collection("courses").doc("$entryNumber");
+    Map<String, dynamic> courses = {"courses": Courses};
+    ref_event_nr
+        .set(courses)
+        .then((value) => print("courses added"))
+        .catchError((error) => print("failed to add courses: $error"));
+  }
 }
