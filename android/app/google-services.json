@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "605010269946-mql97v3nctc38fp8krt56ob5m7mn0c71.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.iitropar",
+            "certificate_hash": "bba8011f74a1b9911cd5ff860218ee6ab4d97ae4"
+          }
+        },
+        {
           "client_id": "605010269946-d7ofkj5voatmvjkr47irr1rbcacbde7i.apps.googleusercontent.com",
           "client_type": 3
         }
