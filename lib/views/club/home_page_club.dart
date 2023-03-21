@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/views/admin/add_event.dart';
 import 'package:iitropar/views/admin/add_event_csv.dart';
 import 'package:iitropar/views/admin/add_course_csv.dart';
@@ -7,20 +8,32 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitropar/views/signin.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/admin/registerClub.dart';
+import 'package:iitropar/views/club/add_club_event.dart';
 
-class HomePageAdmin extends StatefulWidget {
-  const HomePageAdmin({super.key});
+class HomePageClub extends StatefulWidget {
+  const HomePageClub({super.key});
 
   @override
-  State<HomePageAdmin> createState() => _HomePageAdminState();
+  State<HomePageClub> createState() => _HomePageClubState();
 }
 
-class _HomePageAdminState extends State<HomePageAdmin> {
+class _HomePageClubState extends State<HomePageClub> {
+  String clubName = "";
+
+  _HomePageClubState() {
+    firebaseDatabase
+        .getClubName(FirebaseAuth.instance.currentUser!.email!)
+        .then((value) {
+      setState(() {
+        clubName = value;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Admin Home Page"),
+        title: Text("$clubName Home Page"),
       ),
       drawer: const NavDrawer(),
       body: Center(
@@ -39,31 +52,14 @@ class _HomePageAdminState extends State<HomePageAdmin> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddEvent()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => addClubEvent(
+                              clubName: clubName,
+                            )));
               },
               child: Text("Add Event"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => addEventcsv()));
-              },
-              child: Text("Add Event using CSV file"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => addCoursecsv()));
-              },
-              child: Text("Add Course List of students "),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => registerClub()));
-              },
-              child: Text("Register a club"),
             ),
           ],
         ),

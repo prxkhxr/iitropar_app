@@ -3,6 +3,8 @@ import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitropar/views/admin/home_page_admin.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
+import 'package:iitropar/views/club/home_page_club.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -22,12 +24,17 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void getUserScreen() {
+  void getUserScreen() async {
     var admin_email = ["2020csb1086@iitrpr.ac.in"];
+    List<dynamic> Email = await firebaseDatabase.getClubIds();
     if (FirebaseAuth.instance.currentUser != null &&
         admin_email.contains(FirebaseAuth.instance.currentUser!.email)) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomePageAdmin()));
+    } else if (FirebaseAuth.instance.currentUser != null &&
+        Email.contains(FirebaseAuth.instance.currentUser!.email)) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePageClub()));
     } else {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomePage()));
