@@ -73,7 +73,7 @@ class _HomePageClubState extends State<HomePageClub> {
       return Image.network(
           FirebaseAuth.instance.currentUser!.photoURL.toString());
     }
-    return Image.asset('assets/user.jpg', height: 100, width: 100);
+    return Image.asset('assets/user.png', height: 100, width: 100);
   }
 
   String getUserName() {

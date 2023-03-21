@@ -1,7 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:iitropar/database/Event.dart';
+import 'package:iitropar/database/event.dart';
 import 'package:path/path.dart' as p;
+import 'package:iitropar/frequently_used.dart';
 
 String _dbName = "Events.db";
 
@@ -14,9 +15,7 @@ Future<EventDB> openEventDB() async {
         version: 1,
         onCreate: (db, version) async {
           await db.execute(
-              "CREATE TABLE singular(title TEXT, desc TEXT, date TEXT, stime TEXT, etime TEXT, PRIMARY KEY(title, date, stime, etime)) WITHOUT ROWID;");
-          await db.execute(
-              "CREATE TABLE recurring(title TEXT, desc TEXT, startDate TEXT, endDate TEXT, stime TEXT, etime TEXT, PRIMARY KEY(title, desc)) WITHOUT ROWID;");
+              "CREATE TABLE events(title TEXT, desc TEXT, stime TEXT, etime TEXT, startDate TEXT, endDate TEXT, mask TEXT, type INTEGER, PRIMARY KEY(title, desc, stime, etime, startDate)) WITHOUT ROWID;");
         },
       );
       inst.init = true;
@@ -35,51 +34,73 @@ class EventDB {
 
   Future<List<Event>> fetchSingularEvents(DateTime date) async {
     String d = DateFormat('yyyy-MM-dd').format(date);
-    var t = await _db!.rawQuery('SELECT * FROM singular WHERE date = "$d";');
+    var t = await _db!
+        .rawQuery('SELECT * FROM events WHERE startDate = "$d" and type = 0;');
     return Future(() => List.generate(
           t.length,
-          (idx) => Event(
+          (idx) => Event.singular(
             title: t[idx]['title'].toString(),
+            description: t[idx]['desc'].toString(),
             stime: t[idx]['stime'].toString(),
             etime: t[idx]['etime'].toString(),
-            description: t[idx]['desc'].toString(),
+            displayDate: t[idx]['startDate'].toString(),
             creator: 'user',
           ),
           growable: true,
         ));
   }
 
-  Future<void> addSingularEvent(SingularEvent se) async {
-    await _db!.execute(
-        'INSERT INTO singular VALUES ("${se.title}", "${se.description}", "${se.date}", "${se.stime}", "${se.etime}");');
+  Future<int> _addSingularEvent(Event se) async {
+    return await _db!.rawInsert(
+        'INSERT INTO events(title, desc, stime, etime, startDate, type) VALUES ("${se.title}", "${se.description}", "${se.stime}", "${se.etime}", "${se.displayDate}", 0);');
   }
 
-  Future<void> addRecurringEvent(RecurringEvent re) async {
-    await _db!.execute(
-        'INSERT INTO recurring VALUES ("${re.title}", "${re.description}", "${re.startDate}", "${re.endDate}, "${re.stime}", "${re.etime}");');
+  Future<int> _addRecurringEvent(Event re) async {
+    return await _db!.rawInsert(
+        'INSERT INTO events(title, desc, stime, etime, startDate, endDate, mask, type) VALUES ("${re.title}", "${re.description}", "${re.stime}", "${re.etime}", "${re.startDate}", "${re.endDate}", ${re.mask}, 1);');
   }
 
   Future<List<Event>> fetchRecurringEvents(DateTime d) async {
     String date = DateFormat('yyyy-MM-dd').format(d);
     int day = d.weekday;
     var t = await _db!.rawQuery(
-        'SELECT * FROM recurring WHERE startDate <= "$date" and endDate >= "$date";');
+        'SELECT * FROM events WHERE startDate <= "$date" and endDate >= "$date" and type = 1;');
     return Future(() {
       List<Event> l = List.empty(growable: true);
       for (var row in t) {
         int mask = int.parse(row['mask'].toString());
         if (mask & (1 << day) != 0) {
-          l.add(Event(
+          l.add(Event.recurring(
             title: row['title'].toString(),
             description: row['desc'].toString(),
-            creator: 'user',
             stime: row['stime'].toString(),
             etime: row['etime'].toString(),
+            startDate: row['startDate'].toString(),
+            endDate: row['endDate'].toString(),
+            displayDate: dateString(d),
+            mask: mask,
+            creator: 'user',
           ));
         }
       }
       return l;
     });
+  }
+
+  Future<bool> delete(Event e) async {
+    var cnt = await _db!.rawDelete(
+        'DELETE FROM events WHERE title = "${e.title}" and desc = "${e.description}" and stime = "${e.stime}" and etime = "${e.etime}";');
+    return !(cnt == 0);
+  }
+
+  Future<bool> insert(Event e) async {
+    var cnt = 0;
+    if (e.isRecurring()) {
+      cnt = await _addRecurringEvent(e);
+    } else {
+      cnt = await _addSingularEvent(e);
+    }
+    return !(cnt == 0);
   }
 
   Future<List<Event>> fetchEvents(DateTime d) async {
