@@ -124,6 +124,21 @@ class _EventsState extends State<Events> {
         bottomNavigationBar: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ElevatedButton(
+              onPressed: () async {
+                showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime(2100))
+                    .then((date) {
+                  setState(() {
+                    _selectedDate = date!;
+                  });
+                });
+              },
+              child: Text("Select Date"),
+            ),
             IconButton(
               onPressed: () {
                 setState(() {
