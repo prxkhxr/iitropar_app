@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iitropar/views/admin/home_page_admin.dart';
+import 'package:iitropar/views/club/home_page_club.dart';
 import 'package:iitropar/views/events.dart';
 import 'package:iitropar/views/event_calendar.dart';
 import 'package:iitropar/views/home_page.dart';
@@ -39,6 +40,14 @@ class NavDrawer extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (BuildContext context) => const HomePageAdmin(),
+                    ));
+              } else if (FirebaseAuth.instance.currentUser != null &&
+                  FirebaseAuth.instance.currentUser!.email ==
+                      "2020csb1111@iitrpr.ac.in") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => const HomePageClub(),
                     ));
               } else {
                 Navigator.push(
