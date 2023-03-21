@@ -1,14 +1,13 @@
 import 'dart:async';
-import 'package:iitropar/database/Event.dart';
+import 'package:iitropar/database/event.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:iitropar/database/local_db.dart';
-import 'package:iitropar/database/Event.dart';
-
-import 'package:iitropar/database/local_db.dart';
+import 'package:iitropar/database/event.dart';
+import 'package:iitropar/frequently_used.dart';
 
 class EventCalendarScreen extends StatefulWidget {
   const EventCalendarScreen({super.key});
@@ -34,10 +33,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   final descpController = TextEditingController();
   final typeController = TextEditingController();
   final venueController = TextEditingController();
-
-  String _dateString(DateTime d) {
-    return DateFormat('yyyy-MM-dd').format(d);
-  }
 
   @override
   void initState() {
@@ -70,20 +65,16 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     }
   }
 
-  _insertREvent(RecurringEvent r) async {
+  void _insertEvent(Event e) async {
     await fldb;
-    setState(() {
-      ldb!.addRecurringEvent(r);
-      loadEvents(_selectedDate);
-    });
+    ldb!.insert(e);
+    loadEvents(stringDate(e.displayDate));
   }
 
-  _insertSEvent(SingularEvent s) async {
+  void _deleteEvent(Event e) async {
     await fldb;
-    setState(() {
-      ldb!.addSingularEvent(s);
-      loadEvents(_selectedDate);
-    });
+    await ldb!.delete(e);
+    loadEvents(stringDate(e.displayDate));
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -158,13 +149,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 ),
               ),
               TextField(
-                controller: typeController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Type',
-                ),
-              ),
-              TextField(
                 controller: venueController,
                 textCapitalization: TextCapitalization.words,
                 decoration: const InputDecoration(
@@ -219,26 +203,24 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 onPressed: () {
                   if (titleController.text.isEmpty ||
                       descpController.text.isEmpty ||
-                      typeController.text.isEmpty ||
-                      venueController.text.isEmpty ||
                       toDouble(endTime) < toDouble(startTime)) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text(
-                          "Required title, description, type and venue. Times must be entered properly."),
+                          "Required title and description. Times must be entered properly."),
                       duration: Duration(seconds: 5),
                     ));
                     return;
                   } else {
                     print("Adding Singular Event");
-                    SingularEvent s = SingularEvent(
+                    Event s = Event.singular(
                       title: titleController.text,
                       description: descpController.text,
-                      date: _dateString(_selectedDate),
                       stime: formatTimeOfDay(startTime),
                       etime: formatTimeOfDay(endTime),
+                      displayDate: dateString(_selectedDate),
                       creator: 'user',
                     );
-                    _insertSEvent(s);
+                    _insertEvent(s);
 
                     titleController.clear();
                     descpController.clear();
@@ -309,13 +291,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 textCapitalization: TextCapitalization.words,
                 decoration: const InputDecoration(
                   labelText: 'Description',
-                ),
-              ),
-              TextField(
-                controller: typeController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Type',
                 ),
               ),
               TextField(
@@ -395,8 +370,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 onPressed: () {
                   if (titleController.text.isEmpty ||
                       descpController.text.isEmpty ||
-                      typeController.text.isEmpty ||
-                      venueController.text.isEmpty ||
                       startDate.compareTo(endDate) > 0 ||
                       toDouble(endTime) < toDouble(startTime)) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -408,19 +381,19 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   } else {
                     print("Adding Recurring Event");
                     print(
-"${DateFormat('dd-MM-yyyy').format(startDate)} ::: ${DateFormat('dd-MM-yyyy').format(endDate)}");
-                    RecurringEvent r = RecurringEvent(
+                        "${DateFormat('dd-MM-yyyy').format(startDate)} ::: ${DateFormat('dd-MM-yyyy').format(endDate)}");
+                    Event r = Event.recurring(
                       title: titleController.text,
                       description: descpController.text,
                       stime: formatTimeOfDay(startTime),
                       etime: formatTimeOfDay(endTime),
-                      startDate: _dateString(DateTime.now()),
-                      endDate: _dateString(
-                          DateTime.now().subtract(const Duration(days: -50))),
-                      mask: ~0,
+                      startDate: dateString(startDate),
+                      endDate: dateString(endDate),
+                      displayDate: dateString(_selectedDate),
+                      mask: (1 << startDate.weekday),
                       creator: 'user',
                     );
-                    _insertREvent(r);
+                    _insertEvent(r);
 
                     titleController.clear();
                     descpController.clear();
@@ -485,10 +458,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Text("Event Title: ${myEvents.title}"),
                       ),
-                      const SizedBox(width: 10,),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       IconButton(
-                        onPressed: (){
-
+                        onPressed: () {
+                          _deleteEvent(myEvents);
                         },
                         icon: const Icon(Icons.delete),
                       )
@@ -530,7 +505,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             );
           },
           child: const Icon(Icons.add),
-        )
-    );
+        ));
   }
 }
