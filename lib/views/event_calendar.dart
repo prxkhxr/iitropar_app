@@ -238,6 +238,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   }
 
   _showRecurringAddEventDialog() async {
+    endDate = _selectedDate;
     await showDialog(
       context: context,
       builder: (context) => SingleChildScrollView(
@@ -261,7 +262,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           _selectedDate =
                               _selectedDate.subtract(const Duration(days: 1));
                         });
-                        startDate = _selectedDate;
                       },
                       icon: const Icon(Icons.arrow_left),
                     ),
@@ -272,7 +272,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           _selectedDate =
                               _selectedDate.add(const Duration(days: 1));
                         });
-                        startDate = _selectedDate;
                       },
                       icon: const Icon(Icons.arrow_right),
                     ),
@@ -345,7 +344,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           lastDate: DateTime(2100));
 
                       if (newDate != null) {
-                        startDate = _selectedDate;
                         setState(() {
                           endDate = newDate;
                         });
@@ -368,13 +366,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 child: const Text("Cancel")),
             TextButton(
                 onPressed: () {
+                  startDate = _selectedDate;
                   if (titleController.text.isEmpty ||
                       descpController.text.isEmpty ||
                       startDate.compareTo(endDate) > 0 ||
                       toDouble(endTime) < toDouble(startTime)) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text(
-                          "Required title, description, type and venue. Times must be entered properly."),
+                          "Required title and description. Times must be entered properly."),
                       duration: Duration(seconds: 5),
                     ));
                     return;
@@ -429,6 +428,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 if (!isSameDay(_selectedDate, selectedDay)) {
                   setState(() {
                     _selectedDate = selectedDay;
+                    print('Selected Date = $_selectedDate');
                     _focused = focusedDay;
                   });
                 }
@@ -445,7 +445,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               },
               eventLoader: _listOfDayEvents,
               availableCalendarFormats: const {CalendarFormat.month: 'Month'},
-              currentDay: DateTime(2023, DateTime.february),
+              currentDay: DateTime.now(),
             ),
             ..._listOfDayEvents(_selectedDate).map((myEvents) => ListTile(
                   leading: const Icon(
