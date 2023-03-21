@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iitropar/views/admin/add_event.dart';
 import 'package:iitropar/views/admin/add_event_csv.dart';
+import 'package:iitropar/views/admin/add_course_csv.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitropar/views/signin.dart';
@@ -48,6 +49,13 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                     MaterialPageRoute(builder: (context) => addEventcsv()));
               },
               child: Text("Add Event using CSV file"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => addCoursecsv()));
+              },
+              child: Text("Add Course List of students "),
             ),
           ],
         ),

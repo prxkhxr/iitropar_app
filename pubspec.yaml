@@ -34,24 +34,24 @@ dependencies:
   flutter:
     sdk: flutter
   table_calendar: ^3.0.9
-  intl: ^0.18.0
+  intl: ^0.18.0-nullsafety.2
   firebase_core: ^2.6.1 
   firebase_auth: ^4.2.8
   google_sign_in: ^6.0.0
   file_picker: ^5.2.5
   csv: ^5.0.1
+  sqflite: ^2.2.4+1
+  path:
 
 
 dependency_overrides:
-  intl: ^0.16.1
 
 
 
+  intl: ^0.17.0-nullsafety.2
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  sqflite: ^2.2.4+1
-  path:
 
 dev_dependencies:
   flutter_test:

@@ -15,6 +15,33 @@ class addEventcsv extends StatefulWidget {
 class _addEventcsvState extends State<addEventcsv> {
   List<List<dynamic>> _data = [];
   String? filePath;
+  bool checkData(List<List<dynamic>> _events) {
+    int len = _events.length;
+    RegExp time_regex = new RegExp(r'^[0-2]?[0-9]:[0-6]?[0-9]$');
+    RegExp date_regex = new RegExp(r'^[0-3]?[0-9]/[0-1]?[0-9]/[0-9]{4}$');
+    for (int i = 1; i < len; i++) {
+      if (!date_regex.hasMatch(_events[i][4])) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "Date format at line $i is incorrect - ${_events[i][4]}")));
+        return false;
+      }
+      if (!time_regex.hasMatch(_events[i][5].toString())) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "Time format at line $i is incorrect - ${_events[i][5]}")));
+        return false;
+      }
+      if (!time_regex.hasMatch(_events[i][6].toString())) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "Time format at line $i is incorrect - ${_events[i][6]}")));
+        return false;
+      }
+    }
+    return true;
+  }
+
   void uploadData(List<List<dynamic>> _events) {
     int len = _events.length;
     for (int i = 1; i < len; i++) {
@@ -28,7 +55,7 @@ class _addEventcsvState extends State<addEventcsv> {
           _events[i][6],
           _events[i][7]);
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Added data sucessfully")));
+          .showSnackBar(SnackBar(content: Text("Uploaded data sucessfully")));
     }
   }
 
@@ -54,7 +81,9 @@ class _addEventcsvState extends State<addEventcsv> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Header format in csv correct!")));
-      uploadData(fields);
+      if (checkData(fields)) {
+        uploadData(fields);
+      }
     }
     setState(() {
       _data = fields;
@@ -79,17 +108,28 @@ class _addEventcsvState extends State<addEventcsv> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Add Event using csv"),
+          title: const Text("Add Course List using csv"),
         ),
         body: Center(
           child: Column(children: [
-            SizedBox(height: 20),
+            SizedBox(height: 50),
             ElevatedButton(
               child: const Text("Upload FIle"),
               onPressed: () {
                 _pickFile();
               },
-            )
+            ),
+            SizedBox(height: 50),
+            Text('1 . Accepted CSV format is given below'),
+            SizedBox(height: 5),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Image.asset('assets/admin_csv_format.png'),
+            ),
+            SizedBox(height: 5),
+            Text('2 . Time should be of the form HH:MM'),
+            SizedBox(height: 20),
+            Text('3. Date should be of the format DD/MM/YYYY')
           ]),
         ));
   }

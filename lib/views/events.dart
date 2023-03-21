@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:http/http.dart' as http;
 import 'package:iitropar/utilities/firebase_database.dart';
+import 'package:intl/intl.dart';
 
 //to do build a function to access all the events
 class Events extends StatefulWidget {
@@ -36,19 +37,22 @@ Card eventWidget(
         children: [
           ListTile(
             title: Text(eventTitle),
-            subtitle: Text(eventDesc),
+            subtitle: Text(eventType),
             trailing: Icon(Icons.favorite_outline),
           ),
           Center(
-              child: Image.network(
-            img_url!,
-            errorBuilder: (context, error, stackTrace) =>
-                Image.asset("assets/user.jpg"),
-          )),
+              child: Image.network(img_url!,
+                  errorBuilder: (context, error, stackTrace) =>
+                      SizedBox(height: 20))),
           Container(
             padding: EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
             child: Text('Venue : $eventVenue'),
+          ),
+          Container(
+            padding: EdgeInsets.all(16.0),
+            alignment: Alignment.centerLeft,
+            child: Text('Desc : $eventDesc'),
           ),
           Container(
             padding: EdgeInsets.all(16.0),
@@ -73,6 +77,11 @@ Card eventWidget(
 }
 
 class _EventsState extends State<Events> {
+  DateTime? _selectedDate;
+
+  _EventsState() {
+    _selectedDate = DateTime.now();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,20 +103,55 @@ class _EventsState extends State<Events> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
                             DocumentSnapshot doc = snapshot.data!.docs[index];
-                            return eventWidget(
-                                doc["eventTitle"],
-                                doc["eventType"],
-                                doc["eventDesc"],
-                                doc["eventVenue"],
-                                doc["eventDate"],
-                                doc["startTime"],
-                                doc["endTime"],
-                                doc["imgURL"]);
+                            String eventDate =
+                                "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}";
+                            print(eventDate);
+                            print(doc["eventDate"]);
+                            if (eventDate == doc["eventDate"])
+                              return eventWidget(
+                                  doc["eventTitle"],
+                                  doc["eventType"],
+                                  doc["eventDesc"],
+                                  doc["eventVenue"],
+                                  doc["eventDate"],
+                                  doc["startTime"],
+                                  doc["endTime"],
+                                  doc["imgURL"]);
+                            else {
+                              return Container();
+                            }
                           });
                     } else {
                       return Text('No Event');
                     }
                   }),
+            ),
+          ],
+        ),
+        bottomNavigationBar: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  if (_selectedDate != null) {
+                    _selectedDate =
+                        _selectedDate!.subtract(const Duration(days: 1));
+                  }
+                });
+              },
+              icon: const Icon(Icons.arrow_left),
+            ),
+            Text(DateFormat('dd-MM-yyyy').format(_selectedDate!)),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  if (_selectedDate != null) {
+                    _selectedDate = _selectedDate!.add(const Duration(days: 1));
+                  }
+                });
+              },
+              icon: const Icon(Icons.arrow_right),
             ),
           ],
         )); // Generated code for this Row Widget...
