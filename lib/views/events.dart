@@ -98,9 +98,17 @@ class _EventsState extends State<Events> {
                             DocumentSnapshot doc = snapshot.data!.docs[index];
                             String eventDate =
                                 "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}";
-                            print(eventDate);
+                            String _doc_eventDate = doc["eventDate"];
+                            List<String> date_split = _doc_eventDate.split('/');
+                            DateTime doc_eventDate = new DateTime(
+                                int.parse(date_split[2]),
+                                int.parse(date_split[1]),
+                                int.parse(date_split[0]));
+                            print(doc_eventDate);
                             print(doc["eventDate"]);
-                            if (eventDate == doc["eventDate"])
+                            if (doc_eventDate.year == _selectedDate!.year &&
+                                doc_eventDate.month == _selectedDate!.month &&
+                                doc_eventDate.day == _selectedDate!.day)
                               return eventWidget(
                                   doc["eventTitle"],
                                   doc["eventType"],
