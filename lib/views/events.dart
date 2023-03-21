@@ -15,13 +15,6 @@ class Events extends StatefulWidget {
   State<Events> createState() => _EventsState();
 }
 
-// bool checkIfImage(String param) {
-//   if (param == 'image/jpeg' || param == 'image/png' || param == 'image/gif') {
-//     return true;
-//   }
-//   return false;
-// }
-
 Card eventWidget(
     String eventTitle,
     String eventType,

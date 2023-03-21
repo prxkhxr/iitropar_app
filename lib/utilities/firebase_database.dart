@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class firebaseDatabase {
@@ -36,5 +38,13 @@ class firebaseDatabase {
         .set(courses)
         .then((value) => print("courses added"))
         .catchError((error) => print("failed to add courses: $error"));
+  }
+
+  static Future<List<dynamic>> getCourses(String entryNumber) async {
+    DocumentReference ref_event_nr =
+        FirebaseFirestore.instance.collection("courses").doc("$entryNumber");
+    DocumentSnapshot snapshot = await ref_event_nr.get();
+    List<dynamic> courses = List.from(snapshot['courses']);
+    return courses;
   }
 }
