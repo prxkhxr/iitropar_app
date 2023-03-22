@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitropar/views/admin/home_page_admin.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/views/club/home_page_club.dart';
+import 'package:iitropar/database/local_db.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -36,6 +37,9 @@ class _SignInScreenState extends State<SignInScreen> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomePageClub()));
     } else {
+      var ldb = await openEventDB();
+      ldb.loadCourse(await firebaseDatabase
+          .getCourses(FirebaseAuth.instance.currentUser!.email!.split('@')[0]));
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomePage()));
     }

@@ -78,11 +78,11 @@ class firebaseDatabase {
     return "noclub";
   }
 
-  static Future<List<dynamic>> getCourses(String entryNumber) async {
+  static Future<List<String>> getCourses(String entryNumber) async {
     DocumentReference ref_event_nr =
-        FirebaseFirestore.instance.collection("courses").doc("$entryNumber");
+        FirebaseFirestore.instance.collection("courses").doc(entryNumber);
     DocumentSnapshot snapshot = await ref_event_nr.get();
-    List<dynamic> courses = List.from(snapshot['courses']);
+    List<String> courses = List.from(snapshot['courses']);
     return courses;
   }
 }

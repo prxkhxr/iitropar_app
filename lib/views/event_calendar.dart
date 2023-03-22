@@ -447,30 +447,36 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               availableCalendarFormats: const {CalendarFormat.month: 'Month'},
               currentDay: DateTime.now(),
             ),
-            ..._listOfDayEvents(_selectedDate).map((myEvents) => ListTile(
-                  leading: const Icon(
-                    Icons.done,
-                    color: Colors.indigo,
-                  ),
-                  title: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Text("Event Title: ${myEvents.title}"),
+            Expanded(
+                child: ListView(
+              children: [
+                ..._listOfDayEvents(_selectedDate).map((myEvents) => Flexible(
+                        child: ListTile(
+                      leading: const Icon(
+                        Icons.done,
+                        color: Colors.indigo,
                       ),
-                      const SizedBox(
-                        width: 10,
+                      title: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text("Event Title: ${myEvents.title}"),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              _deleteEvent(myEvents);
+                            },
+                            icon: const Icon(Icons.delete),
+                          )
+                        ],
                       ),
-                      IconButton(
-                        onPressed: () {
-                          _deleteEvent(myEvents);
-                        },
-                        icon: const Icon(Icons.delete),
-                      )
-                    ],
-                  ),
-                  subtitle: Text("Description: ${myEvents.description}"),
-                ))
+                      subtitle: Text("Description: ${myEvents.description}"),
+                    )))
+              ],
+            ))
           ],
         ),
         floatingActionButton: FloatingActionButton(

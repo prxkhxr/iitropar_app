@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:path/path.dart' as p;
 import 'package:iitropar/frequently_used.dart';
+import 'package:csv/csv.dart';
+
+import 'package:flutter/services.dart' show rootBundle;
 
 String _dbName = "Events.db";
 
@@ -56,8 +62,17 @@ class EventDB {
   }
 
   Future<int> _addRecurringEvent(Event re) async {
-    return await _db!.rawInsert(
-        'INSERT INTO events(title, desc, stime, etime, startDate, endDate, mask, type) VALUES ("${re.title}", "${re.description}", "${re.stime}", "${re.etime}", "${re.startDate}", "${re.endDate}", ${re.mask}, 1);');
+    var vals = await _db!.rawQuery(
+        'SELECT * FROM events WHERE title = "${re.title}" and desc = "${re.description}" and stime = "${re.stime}" and etime = "${re.etime}";');
+
+    if (vals.isEmpty) {
+      return await _db!.rawInsert(
+          'INSERT INTO events(title, desc, stime, etime, startDate, endDate, mask, type) VALUES ("${re.title}", "${re.description}", "${re.stime}", "${re.etime}", "${re.startDate}", "${re.endDate}", ${re.mask}, 1);');
+    } else {
+      int mask = (int.parse(vals[0]['mask'].toString()) | re.mask!);
+      return _db!.rawUpdate(
+          'UPDATE events SET mask = $mask WHERE title = "${re.title}" and desc = "${re.description}" and stime = "${re.stime}" and etime = "${re.etime}";');
+    }
   }
 
   Future<List<Event>> fetchRecurringEvents(DateTime d) async {
@@ -112,5 +127,85 @@ class EventDB {
       l1.addAll(l2);
       return l1;
     });
+  }
+
+  Future<bool> loadCourse(List<String> course_id) async {
+    var courseSlots = const CsvToListConverter()
+        .convert(await rootBundle.loadString('assets/CourseSlots.csv'));
+
+    int len = courseSlots.length;
+    Map<String, String> courseToSlot = {};
+    for (int i = 0; i < len; i++) {
+      print(courseSlots[i][0].runtimeType);
+      if (courseSlots[i][0].runtimeType == int) {
+        courseToSlot[courseSlots[i][1].replaceAll(' ', '')] = courseSlots[i][3];
+      }
+    }
+
+    var slotTimes = const CsvToListConverter()
+        .convert(await rootBundle.loadString('assets/TimeTable.csv'));
+
+    len = slotTimes.length;
+    Map<String, List<String>> slotToTime = {};
+    List<String> timings = slotTimes[0].cast<String>();
+    for (int i = 1; i < len; i++) {
+      int sz = slotTimes[i].length;
+      String weekday = slotTimes[i][0];
+      for (int j = 1; j < sz; j++) {
+        String slot = slotTimes[i][j].replaceAll(' ', '');
+        if (slotToTime[slot] == null) {
+          slotToTime[slot] = List.empty(growable: true);
+        }
+        slotToTime[slot]!.add('$weekday ${timings[j]}');
+      }
+    }
+
+    for (int i = 0; i < course_id.length; i++) {
+      for (int j = 0; j < 2; j++) {
+        String? slot = courseToSlot[course_id[i].replaceAll(' ', '')];
+        slot = (j == 0) ? (slot) : ('T-$slot');
+        List<String>? times = slotToTime[slot];
+        if (times == null) continue;
+        for (int j = 0; j < times.length; j++) {
+          String title = (slot!.substring(0, 2).compareTo('T-') == 0)
+              ? ('${course_id[i]} Tutorial')
+              : ('${course_id[i]} Class');
+          String time = times[j];
+          var l = time.split(' ');
+          String day = l[0];
+          int mask = 0;
+          if (day.toLowerCase().compareTo('monday') == 0) {
+            mask = (1 << 1);
+          } else if (day.toLowerCase().compareTo('tuesday') == 0) {
+            mask = (1 << 2);
+          } else if (day.toLowerCase().compareTo('wednesday') == 0) {
+            mask = (1 << 3);
+          } else if (day.toLowerCase().compareTo('thursday') == 0) {
+            mask = (1 << 4);
+          } else if (day.toLowerCase().compareTo('friday') == 0) {
+            mask = (1 << 5);
+          } else if (day.toLowerCase().compareTo('saturday') == 0) {
+            mask = (1 << 6);
+          } else if (day.toLowerCase().compareTo('sunday') == 0) {
+            mask = (1 << 7);
+          }
+          String stime = '${l[1]} ${l[4]}';
+          String etime = '${l[3]} ${l[4]}';
+          Event e = Event.recurring(
+              title: title,
+              description: title,
+              stime: stime,
+              etime: etime,
+              startDate: dateString(DateTime(2023)),
+              endDate: dateString(DateTime(2024)),
+              displayDate: '',
+              mask: mask,
+              creator: 'admin');
+          await insert(e);
+        }
+      }
+    }
+
+    return true;
   }
 }
