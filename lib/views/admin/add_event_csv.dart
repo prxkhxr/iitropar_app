@@ -106,7 +106,7 @@ class _addEventcsvState extends State<addEventcsv> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Add Course List using csv"),
+          title: const Text("Add Events using csv"),
         ),
         body: Center(
           child: Column(children: [
