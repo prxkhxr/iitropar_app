@@ -54,8 +54,6 @@ class _addEventcsvState extends State<addEventcsv> {
           _events[i][5],
           _events[i][6],
           _events[i][7]);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Uploaded data sucessfully")));
     }
   }
 
