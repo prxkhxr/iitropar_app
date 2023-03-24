@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:iitropar/views/admin/home_page_admin.dart';
-import 'package:iitropar/views/club/home_page_club.dart';
+import 'package:iitropar/views/homePage/admin_home.dart';
+import 'package:iitropar/views/homePage/club_home.dart';
 import 'package:iitropar/views/events.dart';
 import 'package:iitropar/views/event_calendar.dart';
-import 'package:iitropar/views/home_page.dart';
+import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/views/mess.dart';
 import 'package:iitropar/views/quicklinks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,7 +39,7 @@ class NavDrawer extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (BuildContext context) => const HomePageAdmin(),
+                      builder: (BuildContext context) => const AdminHome(),
                     ));
               } else if (FirebaseAuth.instance.currentUser != null &&
                   FirebaseAuth.instance.currentUser!.email ==
@@ -47,13 +47,13 @@ class NavDrawer extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (BuildContext context) => const HomePageClub(),
+                      builder: (BuildContext context) => const ClubHome(),
                     ));
               } else {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (BuildContext context) => const HomePage(),
+                      builder: (BuildContext context) => const StudentHome(),
                     ));
               }
             },

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
-import 'package:iitropar/views/home_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:iitropar/views/admin/home_page_admin.dart';
-import 'package:iitropar/utilities/firebase_database.dart';
-import 'package:iitropar/views/club/home_page_club.dart';
-import 'package:iitropar/database/local_db.dart';
+import 'package:iitropar/views/homePage/home_page.dart';
+import 'package:iitropar/views/homePage/student_home.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -25,36 +21,27 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void getUserScreen() async {
-    var admin_email = ["2020csb1086@iitrpr.ac.in"];
-    List<dynamic> Email = await firebaseDatabase.getClubIds();
-    if (FirebaseAuth.instance.currentUser != null &&
-        admin_email.contains(FirebaseAuth.instance.currentUser!.email)) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomePageAdmin()));
-    } else if (FirebaseAuth.instance.currentUser != null &&
-        Email.contains(FirebaseAuth.instance.currentUser!.email)) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomePageClub()));
-    } else {
-      var ldb = await openEventDB();
-      ldb.loadCourse(await firebaseDatabase
-          .getCourses(FirebaseAuth.instance.currentUser!.email!.split('@')[0]));
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
-    }
+  void _signin() async {
+    await FirebaseServices().signInWithGoogle();
+    _moveToHome();
+  }
+
+  void _moveToHome() {
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
         ),
         child: Center(
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
@@ -78,11 +65,10 @@ class _SignInScreenState extends State<SignInScreen> {
                 children: [
                   logoWidget('assets/iitropar_logo.png'),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 30),
+                    margin: const EdgeInsets.symmetric(horizontal: 30),
                     child: ElevatedButton(
-                      onPressed: () async {
-                        await FirebaseServices().signInWithGoogle();
-                        getUserScreen(); // navigate according to the email id
+                      onPressed: () {
+                        _signin(); // navigate according to the email id
                       },
                       style: ButtonStyle(backgroundColor:
                           MaterialStateProperty.resolveWith((states) {
@@ -92,11 +78,11 @@ class _SignInScreenState extends State<SignInScreen> {
                         return Colors.grey[100];
                       })),
                       child: Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
+                              const Text(
                                 "Login with Gmail",
                                 style: TextStyle(
                                     color: Colors.black87,
@@ -113,13 +99,13 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 30),
+                    margin: const EdgeInsets.symmetric(horizontal: 30),
                     child: ElevatedButton(
-                      onPressed: () async {
+                      onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HomePage()));
+                                builder: (context) => const StudentHome()));
                       },
                       style: ButtonStyle(backgroundColor:
                           MaterialStateProperty.resolveWith((states) {
@@ -128,7 +114,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         }
                         return Colors.grey[100];
                       })),
-                      child: Padding(
+                      child: const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           "Login as Guest",

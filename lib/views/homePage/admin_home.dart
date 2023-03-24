@@ -3,19 +3,23 @@ import 'package:iitropar/views/admin/add_event.dart';
 import 'package:iitropar/views/admin/add_event_csv.dart';
 import 'package:iitropar/views/admin/add_course_csv.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:iitropar/views/signin.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/admin/registerClub.dart';
 
-class HomePageAdmin extends StatefulWidget {
-  const HomePageAdmin({super.key});
+import 'home_page.dart';
+
+class AdminHome extends AbstractHome {
+  const AdminHome({super.key});
 
   @override
-  State<HomePageAdmin> createState() => _HomePageAdminState();
+  State<AbstractHome> createState() => _AdminHomeState();
 }
 
-class _HomePageAdminState extends State<HomePageAdmin> {
+class _AdminHomeState extends HomePageState {
+  void _signout() async {
+    await FirebaseServices().signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,16 +31,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(getUserName()),
-            getUserImage(),
-            ElevatedButton(
-              onPressed: () async {
-                await FirebaseServices().signOut();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SignInScreen()));
-              },
-              child: Text("Logout"),
-            ),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context,
@@ -71,17 +65,42 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     );
   }
 
-  Image getUserImage() {
-    if (FirebaseAuth.instance.currentUser != null &&
-        FirebaseAuth.instance.currentUser!.photoURL != null) {
-      return Image.network(
-          FirebaseAuth.instance.currentUser!.photoURL.toString());
-    }
-    return Image.asset('assets/user.png', height: 100, width: 100);
-  }
+  @override
+  List<Widget> buttons() {
+    List<Widget> l = List.empty(growable: true);
 
-  String getUserName() {
-    if (FirebaseAuth.instance.currentUser == null) return "Guest User";
-    return FirebaseAuth.instance.currentUser!.displayName.toString();
+    l.add(ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const AddEvent()));
+      },
+      child: const Text("Add Event"),
+    ));
+
+    l.add(ElevatedButton(
+      onPressed: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const addEventcsv()));
+      },
+      child: const Text("Add Event using CSV file"),
+    ));
+
+    l.add(ElevatedButton(
+      onPressed: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const addCoursecsv()));
+      },
+      child: const Text("Add Course List of students"),
+    ));
+
+    l.add(ElevatedButton(
+      onPressed: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const registerClub()));
+      },
+      child: const Text("Register a club"),
+    ));
+
+    return l;
   }
 }
