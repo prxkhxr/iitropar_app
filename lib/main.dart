@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:iitropar/views/homePage/home_page.dart';
-import 'package:iitropar/views/signin.dart';
+import 'package:iitropar/views/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:iitropar/database/local_db.dart';
 
@@ -13,12 +12,12 @@ void main() async {
   if (await EventDB.firstRun() || FirebaseAuth.instance.currentUser == null) {
     signin = true;
   }
-  runApp(App(signin: signin));
+  LandingPage.signin(signin);
+  runApp(const App());
 }
 
 class App extends StatelessWidget {
-  final bool signin;
-  const App({required this.signin, super.key});
+  const App({super.key});
 
   // This widget is the root of your application.
   @override
@@ -30,7 +29,7 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       initialRoute: '/',
-      home: (signin) ? (const SignInScreen()) : (const HomePage()),
+      home: const LandingPage(),
     );
   }
 }

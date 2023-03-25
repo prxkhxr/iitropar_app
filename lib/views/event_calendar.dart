@@ -443,8 +443,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             Expanded(
                 child: ListView(
               children: [
-                ..._listOfDayEvents(_selectedDate).map((myEvents) => Flexible(
-                        child: ListTile(
+                ..._listOfDayEvents(_selectedDate).map((myEvents) => ListTile(
                       leading: const Icon(
                         Icons.done,
                         color: Colors.indigo,
@@ -476,7 +475,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           Text('Time: ${myEvents.stime} - ${myEvents.etime}'),
                         ],
                       ),
-                    )))
+                    ))
               ],
             ))
           ],

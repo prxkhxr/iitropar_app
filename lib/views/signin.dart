@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/homePage/home_page.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
+import 'package:iitropar/views/landing_page.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -27,9 +28,10 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _moveToHome() {
+    LandingPage.signin(false);
     Navigator.popUntil(context, ModalRoute.withName('/'));
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const HomePage()));
+    Navigator.pop(context);
+    Navigator.pushNamed(context, '/');
   }
 
   @override
