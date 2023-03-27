@@ -443,39 +443,46 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             Expanded(
                 child: ListView(
               children: [
-                ..._listOfDayEvents(_selectedDate).map((myEvents) => ListTile(
-                      leading: const Icon(
+                ..._listOfDayEvents(_selectedDate).map((myEvents) {
+                  final width = MediaQuery.of(context).size.width;
+                  final textsize = (8 / 10) * width;
+                  final buttonsize = (1 / 10) * width;
+                  final iconsize = (1 / 10) * width;
+                  return ListTile(
+                    horizontalTitleGap: 0,
+                    leading: SizedBox(
+                      width: iconsize,
+                      child: const Icon(
                         Icons.done,
                         color: Colors.indigo,
                       ),
-                      title: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Text(myEvents.title),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              _deleteEvent(myEvents);
-                            },
-                            icon: const Icon(Icons.delete),
-                          )
-                        ],
+                    ),
+                    title: SizedBox(
+                      width: textsize,
+                      child: Text(
+                        myEvents.title,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Description: ${myEvents.description}"),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text('Time: ${myEvents.stime} - ${myEvents.etime}'),
-                        ],
+                    ),
+                    trailing: SizedBox(
+                      width: buttonsize,
+                      child: IconButton(
+                        onPressed: () => _deleteEvent(myEvents),
+                        icon: const Icon(Icons.delete),
                       ),
-                    ))
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Description: ${myEvents.description}"),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text('Time: ${myEvents.stime} - ${myEvents.etime}'),
+                      ],
+                    ),
+                  );
+                })
               ],
             ))
           ],
