@@ -85,4 +85,19 @@ class firebaseDatabase {
     List<String> courses = List.from(snapshot['courses']);
     return courses;
   }
+
+  static Future<bool> checkIfDocExists(
+      String collectionName, String docId) async {
+    try {
+      // Get reference to Firestore collection
+      DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+          .instance
+          .collection(collectionName)
+          .doc(docId)
+          .get();
+      return doc.exists;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

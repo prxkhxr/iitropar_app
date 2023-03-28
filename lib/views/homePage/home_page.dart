@@ -78,8 +78,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Widget _body = CircularProgressIndicator();
   String user = "guest";
-
+  bool isLoaded = false;
   Future<bool> resolveUser() async {
     var adminEmails = ["2020csb1086@iitrpr.ac.in"];
     var clubEmails = await firebaseDatabase.getClubIds();
@@ -92,16 +93,24 @@ class _HomePageState extends State<HomePage> {
     } else {
       user = "student";
     }
+    if (this.mounted) {
+      setState(() {
+        isLoaded = true;
+      });
+    }
     return true;
   }
 
   Widget userScreen(BuildContext context) {
-    if (user.compareTo('admin') == 0) {
-      return const AdminHome();
-    } else if (user.compareTo('club') == 0) {
-      return const ClubHome();
+    if (isLoaded) {
+      if (user.compareTo('admin') == 0) {
+        return const AdminHome();
+      } else if (user.compareTo('club') == 0) {
+        return const ClubHome();
+      }
+      return const StudentHome();
     }
-    return const StudentHome();
+    return _body;
   }
 
   @override
