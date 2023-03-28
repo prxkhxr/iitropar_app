@@ -10,8 +10,10 @@ class firebaseDatabase {
       String startTime,
       String endTime,
       String? imgURL) {
-    CollectionReference ref_event_nr =
-        FirebaseFirestore.instance.collection("Event.nonrecurring");
+    String docName = "$eventTitle" + date.replaceAll('/', '-');
+    DocumentReference ref_event_nr = FirebaseFirestore.instance
+        .collection("Event.nonrecurring")
+        .doc(docName);
     Map<String, dynamic> event = {
       "eventTitle": eventTitle,
       "eventType": eventType,
@@ -23,7 +25,7 @@ class firebaseDatabase {
       "imgURL": imgURL
     };
     ref_event_nr
-        .add(event)
+        .set(event)
         .then((value) => print("event added"))
         .catchError((error) => print("failed to add event: $error"));
   }
