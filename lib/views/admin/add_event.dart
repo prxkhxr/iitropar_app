@@ -3,6 +3,7 @@ import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import 'package:intl/intl.dart';
 
 class AddEvent extends StatefulWidget {
   const AddEvent({super.key});
@@ -55,6 +56,14 @@ class AddEventFormState extends State<AddEventForm> {
     startTime = TimeOfDay.now();
     endTime = TimeOfDay.now();
   }
+  double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
+  String formatTimeOfDay(TimeOfDay tod) {
+    final now = DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    final format = DateFormat.jm(); //"6:00 AM"
+    return format.format(dt);
+  }
+
   Widget _buildEventTitle() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Event Title'),
@@ -229,10 +238,23 @@ class AddEventFormState extends State<AddEventForm> {
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  // Validate returns true if the form is valid, or false otherwise.
+                  // Validating form inputs
+                  if (eventDate.compareTo(DateTime.now()) < 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text("Previous date event are not allowed")),
+                    );
+                    return;
+                  }
+                  if (toDouble(startTime) > toDouble(endTime)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              "Invalid Time. End time is before start time.")),
+                    );
+                    return;
+                  }
                   if (_formKey.currentState!.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
                     _formKey.currentState!.save();
                     if (file == null) {
                       print("No file selected!");
@@ -262,7 +284,7 @@ class AddEventFormState extends State<AddEventForm> {
                       "${endTime.hour}:${endTime.minute}",
                       imageURL);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(eventType)),
+                    SnackBar(content: Text("Event Added Sucessfully")),
                   );
                 },
                 child: const Text('Submit'),
