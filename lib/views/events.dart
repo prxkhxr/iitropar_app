@@ -1,10 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
-import 'package:http/http.dart' as http;
-import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:intl/intl.dart';
 
 //to do build a function to access all the events
@@ -31,29 +27,29 @@ Card eventWidget(
           ListTile(
             title: Text(eventTitle),
             subtitle: Text(eventType),
-            trailing: Icon(Icons.favorite_outline),
+            trailing: const Icon(Icons.favorite_outline),
           ),
           Center(
               child: Image.network(img_url!,
                   errorBuilder: (context, error, stackTrace) =>
-                      SizedBox(height: 20))),
+                      const SizedBox(height: 20))),
           Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
             child: Text('Venue : $eventVenue'),
           ),
           Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
             child: Text('Desc : $eventDesc'),
           ),
           Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
             child: Text('Date : $date'),
           ),
           Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
             child: Text('Timing : $startTime - $endTime'),
           ),
@@ -96,19 +92,18 @@ class _EventsState extends State<Events> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
                             DocumentSnapshot doc = snapshot.data!.docs[index];
-                            String eventDate =
-                                "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}";
                             String _doc_eventDate = doc["eventDate"];
                             List<String> date_split = _doc_eventDate.split('/');
-                            DateTime doc_eventDate = new DateTime(
-                                int.parse(date_split[2]),
-                                int.parse(date_split[1]),
-                                int.parse(date_split[0]));
+                            DateTime doc_eventDate = DateTime(
+                              int.parse(date_split[2]),
+                              int.parse(date_split[1]),
+                              int.parse(date_split[0]),
+                            );
                             print(doc_eventDate);
                             print(doc["eventDate"]);
                             if (doc_eventDate.year == _selectedDate!.year &&
                                 doc_eventDate.month == _selectedDate!.month &&
-                                doc_eventDate.day == _selectedDate!.day)
+                                doc_eventDate.day == _selectedDate!.day) {
                               return eventWidget(
                                   doc["eventTitle"],
                                   doc["eventType"],
@@ -118,12 +113,12 @@ class _EventsState extends State<Events> {
                                   doc["startTime"],
                                   doc["endTime"],
                                   doc["imgURL"]);
-                            else {
+                            } else {
                               return Container();
                             }
                           });
                     } else {
-                      return Text('No Event');
+                      return Container();
                     }
                   }),
             ),
@@ -140,12 +135,13 @@ class _EventsState extends State<Events> {
                         firstDate: DateTime(1900),
                         lastDate: DateTime(2100))
                     .then((date) {
+                  if (date == null) return;
                   setState(() {
-                    _selectedDate = date!;
+                    _selectedDate = date;
                   });
                 });
               },
-              child: Text("Select Date"),
+              child: const Text("Select Date"),
             ),
             IconButton(
               onPressed: () {

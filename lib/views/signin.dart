@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
-import 'package:iitropar/views/homePage/home_page.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/views/landing_page.dart';
 

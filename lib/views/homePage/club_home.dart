@@ -12,7 +12,7 @@ class ClubHome extends AbstractHome {
   State<AbstractHome> createState() => _ClubHomeState();
 }
 
-class _ClubHomeState extends HomePageState {
+class _ClubHomeState extends AbstractHomeState {
   String clubName = "";
 
   _ClubHomeState() {

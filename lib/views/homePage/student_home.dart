@@ -8,7 +8,7 @@ class StudentHome extends AbstractHome {
   State<AbstractHome> createState() => _StudentHomeState();
 }
 
-class _StudentHomeState extends HomePageState {
+class _StudentHomeState extends AbstractHomeState {
   @override
   List<Widget> buttons() {
     List<Widget> l = List.empty(growable: true);

@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:intl/intl.dart';
 
 String dateString(DateTime d) {
@@ -11,6 +13,50 @@ DateTime stringDate(String d) {
   int day = int.parse(d.substring(8, 10));
   return DateTime(year, month, day);
 }
+
+class Ids {
+  static List<String> admins = [
+    "2020csb1082@iitrpr.ac.in",
+    "2020csb1086@iitrpr.ac.in"
+  ];
+  static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
+  static String role = "guest";
+  static bool assigned = false;
+
+  static Future<String> resolveUser() async {
+    if (assigned == true) return role;
+    String user;
+    var clubEmails = await Ids.fclub;
+    if (FirebaseAuth.instance.currentUser != null &&
+        admins.contains(FirebaseAuth.instance.currentUser!.email)) {
+      user = "admin";
+    } else if (FirebaseAuth.instance.currentUser != null &&
+        clubEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
+      user = "club";
+    } else if (FirebaseAuth.instance.currentUser != null) {
+      user = "student";
+    } else {
+      user = "guest";
+    }
+    role = user;
+    assigned = true;
+    return role;
+  }
+}
+
+// class LoadingScreen extends StatefulWidget {
+//   const LoadingScreen({super.key});
+
+//   @override
+//   State<LoadingScreen> createState() => _LoadingScreenState();
+// }
+
+// class _LoadingScreenState extends State<LoadingScreen> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Placeholder();
+//   }
+// }
 
 class LoadingScreen {
   static Future<bool> Function()? _task;
@@ -32,24 +78,30 @@ class LoadingScreen {
     _builder = builder;
   }
 
+  static bool isLoaded = false;
+
   static Widget build(BuildContext context) {
-    FutureBuilder(
-        future: _task!(),
-        builder: (context, snapshot) {
-          if (snapshot.data == null) {
-            return Expanded(
-                child: Dialog(
-              child: Column(children: [
-                const CircularProgressIndicator(),
-                const SizedBox(
-                  height: 15,
-                ),
-                Text((_msg != null) ? _msg! : 'Loading...'),
-              ]),
-            ));
-          }
-          return const Placeholder();
-        });
-    return _builder(context);
+    return FutureBuilder(
+      future: _task!(),
+      builder: (context, snapshot) {
+        if (snapshot.data == null) {
+          return Expanded(
+            child: Scaffold(
+              body: Center(
+                child: Column(children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text((_msg != null) ? _msg! : 'Loading...'),
+                ]),
+              ),
+            ),
+          );
+        } else {
+          return _builder(context);
+        }
+      },
+    );
   }
 }

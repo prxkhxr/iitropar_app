@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/views/homePage/admin_home.dart';
 import 'package:iitropar/views/homePage/club_home.dart';
 import 'package:iitropar/views/events.dart';
@@ -6,7 +7,6 @@ import 'package:iitropar/views/event_calendar.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/views/mess.dart';
 import 'package:iitropar/views/quicklinks.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class NavDrawer extends StatelessWidget {
   const NavDrawer({
@@ -33,17 +33,14 @@ class NavDrawer extends StatelessWidget {
             title: const Text('Home'),
             onTap: () {
               Navigator.popUntil(context, ModalRoute.withName("/"));
-              if (FirebaseAuth.instance.currentUser != null &&
-                  FirebaseAuth.instance.currentUser!.email ==
-                      "2020csb1086@iitrpr.ac.in") {
+
+              if (Ids.role.compareTo("admin") == 0) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (BuildContext context) => const AdminHome(),
                     ));
-              } else if (FirebaseAuth.instance.currentUser != null &&
-                  FirebaseAuth.instance.currentUser!.email ==
-                      "2020csb1111@iitrpr.ac.in") {
+              } else if (Ids.role.compareTo("club") == 0) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
