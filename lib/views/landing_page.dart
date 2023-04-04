@@ -1,4 +1,5 @@
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:iitropar/views/PBTabView.dart';
 import 'package:iitropar/views/homePage/home_page.dart';
 import 'package:iitropar/views/signin.dart';
 
@@ -16,7 +17,7 @@ class LandingPage extends StatelessWidget {
     if (_signin) {
       return const SignInScreen();
     } else {
-      return const HomePage();
+      return const MainLandingPage();
     }
   }
 }

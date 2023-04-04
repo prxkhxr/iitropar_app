@@ -79,7 +79,7 @@ class _EventsState extends State<Events> {
         appBar: AppBar(
           title: const Text("Events"),
         ),
-        drawer: const NavDrawer(),
+        // drawer: const NavDrawer(),
         body: Column(
           children: [
             Expanded(

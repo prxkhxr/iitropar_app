@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/bottom_bar.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:iitropar/views/homePage/admin_home.dart';
@@ -20,7 +21,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
       image =
           NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString());
     } else {
-      image = AssetImage('assets/user.png');
+      image = const AssetImage('assets/user.png');
     }
     return CircleAvatar(
       backgroundImage: image,
@@ -47,20 +48,33 @@ abstract class AbstractHomeState extends State<AbstractHome> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Home Page"),
+            const Text("Home Page"),
             ElevatedButton(
               onPressed: () {
                 LoadingScreen.setTask(_signout);
                 LoadingScreen.setPrompt('Signing Out');
                 LoadingScreen.setBuilder((context) => const LandingPage());
                 LandingPage.signin(true);
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
+                
+                // Navigator.popUntil(context, ModalRoute.withName('/'));
+                // Navigator.pop(context);
+                // Navigator.of(context).popUntil((route) => route.isFirst);
+                
+                // Navigator.of(context).pushAndRemoveUntil(
+                //     MaterialPageRoute(
+                //         builder: LoadingScreen.build,
+                //         settings: const RouteSettings(name: '/')),
+                //     (route) => false);
+
+                Navigator.of(context, rootNavigator: true).pushReplacement(
                     MaterialPageRoute(
                         builder: LoadingScreen.build,
                         settings: const RouteSettings(name: '/')));
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: LoadingScreen.build,
+                //         settings: const RouteSettings(name: '/')));
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red[500]),
               child: const Text('Signout'),
@@ -68,12 +82,11 @@ abstract class AbstractHomeState extends State<AbstractHome> {
           ],
         ),
       ),
-      drawer: const NavDrawer(),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   Padding(
@@ -84,14 +97,14 @@ abstract class AbstractHomeState extends State<AbstractHome> {
                     children: [
                       Text('Hey ${getUserName()}',
                           textAlign: TextAlign.right,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black, // Set text color to blue
                             fontSize: 24, // Set text size to 24
                             fontWeight:
                                 FontWeight.bold, // Set text font to bold
                           )),
-                      SizedBox(height: 5),
-                      Text('  How are you doing today?',
+                      const SizedBox(height: 5),
+                      const Text('  How are you doing today?',
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             color: Colors.black, // Set text color to blue
@@ -102,7 +115,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
                   ),
                 ],
               ), // Set text alignment to center
-              Divider(
+              const Divider(
                 color: Colors.black,
                 height: 30,
                 thickness: 1,

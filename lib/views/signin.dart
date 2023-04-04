@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
+import 'package:iitropar/views/PBTabView.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
@@ -35,7 +36,11 @@ class _SignInScreenState extends State<SignInScreen> {
     LandingPage.signin(false);
     Navigator.popUntil(context, ModalRoute.withName('/'));
     Navigator.pop(context);
-    Navigator.pushNamed(context, '/');
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => const MainLandingPage(),
+        ));
   }
 
   @override

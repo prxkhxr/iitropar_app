@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/utilities/bottom_bar.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:iitropar/frequently_used.dart';
 
@@ -62,7 +63,6 @@ class _MessMenuPageState extends State<MessMenuPage>
             tabs: myTabs,
           ),
         ),
-        drawer: const NavDrawer(),
         body: TabBarView(
           children: [
             ..._daysOfWeek.map((day) => _buildMenuList(day)),

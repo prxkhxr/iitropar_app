@@ -409,7 +409,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         appBar: AppBar(
           title: const Text("Event Calendar"),
         ),
-        drawer: const NavDrawer(),
+        // drawer: const NavDrawer(),
         body: Column(
           children: [
             TableCalendar(

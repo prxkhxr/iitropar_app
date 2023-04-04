@@ -59,7 +59,7 @@ class _QuickLinksState extends State<QuickLinks> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quick Links'),
+        title: const Text('Quick Links'),
       ),
       body: GridView.count(
         crossAxisCount: 3, // 2 columns
@@ -74,7 +74,7 @@ class _QuickLinksState extends State<QuickLinks> {
           );
         }).toList(),
       ),
-      drawer: const NavDrawer(),
+      // drawer: const NavDrawer(),
     );
   }
 

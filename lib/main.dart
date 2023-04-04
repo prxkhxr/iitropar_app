@@ -26,7 +26,8 @@ class App extends StatelessWidget {
       title: 'IIT Ropar App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.indigo,
+        fontFamily: 'Montserrat',
       ),
       initialRoute: '/',
       home: const LandingPage(),
