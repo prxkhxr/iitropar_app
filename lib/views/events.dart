@@ -30,9 +30,11 @@ Card eventWidget(
             trailing: const Icon(Icons.favorite_outline),
           ),
           Center(
-              child: Image.network(img_url!,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox(height: 20))),
+              child: img_url == null
+                  ? const SizedBox(height: 20)
+                  : Image.network(img_url,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const SizedBox(height: 20))),
           Container(
             padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,

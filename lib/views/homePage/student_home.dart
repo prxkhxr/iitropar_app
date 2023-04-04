@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/views/homePage/home_page.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:path/path.dart';
@@ -105,9 +106,10 @@ Widget todayMenu() {
 
 class _StudentHomeState extends AbstractHomeState {
   bool isClassLoad = false;
-  List<Event> l = [];
+  List<Event> classes = [];
+  List<Event> events = [];
   Future<bool> loadClasses() async {
-    l = await EventDB().fetchRecurringEvents(DateTime.now());
+    classes = await EventDB().fetchRecurringEvents(DateTime.now());
     return true;
   }
 
@@ -163,14 +165,47 @@ class _StudentHomeState extends AbstractHomeState {
             return Text('No classes Today');
           } else {
             return SizedBox(
-              height: 180,
+              height: 100,
               child: ListView(
-                children: l.map(classWidget).toList(),
+                children: classes.map(classWidget).toList(),
                 scrollDirection: Axis.vertical,
               ),
             );
           }
         });
+  }
+
+  Future<bool> loadEvents() async {
+    events = await firebaseDatabase.getEvents(DateTime.now());
+    return true;
+  }
+
+  Widget getEvents() {
+    return FutureBuilder(
+        future: loadEvents(),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return Text('No Events Today');
+          } else {
+            return SizedBox(
+              height: 100,
+              child: ListView(
+                children: events.map(classWidget).toList(),
+                scrollDirection: Axis.vertical,
+              ),
+            );
+          }
+        });
+  }
+
+  Widget todayEvents() {
+    return Column(
+      children: [
+        Text('See Events happening today'),
+        SizedBox(height: 15),
+        getEvents()
+      ],
+    );
   }
 
   @override
@@ -179,6 +214,8 @@ class _StudentHomeState extends AbstractHomeState {
     l.add(todayMenu());
     l.add(Divider());
     l.add(todayClasses());
+    l.add(Divider());
+    l.add(todayEvents());
     return l;
   }
 }

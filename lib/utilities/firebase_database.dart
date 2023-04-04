@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:iitropar/database/event.dart';
 
 class firebaseDatabase {
   static void addEventFB(
@@ -9,7 +10,8 @@ class firebaseDatabase {
       String date,
       String startTime,
       String endTime,
-      String? imgURL) {
+      String? imgURL,
+      String creator) {
     String docName = "$eventTitle" + date.replaceAll('/', '-');
     DocumentReference ref_event_nr = FirebaseFirestore.instance
         .collection("Event.nonrecurring")
@@ -22,7 +24,8 @@ class firebaseDatabase {
       "eventDate": date,
       "startTime": startTime,
       "endTime": endTime,
-      "imgURL": imgURL
+      "imgURL": imgURL,
+      "creator": creator
     };
     ref_event_nr
         .set(event)
@@ -86,6 +89,35 @@ class firebaseDatabase {
     DocumentSnapshot snapshot = await ref_event_nr.get();
     List<String> courses = List.from(snapshot['courses']);
     return courses;
+  }
+
+  static Future<List<Event>> getEvents(DateTime date) async {
+    List<Event> events = [];
+    var snapshots =
+        await FirebaseFirestore.instance.collection('Event.nonrecurring').get();
+    for (int i = 0; i < snapshots.docs.length; i++) {
+      var doc = snapshots.docs[0];
+      String _doc_eventDate = doc["eventDate"];
+      List<String> date_split = _doc_eventDate.split('/');
+      DateTime doc_eventDate = DateTime(
+        int.parse(date_split[2]),
+        int.parse(date_split[1]),
+        int.parse(date_split[0]),
+      );
+      if (doc_eventDate.year == date.year &&
+          doc_eventDate.month == date.month &&
+          doc_eventDate.day == date.day) {
+        Event e = Event.singular(
+            title: doc['eventTitle'],
+            description: doc['eventDesc'],
+            stime: doc['startTime'],
+            etime: doc['endTime'],
+            displayDate: doc['eventDate'],
+            creator: doc['creator']); //TODO : add image as well to Event
+        events.add(e);
+      }
+    }
+    return events;
   }
 
   static Future<bool> checkIfDocExists(

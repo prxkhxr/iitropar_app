@@ -53,7 +53,7 @@ class AddEventFormState extends State<AddEventForm> {
   XFile? file;
 
   AddEventFormState() {
-    eventDate = DateTime(2023, 12, 24);
+    eventDate = DateTime.now();
     startTime = TimeOfDay.now();
     endTime = TimeOfDay.now();
   }
@@ -177,7 +177,7 @@ class AddEventFormState extends State<AddEventForm> {
         Text(
             startTime == null
                 ? 'Nothing has been picked yet'
-                : formatTimeOfDay(endTime),
+                : formatTimeOfDay(startTime),
             style: TextStyle(fontSize: 32)),
       ],
     );
@@ -289,7 +289,8 @@ class AddEventFormState extends State<AddEventForm> {
                       "${eventDate.day}/${eventDate.month}/${eventDate.year}",
                       "${startTime.hour}:${startTime.minute}",
                       "${endTime.hour}:${endTime.minute}",
-                      imageURL);
+                      imageURL,
+                      "admin");
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Event Added Sucessfully")),
                   );

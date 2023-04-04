@@ -257,7 +257,8 @@ class AddEventFormState extends State<AddEventForm> {
                       "${eventDate.day}/${eventDate.month}/${eventDate.year}",
                       "${startTime.hour}:${startTime.minute}",
                       "${endTime.hour}:${endTime.minute}",
-                      imageURL);
+                      imageURL,
+                      clubName);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Event Added Successfuly')),
                   );
