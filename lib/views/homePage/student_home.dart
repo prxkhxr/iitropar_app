@@ -3,6 +3,8 @@ import 'package:iitropar/views/homePage/home_page.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:path/path.dart';
 import 'package:intl/intl.dart';
+import 'package:iitropar/database/local_db.dart';
+import 'package:iitropar/database/event.dart';
 
 double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
@@ -39,6 +41,16 @@ Widget buildItems(String item) {
         ],
       ),
     ),
+  );
+}
+
+Widget divider() {
+  return Divider(
+    color: Colors.black,
+    height: 30,
+    thickness: 1,
+    indent: 30,
+    endIndent: 30,
   );
 }
 
@@ -92,10 +104,81 @@ Widget todayMenu() {
 }
 
 class _StudentHomeState extends AbstractHomeState {
+  bool isClassLoad = false;
+  List<Event> l = [];
+  Future<bool> loadClasses() async {
+    l = await EventDB().fetchRecurringEvents(DateTime.now());
+    return true;
+  }
+
+  Widget classWidget(Event myEvents) {
+    final width = 500;
+    final textsize = (8 / 10) * width;
+    final buttonsize = (1 / 10) * width;
+    final iconsize = (1 / 10) * width;
+    return ListTile(
+      horizontalTitleGap: 0,
+      leading: SizedBox(
+        width: iconsize,
+        child: const Icon(
+          Icons.done,
+          color: Colors.indigo,
+        ),
+      ),
+      title: SizedBox(
+        width: textsize,
+        child: Text(
+          myEvents.title,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Description: ${myEvents.description}"),
+          const SizedBox(
+            width: 5,
+          ),
+          Text('Time: ${myEvents.stime} - ${myEvents.etime}'),
+        ],
+      ),
+    );
+  }
+
+  Widget todayClasses() {
+    return Column(
+      children: [
+        Text('See your class schedule \n and personal events'),
+        SizedBox(height: 15),
+        getSchedule()
+      ],
+    );
+  }
+
+  Widget getSchedule() {
+    return FutureBuilder(
+        future: loadClasses(),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return Text('No classes Today');
+          } else {
+            return SizedBox(
+              height: 180,
+              child: ListView(
+                children: l.map(classWidget).toList(),
+                scrollDirection: Axis.vertical,
+              ),
+            );
+          }
+        });
+  }
+
   @override
   List<Widget> buttons() {
     List<Widget> l = List.empty(growable: true);
     l.add(todayMenu());
+    l.add(Divider());
+    l.add(todayClasses());
     return l;
   }
 }

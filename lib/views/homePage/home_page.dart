@@ -69,46 +69,49 @@ abstract class AbstractHomeState extends State<AbstractHome> {
         ),
       ),
       drawer: const NavDrawer(),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: getUserImage(),
-                ),
-                Column(
-                  children: [
-                    Text('Hey ${getUserName()}',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: Colors.black, // Set text color to blue
-                          fontSize: 24, // Set text size to 24
-                          fontWeight: FontWeight.bold, // Set text font to bold
-                        )),
-                    SizedBox(height: 5),
-                    Text('  How are you doing today?',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: Colors.black, // Set text color to blue
-                          fontSize:
-                              24, // Set text size to 24// Set text font to bold
-                        )),
-                  ],
-                ),
-              ],
-            ), // Set text alignment to center
-            Divider(
-              color: Colors.black,
-              height: 30,
-              thickness: 1,
-              indent: 30,
-              endIndent: 30,
-            ),
-            ...buttons(),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: getUserImage(),
+                  ),
+                  Column(
+                    children: [
+                      Text('Hey ${getUserName()}',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: Colors.black, // Set text color to blue
+                            fontSize: 24, // Set text size to 24
+                            fontWeight:
+                                FontWeight.bold, // Set text font to bold
+                          )),
+                      SizedBox(height: 5),
+                      Text('  How are you doing today?',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: Colors.black, // Set text color to blue
+                            fontSize:
+                                24, // Set text size to 24// Set text font to bold
+                          )),
+                    ],
+                  ),
+                ],
+              ), // Set text alignment to center
+              Divider(
+                color: Colors.black,
+                height: 30,
+                thickness: 1,
+                indent: 30,
+                endIndent: 30,
+              ),
+              ...buttons(),
+            ],
+          ),
         ),
       ),
     );
