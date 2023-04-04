@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
 
-
-
 void main() {
   runApp(const MyApp());
 }
@@ -33,7 +31,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class QuickLinks extends StatefulWidget {
   const QuickLinks({super.key});
 
@@ -45,21 +42,23 @@ class _QuickLinksState extends State<QuickLinks> {
   static const Map<String, String> links = {
     'Library': 'https://www.iitrpr.ac.in/library',
     'Departments': 'https://www.iitrpr.ac.in/departments-centers',
-    'Course Booklet': 'https://www.iitrpr.ac.in/sites/default/files/COURSE%20BOOKLET%20FOR%20UG%202018-19.pdf',
-    'UG Handbook': 'https://www.iitrpr.ac.in/sites/default/files/IIT-Ropar-UG-Handbook-2021-15.9.21-5-3.pdf',
+    'Course Booklet':
+        'https://www.iitrpr.ac.in/sites/default/files/COURSE%20BOOKLET%20FOR%20UG%202018-19.pdf',
+    'UG Handbook':
+        'https://www.iitrpr.ac.in/sites/default/files/IIT-Ropar-UG-Handbook-2021-15.9.21-5-3.pdf',
     'Medical Centre': 'https://www.iitrpr.ac.in/medical-center/',
     'Guest House': 'https://www.iitrpr.ac.in/guest-house/',
-    'Bus Timings': 'https://docs.google.com/document/d/1oFeyY-JxaXzPH0hWT1HTMEA_nOtyz1g1w2XYEwTC9_Y/edit/',
+    'Bus Timings':
+        'https://docs.google.com/document/d/1oFeyY-JxaXzPH0hWT1HTMEA_nOtyz1g1w2XYEwTC9_Y/edit/',
     'क्षितिज – The Horizon': 'https://www.iitrpr.ac.in/kshitij/',
     'TBIF': 'https://www.tbifiitrpr.org/',
     'BOST': 'https://bost-19.github.io/',
   };
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         title: Text('Quick Links'),
       ),
       body: GridView.count(
@@ -78,6 +77,7 @@ class _QuickLinksState extends State<QuickLinks> {
       drawer: const NavDrawer(),
     );
   }
+
   void _launchURL(String url) async {
     Uri uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
