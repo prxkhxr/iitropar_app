@@ -1,15 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:iitropar/views/signin.dart';
+import 'package:iitropar/views/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:iitropar/database/local_db.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  await EventDB.startInstance();
+  bool signin = false;
+  if (await EventDB.firstRun() || FirebaseAuth.instance.currentUser == null) {
+    signin = true;
+  }
+  LandingPage.signin(signin);
+  runApp(const App());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   // This widget is the root of your application.
   @override
@@ -21,7 +29,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       initialRoute: '/',
-      home: const SignInScreen(),
+      home: const LandingPage(),
     );
   }
 }

@@ -30,19 +30,19 @@ class firebaseDatabase {
         .catchError((error) => print("failed to add event: $error"));
   }
 
-  static void addCourseFB(String entryNumber, List<dynamic> Courses) {
+  static void addCourseFB(String entryNumber, List<dynamic> courses) {
     DocumentReference ref_event_nr =
-        FirebaseFirestore.instance.collection("courses").doc("$entryNumber");
-    Map<String, dynamic> courses = {"courses": Courses};
+        FirebaseFirestore.instance.collection("courses").doc(entryNumber);
+    Map<String, dynamic> crs = {"courses": courses};
     ref_event_nr
-        .set(courses)
+        .set(crs)
         .then((value) => print("courses added"))
         .catchError((error) => print("failed to add courses: $error"));
   }
 
   static void registerClubFB(String clubTitle, String clubDesc, String email) {
     DocumentReference ref_event_nr =
-        FirebaseFirestore.instance.collection("clubs").doc("$clubTitle");
+        FirebaseFirestore.instance.collection("clubs").doc(clubTitle);
     Map<String, dynamic> clubs = {
       "clubTitle": clubTitle,
       "clubDesc": clubDesc,
@@ -60,9 +60,9 @@ class firebaseDatabase {
     QuerySnapshot querySnapshot = await _collectionRef.get();
 
     // Get data from docs and convert map to List
-    List<dynamic> Email =
+    List<dynamic> emails =
         querySnapshot.docs.map((doc) => doc['email']).toList();
-    return Email;
+    return emails;
   }
 
   static Future<String> getClubName(String clubEmail) async {
@@ -86,5 +86,20 @@ class firebaseDatabase {
     DocumentSnapshot snapshot = await ref_event_nr.get();
     List<String> courses = List.from(snapshot['courses']);
     return courses;
+  }
+
+  static Future<bool> checkIfDocExists(
+      String collectionName, String docId) async {
+    try {
+      // Get reference to Firestore collection
+      DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+          .instance
+          .collection(collectionName)
+          .doc(docId)
+          .get();
+      return doc.exists;
+    } catch (e) {
+      throw e;
+    }
   }
 }

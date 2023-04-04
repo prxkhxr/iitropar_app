@@ -1,5 +1,6 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitropar/frequently_used.dart';
 
 class FirebaseServices {
   final _auth = FirebaseAuth.instance;
@@ -23,6 +24,8 @@ class FirebaseServices {
   }
 
   signOut() async {
+    Ids.role = "guest";
+    Ids.assigned = false;
     await _auth.signOut();
     await _googleSignIn.signOut();
   }

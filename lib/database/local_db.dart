@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:iitropar/database/event.dart';
@@ -12,31 +9,27 @@ import 'package:flutter/services.dart' show rootBundle;
 
 String _dbName = "Events.db";
 
-Future<EventDB> openEventDB() async {
-  return Future(() async {
-    var inst = EventDB.instance;
-    if (inst.init == false) {
-      inst._db = await openDatabase(
-        p.join(await getDatabasesPath(), _dbName),
-        version: 1,
-        onCreate: (db, version) async {
-          await db.execute(
-              "CREATE TABLE events(title TEXT, desc TEXT, stime TEXT, etime TEXT, startDate TEXT, endDate TEXT, mask TEXT, type INTEGER, PRIMARY KEY(title, desc, stime, etime, startDate)) WITHOUT ROWID;");
-        },
-      );
-      inst.init = true;
-    }
-    return inst;
-  });
-}
-
 class EventDB {
-  Database? _db;
-  bool init = false;
-  int cnt = 0;
+  static Database? _db;
+  static bool _firstRun = false;
 
-  EventDB._privateconstructor();
-  static final instance = EventDB._privateconstructor();
+  EventDB();
+
+  static Future<void> startInstance() async {
+    _db ??= await openDatabase(
+      p.join(await getDatabasesPath(), _dbName),
+      version: 1,
+      onCreate: (db, version) async {
+        _firstRun = true;
+        await db.execute(
+            "CREATE TABLE events(title TEXT, desc TEXT, stime TEXT, etime TEXT, startDate TEXT, endDate TEXT, mask TEXT, type INTEGER, PRIMARY KEY(title, desc, stime, etime, startDate)) WITHOUT ROWID;");
+      },
+    );
+  }
+
+  static Future<bool> firstRun() async {
+    return _firstRun;
+  }
 
   Future<List<Event>> fetchSingularEvents(DateTime date) async {
     String d = DateFormat('yyyy-MM-dd').format(date);

@@ -1,12 +1,9 @@
-import 'dart:async';
 import 'package:iitropar/database/event.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:iitropar/database/local_db.dart';
-import 'package:iitropar/database/event.dart';
 import 'package:iitropar/frequently_used.dart';
 
 class EventCalendarScreen extends StatefulWidget {
@@ -26,8 +23,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   Map<String, List<Event>> mySelectedEvents = {};
   Map<String, List> weeklyEvents = {};
 
-  Future<EventDB> fldb = openEventDB();
-  EventDB? ldb;
+  EventDB edb = EventDB();
 
   final titleController = TextEditingController();
   final descpController = TextEditingController();
@@ -39,11 +35,10 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     super.initState();
 
     mySelectedEvents = {};
-    loadLocalDB();
+    loadEvents(_selectedDate);
   }
 
   loadLocalDB() async {
-    ldb = await fldb;
     await loadEvents(_selectedDate);
   }
 
@@ -57,7 +52,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     }
     List<Event> l = List.empty(growable: true);
     while (d1.compareTo(d2) < 0) {
-      l = await ldb!.fetchEvents(d1);
+      l = await edb.fetchEvents(d1);
       setState(() {
         mySelectedEvents[DateFormat('yyyy-MM-dd').format(d1)] = l;
       });
@@ -66,14 +61,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   }
 
   void _insertEvent(Event e) async {
-    await fldb;
-    ldb!.insert(e);
+    edb.insert(e);
     loadEvents(stringDate(e.displayDate));
   }
 
   void _deleteEvent(Event e) async {
-    await fldb;
-    await ldb!.delete(e);
+    edb.delete(e);
     loadEvents(stringDate(e.displayDate));
   }
 
@@ -450,31 +443,46 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             Expanded(
                 child: ListView(
               children: [
-                ..._listOfDayEvents(_selectedDate).map((myEvents) => Flexible(
-                        child: ListTile(
-                      leading: const Icon(
+                ..._listOfDayEvents(_selectedDate).map((myEvents) {
+                  final width = MediaQuery.of(context).size.width;
+                  final textsize = (8 / 10) * width;
+                  final buttonsize = (1 / 10) * width;
+                  final iconsize = (1 / 10) * width;
+                  return ListTile(
+                    horizontalTitleGap: 0,
+                    leading: SizedBox(
+                      width: iconsize,
+                      child: const Icon(
                         Icons.done,
                         color: Colors.indigo,
                       ),
-                      title: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Text("Event Title: ${myEvents.title}"),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              _deleteEvent(myEvents);
-                            },
-                            icon: const Icon(Icons.delete),
-                          )
-                        ],
+                    ),
+                    title: SizedBox(
+                      width: textsize,
+                      child: Text(
+                        myEvents.title,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      subtitle: Text("Description: ${myEvents.description}"),
-                    )))
+                    ),
+                    trailing: SizedBox(
+                      width: buttonsize,
+                      child: IconButton(
+                        onPressed: () => _deleteEvent(myEvents),
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Description: ${myEvents.description}"),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text('Time: ${myEvents.stime} - ${myEvents.etime}'),
+                      ],
+                    ),
+                  );
+                })
               ],
             ))
           ],
@@ -484,21 +492,21 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             showModalBottomSheet(
               context: context,
               builder: (BuildContext context) {
-                return Container(
+                return SizedBox(
                   height: 120.0,
                   child: Column(
                     children: [
                       ListTile(
-                        leading: Icon(Icons.event),
-                        title: Text('Add Event'),
+                        leading: const Icon(Icons.event),
+                        title: const Text('Add Event'),
                         onTap: () {
                           Navigator.pop(context);
                           _showSingleAddEventDialog();
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.repeat),
-                        title: Text('Add Recurring Event'),
+                        leading: const Icon(Icons.repeat),
+                        title: const Text('Add Recurring Event'),
                         onTap: () {
                           Navigator.pop(context);
                           _showRecurringAddEventDialog();
