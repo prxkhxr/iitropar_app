@@ -13,13 +13,19 @@ abstract class AbstractHome extends StatefulWidget {
 }
 
 abstract class AbstractHomeState extends State<AbstractHome> {
-  Image getUserImage() {
+  CircleAvatar getUserImage() {
+    var image;
     if (FirebaseAuth.instance.currentUser != null &&
         FirebaseAuth.instance.currentUser!.photoURL != null) {
-      return Image.network(
-          FirebaseAuth.instance.currentUser!.photoURL.toString());
+      image =
+          NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString());
+    } else {
+      image = AssetImage('assets/user.png');
     }
-    return Image.asset('assets/user.png', height: 100, width: 100);
+    return CircleAvatar(
+      backgroundImage: image,
+      radius: 50,
+    );
   }
 
   String getUserName() {
@@ -38,15 +44,10 @@ abstract class AbstractHomeState extends State<AbstractHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home Page"),
-      ),
-      drawer: const NavDrawer(),
-      body: Center(
-        child: Column(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            getUserImage(),
-            Text('Name: ${getUserName()}'),
-            ...buttons(),
+            Text("Home Page"),
             ElevatedButton(
               onPressed: () {
                 LoadingScreen.setTask(_signout);
@@ -61,8 +62,52 @@ abstract class AbstractHomeState extends State<AbstractHome> {
                         builder: LoadingScreen.build,
                         settings: const RouteSettings(name: '/')));
               },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red[500]),
               child: const Text('Signout'),
             )
+          ],
+        ),
+      ),
+      drawer: const NavDrawer(),
+      body: Center(
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: getUserImage(),
+                ),
+                Column(
+                  children: [
+                    Text('Hey ${getUserName()}',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: Colors.black, // Set text color to blue
+                          fontSize: 24, // Set text size to 24
+                          fontWeight: FontWeight.bold, // Set text font to bold
+                        )),
+                    SizedBox(height: 5),
+                    Text('  How are you doing today?',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: Colors.black, // Set text color to blue
+                          fontSize:
+                              24, // Set text size to 24// Set text font to bold
+                        )),
+                  ],
+                ),
+              ],
+            ), // Set text alignment to center
+            Divider(
+              color: Colors.black,
+              height: 30,
+              thickness: 1,
+              indent: 30,
+              endIndent: 30,
+            ),
+            ...buttons(),
           ],
         ),
       ),
