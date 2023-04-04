@@ -11,7 +11,7 @@ class MessMenuPage extends StatefulWidget {
 
 class _MessMenuPageState extends State<MessMenuPage>
     with SingleTickerProviderStateMixin {
-  List<String> _daysOfWeek = [
+  final List<String> _daysOfWeek = [
     'Monday',
     'Tuesday',
     'Wednesday',
@@ -20,7 +20,7 @@ class _MessMenuPageState extends State<MessMenuPage>
     'Saturday',
     'Sunday'
   ];
-  Map<String, List<MenuItem>> _menu = Menu.menu;
+  final Map<String, List<MenuItem>> _menu = Menu.menu;
 
   int _selectedDayIndex = 0;
 
@@ -78,11 +78,33 @@ class _MessMenuPageState extends State<MessMenuPage>
       itemBuilder: (context, index) {
         final meal = _menu[day]![index];
 
-        return ListTile(
+        return ExpansionTile(
           title: Text(meal.name),
-          subtitle: Text(meal.description),
+          subtitle: Text(checkTime(meal.name)),
+          initiallyExpanded: meal.name == "Breakfast" ? true : false,
+          children: [
+            ...parseString(meal.description).map((myMeal) {
+              return ListTile(
+                title: Text(myMeal),
+              );
+            })
+          ],
         );
       },
     );
+  }
+
+  String checkTime(String name) {
+    if (name == 'Breakfast') {
+      return "7:30 AM to 9:15 AM";
+    } else if (name == 'Lunch') {
+      return "12:30 PM to 2:15 PM";
+    } else {
+      return "7:30 PM to 9:15 PM";
+    }
+  }
+
+  List<String> parseString(String desc) {
+    return desc.split(", ");
   }
 }
