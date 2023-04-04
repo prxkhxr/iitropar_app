@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
+import 'package:iitropar/frequently_used.dart';
 
 class AddEvent extends StatefulWidget {
   const AddEvent({super.key});
@@ -136,9 +137,11 @@ class AddEventFormState extends State<AddEventForm> {
                     firstDate: DateTime(1900),
                     lastDate: DateTime(2100))
                 .then((date) {
-              setState(() {
-                eventDate = date!;
-              });
+              if (date != null && date != eventDate) {
+                setState(() {
+                  eventDate = date;
+                });
+              }
             });
           },
         ),
@@ -162,9 +165,11 @@ class AddEventFormState extends State<AddEventForm> {
               context: context,
               initialTime: startTime,
             ).then((time) {
-              setState(() {
-                startTime = time!;
-              });
+              if (time != null && time != startTime) {
+                setState(() {
+                  startTime = time;
+                });
+              }
             });
           },
         ),
@@ -172,7 +177,7 @@ class AddEventFormState extends State<AddEventForm> {
         Text(
             startTime == null
                 ? 'Nothing has been picked yet'
-                : "${startTime.hour} : ${startTime.minute} ",
+                : formatTimeOfDay(endTime),
             style: TextStyle(fontSize: 32)),
       ],
     );
@@ -188,9 +193,11 @@ class AddEventFormState extends State<AddEventForm> {
               context: context,
               initialTime: endTime,
             ).then((time) {
-              setState(() {
-                endTime = time!;
-              });
+              if (time != null && time != endTime) {
+                setState(() {
+                  endTime = time;
+                });
+              }
             });
           },
         ),
@@ -198,7 +205,7 @@ class AddEventFormState extends State<AddEventForm> {
         Text(
             endTime == null
                 ? 'Nothing has been picked yet'
-                : "${endTime.hour} : ${endTime.minute}",
+                : formatTimeOfDay(endTime),
             style: TextStyle(fontSize: 32)),
       ],
     );
