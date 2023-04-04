@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/views/landing_page.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitropar/database/local_db.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -23,6 +26,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _signin() async {
     await FirebaseServices().signInWithGoogle();
+    EventDB().loadCourse(await firebaseDatabase
+        .getCourses(FirebaseAuth.instance.currentUser!.email!.split('@')[0]));
     _moveToHome();
   }
 
