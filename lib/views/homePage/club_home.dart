@@ -40,7 +40,7 @@ class _ClubHomeState extends AbstractHomeState {
       },
       child: Text(
         "Add Event",
-        style: TextStyle(color: Color(primaryLight)),
+        style: TextStyle(color: Color(secondaryLight)),
       ),
     ));
 

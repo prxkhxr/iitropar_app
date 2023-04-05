@@ -119,40 +119,45 @@ class _StudentHomeState extends AbstractHomeState {
     final textsize = (8 / 10) * width;
     final buttonsize = (1 / 10) * width;
     final iconsize = (1 / 10) * width;
-    return ListTile(
-      horizontalTitleGap: 0,
-      leading: SizedBox(
-        width: iconsize,
-        child: Icon(
-          Icons.book,
-          color: Color(primaryLight),
-        ),
-      ),
-      title: SizedBox(
-        width: textsize,
-        child: Text(
-          myEvents.title,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Description: ${myEvents.description}"),
-          const SizedBox(
-            width: 5,
+    return Column(
+      children: [
+        ListTile(
+          horizontalTitleGap: 0,
+          leading: SizedBox(
+            width: iconsize,
+            child: Icon(
+              Icons.book,
+              color: Color(primaryLight),
+            ),
           ),
-          Text('Time: ${myEvents.stime} - ${myEvents.etime}'),
-        ],
-      ),
+          title: SizedBox(
+            width: textsize,
+            child: Text(
+              myEvents.title,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Description: ${myEvents.description}"),
+              const SizedBox(
+                width: 5,
+              ),
+              Text('Time: ${myEvents.stime} - ${myEvents.etime}'),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+      ],
     );
   }
 
   Widget todayClasses() {
     return Column(
-      children: [
-        getSchedule()
-      ],
+      children: [getSchedule()],
     );
   }
 
@@ -163,11 +168,41 @@ class _StudentHomeState extends AbstractHomeState {
           if (snapshot.data == null) {
             return const Text('No classes Today');
           } else {
-            return SizedBox(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: classes.map(classWidget).toList(),
+            return Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color(0xff555555),
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 10,
+                      blurStyle: BlurStyle.outer,
+                      color: Color(primaryLight),
+                    ),
+                  ]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Classes",
+                    style: TextStyle(
+                        color: Color(primaryLight),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: ListView(
+                      scrollDirection: Axis.vertical,
+                      children: classes.map(classWidget).toList(),
+                    ),
+                  ),
+                ],
               ),
             );
           }
@@ -186,11 +221,41 @@ class _StudentHomeState extends AbstractHomeState {
           if (snapshot.data == null) {
             return const Text('No Events Today');
           } else {
-            return SizedBox(
-              height: 100,
-              child: ListView(
-                children: events.map(classWidget).toList(),
-                scrollDirection: Axis.vertical,
+            return Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color(0xff555555),
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 10,
+                      blurStyle: BlurStyle.outer,
+                      color: Color(primaryLight),
+                    ),
+                  ]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Events",
+                    style: TextStyle(
+                        color: Color(primaryLight),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: ListView(
+                      scrollDirection: Axis.vertical,
+                      children: events.map(classWidget).toList(),
+                    ),
+                  ),
+                ],
               ),
             );
           }
@@ -199,8 +264,25 @@ class _StudentHomeState extends AbstractHomeState {
 
   Widget todayEvents() {
     return Column(
+      children: [getEvents()],
+    );
+  }
+
+  Widget intermediateText() {
+    return Column(
+      // kuch dikkat aa sakti hai, start nahi chal raha :(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        getEvents()
+        Text(
+          "What's happening next?",
+          style: TextStyle(
+              color: Color(primaryLight),
+              fontSize: 22,
+              fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
       ],
     );
   }
@@ -209,8 +291,15 @@ class _StudentHomeState extends AbstractHomeState {
   List<Widget> buttons() {
     List<Widget> l = List.empty(growable: true);
     l.add(todayMenu());
+    l.add(intermediateText());
     l.add(todayClasses());
+    l.add(const SizedBox(
+      height: 20,
+    ));
     l.add(todayEvents());
+    l.add(const SizedBox(
+      height: 20,
+    ));
     return l;
   }
 }
