@@ -78,12 +78,19 @@ class _QuickLinksState extends State<QuickLinks> {
     );
   }
 
+  // void _launchURL(String url) async {
+  //   Uri uri = Uri.parse(url);
+  //   if (await canLaunchUrl(uri)) {
+  //     await launchUrl(uri);
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
   void _launchURL(String url) async {
-    Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+    if (await canLaunch(url)) {
+      await launch(url);
     } else {
-      throw 'Could not launch $url';
+      throw 'Could not launch $url';
     }
   }
 }

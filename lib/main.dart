@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:iitropar/database/local_db.dart';
@@ -26,7 +27,7 @@ class App extends StatelessWidget {
       title: 'IIT Ropar App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
+        primarySwatch: Colors.blueGrey,
         fontFamily: 'Montserrat',
       ),
       initialRoute: '/',

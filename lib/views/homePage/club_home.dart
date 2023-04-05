@@ -3,6 +3,7 @@ import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitropar/views/club/add_club_event.dart';
 
+import '../../utilities/colors.dart';
 import 'home_page.dart';
 
 class ClubHome extends AbstractHome {
@@ -37,7 +38,10 @@ class _ClubHomeState extends AbstractHomeState {
                       clubName: clubName,
                     )));
       },
-      child: const Text("Add Event"),
+      child: Text(
+        "Add Event",
+        style: TextStyle(color: Color(primaryLight)),
+      ),
     ));
 
     return l;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/views/homePage/home_page.dart';
 import 'package:iitropar/frequently_used.dart';
@@ -33,10 +34,10 @@ Widget buildItems(String item) {
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             item,
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 14, color: Color(primaryLight)),
             textAlign: TextAlign.center,
           ),
         ],
@@ -46,7 +47,7 @@ Widget buildItems(String item) {
 }
 
 Widget divider() {
-  return Divider(
+  return const Divider(
     color: Colors.black,
     height: 30,
     thickness: 1,
@@ -58,8 +59,8 @@ Widget divider() {
 Widget todayMenu() {
   String currentMeal = "Dinner";
   int idx = 0;
-  double maxBfTime = toDouble(TimeOfDay(hour: 9, minute: 30));
-  double maxLunchTime = toDouble(TimeOfDay(hour: 14, minute: 30));
+  double maxBfTime = toDouble(const TimeOfDay(hour: 9, minute: 30));
+  double maxLunchTime = toDouble(const TimeOfDay(hour: 14, minute: 30));
   double curTime = toDouble(TimeOfDay.now());
   if (curTime < maxBfTime) {
     idx = 0;
@@ -76,28 +77,28 @@ Widget todayMenu() {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(5.0),
         child: Text('Hungry ? ',
             style: TextStyle(
-              color: Colors.black, // Set text color to blue
-              fontSize: 24, // Set text size to 24
+              color: Color(primaryLight), // Set text color to blue
+              fontSize: 22, // Set text size to 24
               fontWeight: FontWeight.bold, // Set text font to bold
             )),
       ),
       Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(5.0),
           child: Text(
             'See what is there for $currentMeal',
-            style: TextStyle(
-              color: Colors.black, // Set text color to blue
-              fontSize: 24, // Set text size to 24// Set text font to bold
+            style: const TextStyle(
+              color: Color(0xff333333), // Set text color to blue
+              fontSize: 18, // Set text size to 24// Set text font to bold
             ),
           )),
       SizedBox(
         height: 150,
         child: ListView(
-          children: items.map(buildItems).toList(),
           scrollDirection: Axis.horizontal,
+          children: items.map(buildItems).toList(),
         ),
       )
     ],
@@ -122,9 +123,9 @@ class _StudentHomeState extends AbstractHomeState {
       horizontalTitleGap: 0,
       leading: SizedBox(
         width: iconsize,
-        child: const Icon(
-          Icons.done,
-          color: Colors.indigo,
+        child: Icon(
+          Icons.book,
+          color: Color(primaryLight),
         ),
       ),
       title: SizedBox(
@@ -150,8 +151,6 @@ class _StudentHomeState extends AbstractHomeState {
   Widget todayClasses() {
     return Column(
       children: [
-        Text('See your class schedule \n and personal events'),
-        SizedBox(height: 15),
         getSchedule()
       ],
     );
@@ -162,13 +161,13 @@ class _StudentHomeState extends AbstractHomeState {
         future: loadClasses(),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
-            return Text('No classes Today');
+            return const Text('No classes Today');
           } else {
             return SizedBox(
               height: 100,
               child: ListView(
-                children: classes.map(classWidget).toList(),
                 scrollDirection: Axis.vertical,
+                children: classes.map(classWidget).toList(),
               ),
             );
           }
@@ -185,7 +184,7 @@ class _StudentHomeState extends AbstractHomeState {
         future: loadEvents(),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
-            return Text('No Events Today');
+            return const Text('No Events Today');
           } else {
             return SizedBox(
               height: 100,
@@ -201,8 +200,6 @@ class _StudentHomeState extends AbstractHomeState {
   Widget todayEvents() {
     return Column(
       children: [
-        Text('See Events happening today'),
-        SizedBox(height: 15),
         getEvents()
       ],
     );
@@ -212,9 +209,7 @@ class _StudentHomeState extends AbstractHomeState {
   List<Widget> buttons() {
     List<Widget> l = List.empty(growable: true);
     l.add(todayMenu());
-    l.add(Divider());
     l.add(todayClasses());
-    l.add(Divider());
     l.add(todayEvents());
     return l;
   }

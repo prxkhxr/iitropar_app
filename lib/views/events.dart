@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:intl/intl.dart';
 
@@ -77,7 +78,13 @@ class _EventsState extends State<Events> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Events"),
+          title: Center(
+              child: Text(
+            "Events",
+            style: TextStyle(color: Color(primaryLight), fontSize: 24),
+          )),
+          elevation: 0,
+          backgroundColor: Color(secondaryLight),
         ),
         // drawer: const NavDrawer(),
         body: Column(

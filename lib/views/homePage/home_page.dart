@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/bottom_bar.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:iitropar/views/homePage/admin_home.dart';
@@ -44,22 +46,35 @@ abstract class AbstractHomeState extends State<AbstractHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(secondaryLight),
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Color(secondaryLight),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Home Page"),
-            ElevatedButton(
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.wb_sunny_rounded,
+              ),
+              color: Color(primaryLight),
+              iconSize: 28,
+            ),
+            IconButton(
+              icon: const Icon(Icons.logout_rounded),
+              color: Color(primaryLight),
+              iconSize: 28,
               onPressed: () {
                 LoadingScreen.setTask(_signout);
                 LoadingScreen.setPrompt('Signing Out');
                 LoadingScreen.setBuilder((context) => const LandingPage());
                 LandingPage.signin(true);
-                
+
                 // Navigator.popUntil(context, ModalRoute.withName('/'));
                 // Navigator.pop(context);
                 // Navigator.of(context).popUntil((route) => route.isFirst);
-                
+
                 // Navigator.of(context).pushAndRemoveUntil(
                 //     MaterialPageRoute(
                 //         builder: LoadingScreen.build,
@@ -76,56 +91,62 @@ abstract class AbstractHomeState extends State<AbstractHome> {
                 //         builder: LoadingScreen.build,
                 //         settings: const RouteSettings(name: '/')));
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red[500]),
-              child: const Text('Signout'),
             )
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
+      body: Column(
+        children: [
+          const SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: getUserImage(),
-                  ),
-                  Column(
-                    children: [
-                      Text('Hey ${getUserName()}',
-                          textAlign: TextAlign.right,
-                          style: const TextStyle(
-                            color: Colors.black, // Set text color to blue
-                            fontSize: 24, // Set text size to 24
-                            fontWeight:
-                                FontWeight.bold, // Set text font to bold
-                          )),
-                      const SizedBox(height: 5),
-                      const Text('  How are you doing today?',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: Colors.black, // Set text color to blue
-                            fontSize:
-                                24, // Set text size to 24// Set text font to bold
-                          )),
-                    ],
-                  ),
-                ],
-              ), // Set text alignment to center
-              const Divider(
-                color: Colors.black,
-                height: 30,
-                thickness: 1,
-                indent: 30,
-                endIndent: 30,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: getUserImage(),
               ),
-              ...buttons(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Hey ${getUserName()}',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: Color(primaryLight), // Set text color to blue
+                        fontSize: 22, // Set text size to 24
+                        fontWeight: FontWeight.bold, // Set text font to bold
+                      )),
+                  const SizedBox(height: 5),
+                  Text('How are you doing today?',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: Color(primaryLight), // Set text color to blue
+                        fontSize:
+                            18, // Set text size to 24// Set text font to bold
+                      )),
+                ],
+              ),
             ],
+          ), // Set text alignment to center
+          Divider(
+            color: Color(primaryLight),
+            height: 30,
+            thickness: 1,
+            indent: 15,
+            endIndent: 15,
           ),
-        ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Center(
+                child: Column(
+                  children: [
+                    ...buttons(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

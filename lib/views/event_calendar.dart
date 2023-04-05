@@ -1,4 +1,5 @@
 import 'package:iitropar/database/event.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -407,7 +408,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text("Event Calendar"),
+          title: Center(
+            child: Text(
+              "Event Calendar",
+              style: TextStyle(color: Color(primaryLight), fontSize: 24),
+            ),
+          ),
+          backgroundColor: Color(secondaryLight),
+          elevation: 0,
         ),
         // drawer: const NavDrawer(),
         body: Column(
@@ -436,10 +444,20 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 _focused = focusedDay;
                 loadEvents(focusedDay);
               },
-              eventLoader: _listOfDayEvents,
+              eventLoader: (datetime) {
+                List l = _listOfDayEvents(datetime);
+                if (l.isNotEmpty) return [1];
+                return [];
+              },
               availableCalendarFormats: const {CalendarFormat.month: 'Month'},
               currentDay: DateTime.now(),
+              calendarStyle: const CalendarStyle(
+                  selectedDecoration: BoxDecoration(
+                      color: Color(0xff555555), shape: BoxShape.circle),
+                  todayDecoration: BoxDecoration(
+                      color: Color(0xffAAAAAA), shape: BoxShape.circle)),
             ),
+            const SizedBox(height: 20,),
             Expanded(
                 child: ListView(
               children: [
@@ -448,39 +466,51 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   final textsize = (8 / 10) * width;
                   final buttonsize = (1 / 10) * width;
                   final iconsize = (1 / 10) * width;
-                  return ListTile(
-                    horizontalTitleGap: 0,
-                    leading: SizedBox(
-                      width: iconsize,
-                      child: const Icon(
-                        Icons.done,
-                        color: Colors.indigo,
-                      ),
-                    ),
-                    title: SizedBox(
-                      width: textsize,
-                      child: Text(
-                        myEvents.title,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    trailing: SizedBox(
-                      width: buttonsize,
-                      child: IconButton(
-                        onPressed: () => _deleteEvent(myEvents),
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Description: ${myEvents.description}"),
-                        const SizedBox(
-                          width: 5,
+                  return Column(
+                    children: [
+                      ListTile(
+                        horizontalTitleGap: 0,
+                        leading: SizedBox(
+                          width: iconsize,
+                          child: Icon(
+                            Icons.event,
+                            color: Color(primaryLight),
+                          ),
                         ),
-                        Text('Time: ${myEvents.stime} - ${myEvents.etime}'),
-                      ],
-                    ),
+                        title: SizedBox(
+                          width: textsize,
+                          child: Text(
+                            myEvents.title,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: Color(primaryLight)),
+                          ),
+                        ),
+                        trailing: SizedBox(
+                          width: buttonsize,
+                          child: IconButton(
+                            onPressed: () => _deleteEvent(myEvents),
+                            icon: const Icon(Icons.delete),
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Description: ${myEvents.description}",
+                              style: TextStyle(color: Color(primaryLight)),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              'Time: ${myEvents.stime} - ${myEvents.etime}',
+                              style: TextStyle(color: Color(primaryLight)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10,),
+                    ],
                   );
                 })
               ],
