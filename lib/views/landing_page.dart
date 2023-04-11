@@ -1,10 +1,9 @@
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/material.dart';
 import 'package:iitropar/views/PBTabView.dart';
-import 'package:iitropar/views/homePage/home_page.dart';
 import 'package:iitropar/views/signin.dart';
 
-class LandingPage extends StatelessWidget {
-  const LandingPage({super.key});
+class RootPage extends StatelessWidget {
+  const RootPage({super.key});
 
   static bool _signin = false;
 

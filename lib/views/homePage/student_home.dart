@@ -3,7 +3,6 @@ import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/views/homePage/home_page.dart';
 import 'package:iitropar/frequently_used.dart';
-import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/database/event.dart';
@@ -22,26 +21,24 @@ String getDay() {
 }
 
 Widget buildItems(String item) {
-  return Container(
-    child: Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 40,
-            child: Image.asset(
-              'assets/foodItem.jfif',
-              fit: BoxFit.cover,
-            ),
+  return Padding(
+    padding: const EdgeInsets.all(10),
+    child: Column(
+      children: [
+        CircleAvatar(
+          radius: 40,
+          child: Image.asset(
+            'assets/foodItem.jfif',
+            fit: BoxFit.cover,
           ),
-          const SizedBox(height: 10),
-          Text(
-            item,
-            style: TextStyle(fontSize: 14, color: Color(primaryLight)),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          item,
+          style: TextStyle(fontSize: 14, color: Color(primaryLight)),
+          textAlign: TextAlign.center,
+        ),
+      ],
     ),
   );
 }
@@ -115,10 +112,9 @@ class _StudentHomeState extends AbstractHomeState {
   }
 
   Widget classWidget(Event myEvents) {
-    final width = 500;
-    final textsize = (8 / 10) * width;
-    final buttonsize = (1 / 10) * width;
-    final iconsize = (1 / 10) * width;
+    const width = 500;
+    const textsize = (8 / 10) * width;
+    const iconsize = (1 / 10) * width;
     return Column(
       children: [
         ListTile(

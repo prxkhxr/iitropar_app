@@ -33,50 +33,58 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _moveToHome() {
-    LandingPage.signin(false);
+    RootPage.signin(false);
     Navigator.popUntil(context, ModalRoute.withName('/'));
     Navigator.pop(context);
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) => const MainLandingPage(),
+          builder: (BuildContext context) => const RootPage(),
         ));
   }
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    const double buttonMargin = 30;
+    final double buttonWidth = (screenSize.width - 2 * buttonMargin) * 0.8;
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: Center(
-          child: Container(
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              stops: [
-                0.1,
-                0.4,
-                0.6,
-                0.9,
-              ],
-              colors: [
-                Colors.grey,
-                Colors.blue,
-                Colors.blue,
-                Colors.grey,
-              ],
-            )),
-            // margin: EdgeInsets.symmetric(horizontal: 80),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  logoWidget('assets/iitropar_logo.png'),
+      body:
+          // Container(
+          // decoration: const BoxDecoration(
+          //   color: Colors.white,
+          // ),
+          // child:
+          Center(
+        child: Container(
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            stops: [
+              0.1,
+              0.4,
+              0.6,
+              0.9,
+            ],
+            colors: [
+              Colors.grey,
+              Colors.blue,
+              Colors.blue,
+              Colors.grey,
+            ],
+          )),
+          // margin: EdgeInsets.symmetric(horizontal: 80),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                logoWidget('assets/iitropar_logo.png'),
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 30),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: buttonMargin),
                     child: ElevatedButton(
                       onPressed: () {
                         _signin(); // navigate according to the email id
@@ -88,59 +96,68 @@ class _SignInScreenState extends State<SignInScreen> {
                         }
                         return Colors.grey[100];
                       })),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
+                      // child: Padding(
+                      //   padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: buttonWidth * 0.8,
+                              child: const Text(
                                 "Login with Gmail",
                                 style: TextStyle(
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24),
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                ),
                               ),
-                              Image.asset(
-                                "assets/google.png",
-                                width: 40,
-                                height: 40,
-                              ),
-                            ]),
-                      ),
+                            ),
+                            Image.asset(
+                              "assets/google.png",
+                              width: buttonWidth * 0.2,
+                              height: buttonWidth * 0.2,
+                            ),
+                          ]),
+                      // ),
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 30),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: buttonMargin),
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const StudentHome()));
-                      },
-                      style: ButtonStyle(backgroundColor:
-                          MaterialStateProperty.resolveWith((states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Colors.black26;
-                        }
-                        return Colors.grey[100];
-                      })),
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "Login as Guest",
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const StudentHome()));
+                        },
+                        style: ButtonStyle(backgroundColor:
+                            MaterialStateProperty.resolveWith((states) {
+                          if (states.contains(MaterialState.pressed)) {
+                            return Colors.black26;
+                          }
+                          return Colors.grey[100];
+                        })),
+                        // child: const Padding(
+                        // padding: EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: buttonWidth,
+                          child: const Text(
+                            "Login as Guest",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24),
+                          ),
+                        )
+                        // ),
                         ),
-                      ),
-                    ),
                   ),
-                ]),
-          ),
+                ])
+              ]),
         ),
       ),
+      // ),
     );
   }
 }

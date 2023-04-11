@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// ignore_for_file: camel_case_types, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -17,33 +17,33 @@ class addCoursecsv extends StatefulWidget {
 class _addCoursecsvState extends State<addCoursecsv> {
   List<List<dynamic>> _data = [];
   String? filePath;
-  bool checkData(List<List<dynamic>> _events) {
-    int len = _events.length;
+  bool checkData(List<List<dynamic>> events) {
+    int len = events.length;
     for (int i = 1; i < len; i++) {
-      int num_of_courses = _events[i].length;
+      int num_of_courses = events[i].length;
       for (int j = 1; j < num_of_courses; j++) {
-        print(_events[i][j]);
+        print(events[i][j]);
       }
     }
     return false;
   }
 
-  void uploadData(List<List<dynamic>> _events) {
+  void uploadData(List<List<dynamic>> events) {
     //toDo
-    int len = _events.length;
+    int len = events.length;
     for (int i = 1; i < len; i++) {
       List<dynamic> courses = [];
-      int num_of_courses = _events[i].length;
+      int num_of_courses = events[i].length;
       for (int j = 1; j < num_of_courses; j++) {
-        if (_events[i][j] != "") courses.add(_events[i][j]);
+        if (events[i][j] != "") courses.add(events[i][j]);
       }
-      firebaseDatabase.addCourseFB(_events[i][0], courses);
+      firebaseDatabase.addCourseFB(events[i][0], courses);
     }
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Uploaded data sucessfully")));
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Uploaded data sucessfully")));
   }
 
-  void _pickFile() async {
+  void _pickFile(ScaffoldMessengerState sm) async {
     final result = await FilePicker.platform.pickFiles(allowMultiple: false);
 
     // if no file is picked
@@ -60,11 +60,11 @@ class _addCoursecsvState extends State<addCoursecsv> {
         .toList();
     print(fields[0]);
     if (!verifyHeader(fields[0])) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Header format in csv incorrect!")));
+      sm.showSnackBar(
+          const SnackBar(content: Text("Header format in csv incorrect!")));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Header format in csv correct!")));
+      sm.showSnackBar(
+          const SnackBar(content: Text("Header format in csv correct!")));
       uploadData(fields);
     }
     setState(() {
@@ -73,10 +73,7 @@ class _addCoursecsvState extends State<addCoursecsv> {
   }
 
   bool verifyHeader(List<dynamic> header) {
-    if (header[0] == "entryNumber")
-      return true;
-    else
-      return false;
+    return header[0] == "entryNumber";
   }
 
   @override
@@ -87,22 +84,23 @@ class _addCoursecsvState extends State<addCoursecsv> {
         ),
         body: Center(
           child: Column(children: [
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             ElevatedButton(
               child: const Text("Upload FIle"),
               onPressed: () {
-                _pickFile();
+                _pickFile(ScaffoldMessenger.of(context));
               },
             ),
-            SizedBox(height: 50),
-            Text('1 . Accepted CSV format is given below'),
-            SizedBox(height: 5),
+            const SizedBox(height: 50),
+            const Text('1 . Accepted CSV format is given below'),
+            const SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Image.asset('assets/admin_course_format.png'),
             ),
-            SizedBox(height: 5),
-            Text('2 . Ensure that you enter valid entryNumber and courseCode'),
+            const SizedBox(height: 5),
+            const Text(
+                '2 . Ensure that you enter valid entryNumber and courseCode'),
           ]),
         ));
   }

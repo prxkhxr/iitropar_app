@@ -1,8 +1,7 @@
+// ignore_for_file: file_names, camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:io';
 
 class registerClub extends StatefulWidget {
   const registerClub({super.key});
@@ -50,7 +49,7 @@ class AddEventFormState extends State<AddEventForm> {
   }
   Widget _buildclubTitle() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Club Title'),
+      decoration: const InputDecoration(labelText: 'Club Title'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Club Title is required';
@@ -65,7 +64,7 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildclubDesc() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Club Description'),
+      decoration: const InputDecoration(labelText: 'Club Description'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Club Description is required';
@@ -80,7 +79,7 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildclubEmail() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Club Email'),
+      decoration: const InputDecoration(labelText: 'Club Email'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Club Email is required';
@@ -99,14 +98,14 @@ class AddEventFormState extends State<AddEventForm> {
     return Form(
       key: _formKey,
       child: Container(
-        margin: EdgeInsets.all(40),
+        margin: const EdgeInsets.all(40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildclubTitle(),
             _buildclubDesc(),
             _buildclubEmail(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
@@ -118,7 +117,8 @@ class AddEventFormState extends State<AddEventForm> {
                     firebaseDatabase.registerClubFB(
                         clubTitle, clubDesc, clubEmail);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Club has been registered!")),
+                      const SnackBar(
+                          content: Text("Club has been registered!")),
                     );
                   }
                 },

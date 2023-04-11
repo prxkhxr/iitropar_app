@@ -1,21 +1,16 @@
+// ignore_for_file: camel_case_types
+
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:csv/csv.dart';
-import 'dart:convert';
 import 'dart:io';
-import 'package:iitropar/utilities/firebase_database.dart';
-import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:io';
 
 class addClubEvent extends StatefulWidget {
   const addClubEvent({super.key, required this.clubName});
   final String clubName;
   @override
-  State<addClubEvent> createState() =>
-      _addClubEventState(clubName: this.clubName);
+  State<addClubEvent> createState() => _addClubEventState(clubName: clubName);
 }
 
 class _addClubEventState extends State<addClubEvent> {
@@ -70,7 +65,7 @@ class AddEventFormState extends State<AddEventForm> {
   }
   Widget _buildEventTitle() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Event Title'),
+      decoration: const InputDecoration(labelText: 'Event Title'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Event Title is required';
@@ -85,7 +80,7 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildEventDesc() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Event Description'),
+      decoration: const InputDecoration(labelText: 'Event Description'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Event Description is required';
@@ -100,7 +95,7 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildEventVenue() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Event Venue'),
+      decoration: const InputDecoration(labelText: 'Event Venue'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Event Venue is required';
@@ -117,7 +112,7 @@ class AddEventFormState extends State<AddEventForm> {
     return Row(
       children: <Widget>[
         ElevatedButton(
-          child: Text('Pick Event Date'),
+          child: const Text('Pick Event Date'),
           onPressed: () {
             showDatePicker(
                     context: context,
@@ -131,12 +126,9 @@ class AddEventFormState extends State<AddEventForm> {
             });
           },
         ),
-        SizedBox(width: 20),
-        Text(
-            eventDate == null
-                ? 'Nothing has been picked yet'
-                : "${eventDate.day}/${eventDate.month}/${eventDate.year}",
-            style: TextStyle(fontSize: 32)),
+        const SizedBox(width: 20),
+        Text("${eventDate.day}/${eventDate.month}/${eventDate.year}",
+            style: const TextStyle(fontSize: 32)),
       ],
     );
   }
@@ -145,7 +137,7 @@ class AddEventFormState extends State<AddEventForm> {
     return Row(
       children: <Widget>[
         ElevatedButton(
-          child: Text('Set Start time'),
+          child: const Text('Set Start time'),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -157,12 +149,9 @@ class AddEventFormState extends State<AddEventForm> {
             });
           },
         ),
-        SizedBox(width: 20),
-        Text(
-            startTime == null
-                ? 'Nothing has been picked yet'
-                : "${startTime.hour} : ${startTime.minute} ",
-            style: TextStyle(fontSize: 32)),
+        const SizedBox(width: 20),
+        Text("${startTime.hour} : ${startTime.minute} ",
+            style: const TextStyle(fontSize: 32)),
       ],
     );
   }
@@ -171,7 +160,7 @@ class AddEventFormState extends State<AddEventForm> {
     return Row(
       children: <Widget>[
         ElevatedButton(
-          child: Text('Set End time'),
+          child: const Text('Set End time'),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -183,12 +172,9 @@ class AddEventFormState extends State<AddEventForm> {
             });
           },
         ),
-        SizedBox(width: 20),
-        Text(
-            endTime == null
-                ? 'Nothing has been picked yet'
-                : "${endTime.hour} : ${endTime.minute}",
-            style: TextStyle(fontSize: 32)),
+        const SizedBox(width: 20),
+        Text("${endTime.hour} : ${endTime.minute}",
+            style: const TextStyle(fontSize: 32)),
       ],
     );
   }
@@ -199,27 +185,27 @@ class AddEventFormState extends State<AddEventForm> {
     return Form(
       key: _formKey,
       child: Container(
-        margin: EdgeInsets.all(40),
+        margin: const EdgeInsets.all(40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildEventTitle(),
             _buildEventDesc(),
             _buildEventVenue(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildEventDate(),
             _buildStartTime(),
             _buildEndTime(),
             Row(
               children: [
-                Text('Add Event Image'),
+                const Text('Add Event Image'),
                 IconButton(
                     onPressed: () async {
                       ImagePicker imagepicker = ImagePicker(); // pick an image
                       file = await imagepicker.pickImage(
                           source: ImageSource.gallery);
                     },
-                    icon: Icon(Icons.camera_alt)),
+                    icon: const Icon(Icons.camera_alt)),
               ],
             ),
             Padding(
@@ -242,8 +228,12 @@ class AddEventFormState extends State<AddEventForm> {
                       Reference imgToUpload = refDir.child(filename);
                       String filePath = (file?.path)!;
                       try {
-                        await imgToUpload.putFile(File(filePath));
-                        imageURL = await imgToUpload.getDownloadURL();
+                        f() async {
+                          await imgToUpload.putFile(File(filePath));
+                          imageURL = await imgToUpload.getDownloadURL();
+                        }
+
+                        f();
                       } catch (error) {
                         print(error);
                       }
@@ -260,7 +250,7 @@ class AddEventFormState extends State<AddEventForm> {
                       imageURL,
                       clubName);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Event Added Successfuly')),
+                    const SnackBar(content: Text('Event Added Successfuly')),
                   );
                 },
                 child: const Text('Submit'),

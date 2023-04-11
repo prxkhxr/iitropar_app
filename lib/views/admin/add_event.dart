@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
-import 'package:iitropar/frequently_used.dart';
 
 class AddEvent extends StatefulWidget {
   const AddEvent({super.key});
@@ -67,7 +66,7 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildEventTitle() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Event Title'),
+      decoration: const InputDecoration(labelText: 'Event Title'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Event Title is required';
@@ -82,7 +81,7 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildEventType() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Event Type'),
+      decoration: const InputDecoration(labelText: 'Event Type'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Event Type is required';
@@ -97,7 +96,7 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildEventDesc() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Event Description'),
+      decoration: const InputDecoration(labelText: 'Event Description'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Event Description is required';
@@ -112,7 +111,7 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildEventVenue() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Event Venue'),
+      decoration: const InputDecoration(labelText: 'Event Venue'),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Event Venue is required';
@@ -129,7 +128,7 @@ class AddEventFormState extends State<AddEventForm> {
     return Row(
       children: <Widget>[
         ElevatedButton(
-          child: Text('Pick Event Date'),
+          child: const Text('Pick Event Date'),
           onPressed: () {
             showDatePicker(
                     context: context,
@@ -145,12 +144,9 @@ class AddEventFormState extends State<AddEventForm> {
             });
           },
         ),
-        SizedBox(width: 20),
-        Text(
-            eventDate == null
-                ? 'Nothing has been picked yet'
-                : "${eventDate.day}/${eventDate.month}/${eventDate.year}",
-            style: TextStyle(fontSize: 32)),
+        const SizedBox(width: 20),
+        Text("${eventDate.day}/${eventDate.month}/${eventDate.year}",
+            style: const TextStyle(fontSize: 32)),
       ],
     );
   }
@@ -159,7 +155,7 @@ class AddEventFormState extends State<AddEventForm> {
     return Row(
       children: <Widget>[
         ElevatedButton(
-          child: Text('Set Start time'),
+          child: const Text('Set Start time'),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -173,12 +169,8 @@ class AddEventFormState extends State<AddEventForm> {
             });
           },
         ),
-        SizedBox(width: 20),
-        Text(
-            startTime == null
-                ? 'Nothing has been picked yet'
-                : formatTimeOfDay(startTime),
-            style: TextStyle(fontSize: 32)),
+        const SizedBox(width: 20),
+        Text(formatTimeOfDay(startTime), style: const TextStyle(fontSize: 32)),
       ],
     );
   }
@@ -187,7 +179,7 @@ class AddEventFormState extends State<AddEventForm> {
     return Row(
       children: <Widget>[
         ElevatedButton(
-          child: Text('Set End time'),
+          child: const Text('Set End time'),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -201,12 +193,8 @@ class AddEventFormState extends State<AddEventForm> {
             });
           },
         ),
-        SizedBox(width: 20),
-        Text(
-            endTime == null
-                ? 'Nothing has been picked yet'
-                : formatTimeOfDay(endTime),
-            style: TextStyle(fontSize: 32)),
+        const SizedBox(width: 20),
+        Text(formatTimeOfDay(endTime), style: const TextStyle(fontSize: 32)),
       ],
     );
   }
@@ -217,7 +205,7 @@ class AddEventFormState extends State<AddEventForm> {
     return Form(
       key: _formKey,
       child: Container(
-        margin: EdgeInsets.all(40),
+        margin: const EdgeInsets.all(40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -225,37 +213,37 @@ class AddEventFormState extends State<AddEventForm> {
             _buildEventType(),
             _buildEventDesc(),
             _buildEventVenue(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildEventDate(),
             _buildStartTime(),
             _buildEndTime(),
             Row(
               children: [
-                Text('Add Event Image'),
+                const Text('Add Event Image'),
                 IconButton(
                     onPressed: () async {
                       ImagePicker imagepicker = ImagePicker(); // pick an image
                       file = await imagepicker.pickImage(
                           source: ImageSource.gallery);
                     },
-                    icon: Icon(Icons.camera_alt)),
+                    icon: const Icon(Icons.camera_alt)),
               ],
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
-                onPressed: () async {
+                onPressed: () {
                   // Validating form inputs
                   if (eventDate.compareTo(DateTime.now()) < 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                           content: Text("Previous date event are not allowed")),
                     );
                     return;
                   }
                   if (toDouble(startTime) > toDouble(endTime)) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                           content: Text(
                               "Invalid Time. End time is before start time.")),
                     );
@@ -274,8 +262,12 @@ class AddEventFormState extends State<AddEventForm> {
                       Reference imgToUpload = refDir.child(filename);
                       String filePath = (file?.path)!;
                       try {
-                        await imgToUpload.putFile(File(filePath));
-                        imageURL = await imgToUpload.getDownloadURL();
+                        f() async {
+                          await imgToUpload.putFile(File(filePath));
+                          imageURL = await imgToUpload.getDownloadURL();
+                        }
+
+                        f();
                       } catch (error) {
                         print(error);
                       }
@@ -292,7 +284,7 @@ class AddEventFormState extends State<AddEventForm> {
                       imageURL,
                       "admin");
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Event Added Sucessfully")),
+                    const SnackBar(content: Text("Event Added Sucessfully")),
                   );
                 },
                 child: const Text('Submit'),

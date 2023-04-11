@@ -1,7 +1,8 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/colors.dart';
-import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:intl/intl.dart';
 
 //to do build a function to access all the events
@@ -101,8 +102,8 @@ class _EventsState extends State<Events> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
                             DocumentSnapshot doc = snapshot.data!.docs[index];
-                            String _doc_eventDate = doc["eventDate"];
-                            List<String> date_split = _doc_eventDate.split('/');
+                            String doc_eventDate0 = doc["eventDate"];
+                            List<String> date_split = doc_eventDate0.split('/');
                             DateTime doc_eventDate = DateTime(
                               int.parse(date_split[2]),
                               int.parse(date_split[1]),

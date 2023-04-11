@@ -3,7 +3,6 @@ import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 
@@ -457,7 +456,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   todayDecoration: BoxDecoration(
                       color: Color(0xffAAAAAA), shape: BoxShape.circle)),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             Expanded(
                 child: ListView(
               children: [
@@ -509,7 +510,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                     ],
                   );
                 })

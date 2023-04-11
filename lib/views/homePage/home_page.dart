@@ -1,11 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
-import 'package:iitropar/utilities/bottom_bar.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
-import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:iitropar/views/homePage/admin_home.dart';
 import 'package:iitropar/views/homePage/club_home.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
@@ -16,8 +13,8 @@ abstract class AbstractHome extends StatefulWidget {
 }
 
 abstract class AbstractHomeState extends State<AbstractHome> {
-  CircleAvatar getUserImage() {
-    var image;
+  CircleAvatar getUserImage(double radius) {
+    ImageProvider image;
     if (FirebaseAuth.instance.currentUser != null &&
         FirebaseAuth.instance.currentUser!.photoURL != null) {
       image =
@@ -27,7 +24,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
     }
     return CircleAvatar(
       backgroundImage: image,
-      radius: 50,
+      radius: radius,
     );
   }
 
@@ -45,6 +42,10 @@ abstract class AbstractHomeState extends State<AbstractHome> {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final iconSize = screenSize.width * 0.2;
+    final textSize = screenSize.width * 0.8;
+
     return Scaffold(
       backgroundColor: Color(secondaryLight),
       appBar: AppBar(
@@ -68,28 +69,13 @@ abstract class AbstractHomeState extends State<AbstractHome> {
               onPressed: () {
                 LoadingScreen.setTask(_signout);
                 LoadingScreen.setPrompt('Signing Out');
-                LoadingScreen.setBuilder((context) => const LandingPage());
-                LandingPage.signin(true);
-
-                // Navigator.popUntil(context, ModalRoute.withName('/'));
-                // Navigator.pop(context);
-                // Navigator.of(context).popUntil((route) => route.isFirst);
-
-                // Navigator.of(context).pushAndRemoveUntil(
-                //     MaterialPageRoute(
-                //         builder: LoadingScreen.build,
-                //         settings: const RouteSettings(name: '/')),
-                //     (route) => false);
+                LoadingScreen.setBuilder((context) => const RootPage());
+                RootPage.signin(true);
 
                 Navigator.of(context, rootNavigator: true).pushReplacement(
                     MaterialPageRoute(
                         builder: LoadingScreen.build,
                         settings: const RouteSettings(name: '/')));
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: LoadingScreen.build,
-                //         settings: const RouteSettings(name: '/')));
               },
             )
           ],
@@ -102,29 +88,34 @@ abstract class AbstractHomeState extends State<AbstractHome> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: getUserImage(),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Hey ${getUserName()}',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: Color(primaryLight), // Set text color to blue
-                        fontSize: 22, // Set text size to 24
-                        fontWeight: FontWeight.bold, // Set text font to bold
-                      )),
-                  const SizedBox(height: 5),
-                  Text('How are you doing today?',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: Color(primaryLight), // Set text color to blue
-                        fontSize:
-                            18, // Set text size to 24// Set text font to bold
-                      )),
-                ],
-              ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(children: [
+                    getUserImage(iconSize / 2 - 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                            width: textSize,
+                            child: Text('Hey! ${getUserName()}',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  color: Color(
+                                      primaryLight), // Set text color to blue
+                                  fontSize: 22, // Set text size to 24
+                                  fontWeight:
+                                      FontWeight.bold, // Set text font to bold
+                                ))),
+                        Text('How are you doing today?',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              color:
+                                  Color(primaryLight), // Set text color to blue
+                              fontSize:
+                                  18, // Set text size to 24// Set text font to bold
+                            )),
+                      ],
+                    ),
+                  ])),
             ],
           ), // Set text alignment to center
           Divider(

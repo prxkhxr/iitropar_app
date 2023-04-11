@@ -1,7 +1,7 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/views/event_calendar.dart';
 import 'package:iitropar/views/events.dart';
@@ -24,7 +24,7 @@ class MainLandingPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildScreens(){
+  List<Widget> _buildScreens() {
     return [
       const HomePage(),
       const EventCalendarScreen(),
@@ -34,38 +34,33 @@ class MainLandingPage extends StatelessWidget {
     ];
   }
 
-  List<PersistentBottomNavBarItem> _navbarItems(){
+  List<PersistentBottomNavBarItem> _navbarItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.home),
-        title: 'Home',
-        activeColorPrimary: Color(primaryLight),
-        inactiveColorPrimary: Colors.grey[400]
-      ),
+          icon: const Icon(CupertinoIcons.home),
+          title: 'Home',
+          activeColorPrimary: Color(primaryLight),
+          inactiveColorPrimary: Colors.grey[400]),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.calendar),
-        title: 'Calendar',
-        activeColorPrimary: Color(primaryLight),
-        inactiveColorPrimary: Colors.grey[400]
-      ),
+          icon: const Icon(CupertinoIcons.calendar),
+          title: 'Calendar',
+          activeColorPrimary: Color(primaryLight),
+          inactiveColorPrimary: Colors.grey[400]),
       PersistentBottomNavBarItem(
-        icon: const Icon(Icons.event),
-        title: 'Events',
-        activeColorPrimary: Color(primaryLight),
-        inactiveColorPrimary: Colors.grey[400]
-      ),
+          icon: const Icon(Icons.event),
+          title: 'Events',
+          activeColorPrimary: Color(primaryLight),
+          inactiveColorPrimary: Colors.grey[400]),
       PersistentBottomNavBarItem(
-        icon: const Icon(Icons.food_bank),
-        title: 'Mess Menu',
-        activeColorPrimary: Color(primaryLight),
-        inactiveColorPrimary: Colors.grey[400]
-      ),
+          icon: const Icon(Icons.food_bank),
+          title: 'Mess Menu',
+          activeColorPrimary: Color(primaryLight),
+          inactiveColorPrimary: Colors.grey[400]),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.link),
-        title: 'Quick Links',
-        activeColorPrimary: Color(primaryLight),
-        inactiveColorPrimary: Colors.grey[400]
-      ),
+          icon: const Icon(CupertinoIcons.link),
+          title: 'Quick Links',
+          activeColorPrimary: Color(primaryLight),
+          inactiveColorPrimary: Colors.grey[400]),
     ];
   }
 }

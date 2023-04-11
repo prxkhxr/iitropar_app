@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iitropar/database/event.dart';
 
@@ -12,7 +14,7 @@ class firebaseDatabase {
       String endTime,
       String? imgURL,
       String creator) {
-    String docName = "$eventTitle" + date.replaceAll('/', '-');
+    String docName = eventTitle + date.replaceAll('/', '-');
     DocumentReference ref_event_nr = FirebaseFirestore.instance
         .collection("Event.nonrecurring")
         .doc(docName);
@@ -58,9 +60,9 @@ class firebaseDatabase {
   }
 
   static Future<List<dynamic>> getClubIds() async {
-    CollectionReference _collectionRef =
+    CollectionReference collectionRef =
         FirebaseFirestore.instance.collection('clubs');
-    QuerySnapshot querySnapshot = await _collectionRef.get();
+    QuerySnapshot querySnapshot = await collectionRef.get();
 
     // Get data from docs and convert map to List
     List<dynamic> emails =
@@ -69,9 +71,9 @@ class firebaseDatabase {
   }
 
   static Future<String> getClubName(String clubEmail) async {
-    CollectionReference _collectionRef =
+    CollectionReference collectionRef =
         FirebaseFirestore.instance.collection('clubs');
-    QuerySnapshot querySnapshot = await _collectionRef.get();
+    QuerySnapshot querySnapshot = await collectionRef.get();
 
     // Get data from docs and convert map to List
     var len = querySnapshot.docs.length;
@@ -97,8 +99,8 @@ class firebaseDatabase {
         await FirebaseFirestore.instance.collection('Event.nonrecurring').get();
     for (int i = 0; i < snapshots.docs.length; i++) {
       var doc = snapshots.docs[0];
-      String _doc_eventDate = doc["eventDate"];
-      List<String> date_split = _doc_eventDate.split('/');
+      String doc_eventDate0 = doc["eventDate"];
+      List<String> date_split = doc_eventDate0.split('/');
       DateTime doc_eventDate = DateTime(
         int.parse(date_split[2]),
         int.parse(date_split[1]),
@@ -131,7 +133,7 @@ class firebaseDatabase {
           .get();
       return doc.exists;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 }

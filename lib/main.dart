@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:iitropar/database/local_db.dart';
@@ -13,7 +12,7 @@ void main() async {
   if (await EventDB.firstRun() || FirebaseAuth.instance.currentUser == null) {
     signin = true;
   }
-  LandingPage.signin(signin);
+  RootPage.signin(signin);
   runApp(const App());
 }
 
@@ -31,7 +30,7 @@ class App extends StatelessWidget {
         fontFamily: 'Montserrat',
       ),
       initialRoute: '/',
-      home: const LandingPage(),
+      home: const RootPage(),
     );
   }
 }

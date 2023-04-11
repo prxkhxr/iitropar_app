@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iitropar/utilities/bottom_bar.dart';
-import 'package:iitropar/utilities/navigation_drawer.dart';
 import 'package:iitropar/frequently_used.dart';
 
 class MessMenuPage extends StatefulWidget {
