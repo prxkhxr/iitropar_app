@@ -121,10 +121,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         const EdgeInsets.symmetric(horizontal: buttonMargin),
                     child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const StudentHome()));
+                          _moveToHome();
                         },
                         style: ButtonStyle(backgroundColor:
                             MaterialStateProperty.resolveWith((states) {

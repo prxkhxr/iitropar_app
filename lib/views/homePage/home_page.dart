@@ -87,41 +87,39 @@ abstract class AbstractHomeState extends State<AbstractHome> {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(children: [
-                    getUserImage(iconSize / 2 - 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                            width: textSize,
-                            child: Text('Hey! ${getUserName()}',
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  color: Color(
-                                      primaryLight), // Set text color to blue
-                                  fontSize: 22, // Set text size to 24
-                                  fontWeight:
-                                      FontWeight.bold, // Set text font to bold
-                                ))),
-                        Text('How are you doing today?',
+          const SizedBox(height: 10),
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(children: [
+                getUserImage(iconSize / 2 - 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                        width: textSize,
+                        child: Text('Hey! ${getUserName()}',
                             textAlign: TextAlign.right,
                             style: TextStyle(
                               color:
                                   Color(primaryLight), // Set text color to blue
-                              fontSize:
-                                  18, // Set text size to 24// Set text font to bold
-                            )),
-                      ],
-                    ),
-                  ])),
-            ],
-          ), // Set text alignment to center
+                              fontSize: 22, // Set text size to 24
+                              fontWeight:
+                                  FontWeight.bold, // Set text font to bold
+                            ))),
+                    SizedBox(
+                      width: textSize,
+                      child: Text('How are you doing today?',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color:
+                                Color(primaryLight), // Set text color to blue
+                            fontSize:
+                                18, // Set text size to 24// Set text font to bold
+                          )),
+                    )
+                  ],
+                ),
+              ])), // Set text alignment to center
           Divider(
             color: Color(primaryLight),
             height: 30,
