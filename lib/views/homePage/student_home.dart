@@ -22,7 +22,7 @@ String getDay() {
 
 Widget buildItems(String item) {
   return Padding(
-    padding: const EdgeInsets.all(10),
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: Column(
       children: [
         CircleAvatar(
@@ -106,9 +106,10 @@ class _StudentHomeState extends AbstractHomeState {
   bool isClassLoad = false;
   List<Event> classes = [];
   List<Event> events = [];
+
   Future<bool> loadClasses() async {
-    classes = await EventDB().fetchOf('admin');
-    print(classes);
+    classes = await EventDB().fetchEvents(DateTime.now(), 'admin');
+    classes.sort(((a, b) => a.compareTo(b)));
     return true;
   }
 
@@ -141,7 +142,7 @@ class _StudentHomeState extends AbstractHomeState {
               const SizedBox(
                 width: 5,
               ),
-              Text('Time: ${myEvents.stime} - ${myEvents.etime}'),
+              Text('Time: ${myEvents.displayTime()}'),
             ],
           ),
         ),

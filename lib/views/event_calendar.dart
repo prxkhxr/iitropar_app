@@ -62,12 +62,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   void _insertEvent(Event e) async {
     edb.insert(e);
-    loadEvents(stringDate(e.displayDate));
+    loadEvents(e.displayDate);
   }
 
   void _deleteEvent(Event e) async {
     edb.delete(e);
-    loadEvents(stringDate(e.displayDate));
+    loadEvents(e.displayDate);
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -82,6 +82,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   List<Event> _listOfDayEvents(DateTime datetime) {
     var l = mySelectedEvents[DateFormat('yyyy-MM-dd').format(datetime)];
     if (l != null) {
+      l.sort((a, b) => a.compareTo(b));
       return l;
     }
     return List.empty();
@@ -208,9 +209,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     Event s = Event.singular(
                       title: titleController.text,
                       description: descpController.text,
-                      stime: formatTimeOfDay(startTime),
-                      etime: formatTimeOfDay(endTime),
-                      displayDate: dateString(_selectedDate),
+                      stime: startTime,
+                      etime: endTime,
+                      displayDate: _selectedDate,
                       creator: 'user',
                     );
                     _insertEvent(s);
@@ -372,16 +373,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     return;
                   } else {
                     print("Adding Recurring Event");
-                    print(
-                        "${DateFormat('dd-MM-yyyy').format(startDate)} ::: ${DateFormat('dd-MM-yyyy').format(endDate)}");
                     Event r = Event.recurring(
                       title: titleController.text,
                       description: descpController.text,
-                      stime: formatTimeOfDay(startTime),
-                      etime: formatTimeOfDay(endTime),
-                      startDate: dateString(startDate),
-                      endDate: dateString(endDate),
-                      displayDate: dateString(_selectedDate),
+                      stime: startTime,
+                      etime: endTime,
+                      startDate: startDate,
+                      endDate: endDate,
+                      displayDate: _selectedDate,
                       mask: (1 << startDate.weekday),
                       creator: 'user',
                     );
@@ -428,7 +427,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 if (!isSameDay(_selectedDate, selectedDay)) {
                   setState(() {
                     _selectedDate = selectedDay;
-                    print('Selected Date = $_selectedDate');
                     _focused = focusedDay;
                   });
                 }
@@ -504,7 +502,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                               width: 5,
                             ),
                             Text(
-                              'Time: ${myEvents.stime} - ${myEvents.etime}',
+                              'Time: ${myEvents.displayTime()}',
                               style: TextStyle(color: Color(primaryLight)),
                             ),
                           ],

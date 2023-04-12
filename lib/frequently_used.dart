@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+
+import 'database/event.dart';
 
 String dateString(DateTime d) {
   return DateFormat('yyyy-MM-dd').format(d);

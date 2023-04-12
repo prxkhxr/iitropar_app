@@ -41,10 +41,12 @@ class _SignInScreenState extends State<SignInScreen> {
     Navigator.popUntil(context, ModalRoute.withName('/'));
     Navigator.pop(context);
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => const RootPage(),
-        ));
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => const RootPage(),
+        settings: const RouteSettings(name: '/'),
+      ),
+    );
   }
 
   @override
