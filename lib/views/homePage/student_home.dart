@@ -107,7 +107,8 @@ class _StudentHomeState extends AbstractHomeState {
   List<Event> classes = [];
   List<Event> events = [];
   Future<bool> loadClasses() async {
-    classes = await EventDB().fetchRecurringEvents(DateTime.now());
+    classes = await EventDB().fetchOf('admin');
+    print(classes);
     return true;
   }
 
@@ -162,8 +163,11 @@ class _StudentHomeState extends AbstractHomeState {
         future: loadClasses(),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
-            return const Text('No classes Today');
+            return const Text('Loading today\'s Classes ...');
           } else {
+            if (classes.isEmpty) {
+              return const Text('No classes today');
+            }
             return Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -215,8 +219,11 @@ class _StudentHomeState extends AbstractHomeState {
         future: loadEvents(),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
-            return const Text('No Events Today');
+            return const Text('Loading today\'s Events ...');
           } else {
+            if (classes.isEmpty) {
+              return const Text('No Events today');
+            }
             return Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(

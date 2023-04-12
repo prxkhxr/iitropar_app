@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/PBTabView.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
@@ -27,8 +28,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _signin() async {
     await FirebaseServices().signInWithGoogle();
-    EventDB().loadCourse(await firebaseDatabase
-        .getCourses(FirebaseAuth.instance.currentUser!.email!.split('@')[0]));
+    if (FirebaseAuth.instance.currentUser == null) return;
+    if ((await Ids.resolveUser()).compareTo('student') == 0) {
+      await EventDB().loadCourse(await firebaseDatabase
+          .getCourses(FirebaseAuth.instance.currentUser!.email!.split('@')[0]));
+    }
     _moveToHome();
   }
 
@@ -50,13 +54,7 @@ class _SignInScreenState extends State<SignInScreen> {
     final double buttonWidth = (screenSize.width - 2 * buttonMargin) * 0.8;
 
     return Scaffold(
-      body:
-          // Container(
-          // decoration: const BoxDecoration(
-          //   color: Colors.white,
-          // ),
-          // child:
-          Center(
+      body: Center(
         child: Container(
           decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -96,8 +94,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         }
                         return Colors.grey[100];
                       })),
-                      // child: Padding(
-                      //   padding: const EdgeInsets.all(8.0),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -118,7 +114,6 @@ class _SignInScreenState extends State<SignInScreen> {
                               height: buttonWidth * 0.2,
                             ),
                           ]),
-                      // ),
                     ),
                   ),
                   Container(
@@ -138,8 +133,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           }
                           return Colors.grey[100];
                         })),
-                        // child: const Padding(
-                        // padding: EdgeInsets.all(8.0),
                         child: SizedBox(
                           width: buttonWidth,
                           child: const Text(
@@ -149,15 +142,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 24),
                           ),
-                        )
-                        // ),
-                        ),
+                        )),
                   ),
                 ])
               ]),
         ),
       ),
-      // ),
     );
   }
 }

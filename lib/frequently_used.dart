@@ -107,20 +107,6 @@ class Menu {
   };
 }
 
-// class LoadingScreen extends StatefulWidget {
-//   const LoadingScreen({super.key});
-
-//   @override
-//   State<LoadingScreen> createState() => _LoadingScreenState();
-// }
-
-// class _LoadingScreenState extends State<LoadingScreen> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Placeholder();
-//   }
-// }
-
 class LoadingScreen {
   static Future<bool> Function()? _task;
   static String? _msg;

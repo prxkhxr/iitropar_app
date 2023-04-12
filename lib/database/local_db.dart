@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:iitropar/database/event.dart';
@@ -22,7 +24,7 @@ class EventDB {
       onCreate: (db, version) async {
         _firstRun = true;
         await db.execute(
-            "CREATE TABLE events(title TEXT, desc TEXT, stime TEXT, etime TEXT, startDate TEXT, endDate TEXT, mask TEXT, type INTEGER, PRIMARY KEY(title, desc, stime, etime, startDate)) WITHOUT ROWID;");
+            "CREATE TABLE events(title TEXT, desc TEXT, stime TEXT, etime TEXT, startDate TEXT, endDate TEXT, mask TEXT, creator INTEGER, type INTEGER, PRIMARY KEY(title, desc, stime, etime, startDate)) WITHOUT ROWID;");
       },
     );
   }
@@ -51,7 +53,7 @@ class EventDB {
 
   Future<int> _addSingularEvent(Event se) async {
     return await _db!.rawInsert(
-        'INSERT INTO events(title, desc, stime, etime, startDate, type) VALUES ("${se.title}", "${se.description}", "${se.stime}", "${se.etime}", "${se.displayDate}", 0);');
+        'INSERT INTO events(title, desc, stime, etime, startDate, creator, type) VALUES ("${se.title}", "${se.description}", "${se.stime}", "${se.etime}", "${se.displayDate}", "${se.creator}", 0);');
   }
 
   Future<int> _addRecurringEvent(Event re) async {
@@ -60,7 +62,7 @@ class EventDB {
 
     if (vals.isEmpty) {
       return await _db!.rawInsert(
-          'INSERT INTO events(title, desc, stime, etime, startDate, endDate, mask, type) VALUES ("${re.title}", "${re.description}", "${re.stime}", "${re.etime}", "${re.startDate}", "${re.endDate}", ${re.mask}, 1);');
+          'INSERT INTO events(title, desc, stime, etime, startDate, endDate, mask, creator, type) VALUES ("${re.title}", "${re.description}", "${re.stime}", "${re.etime}", "${re.startDate}", "${re.endDate}", ${re.mask}, "${re.creator}", 1);');
     } else {
       int mask = (int.parse(vals[0]['mask'].toString()) | re.mask!);
       return _db!.rawUpdate(
@@ -95,10 +97,16 @@ class EventDB {
     });
   }
 
-  Future<bool> delete(Event e) async {
+  Future<int> delete(Event e) async {
     var cnt = await _db!.rawDelete(
         'DELETE FROM events WHERE title = "${e.title}" and desc = "${e.description}" and stime = "${e.stime}" and etime = "${e.etime}";');
-    return !(cnt == 0);
+    return cnt;
+  }
+
+  Future<int> deleteOf(String creator) async {
+    var cnt =
+        await _db!.rawDelete('DELETE FROM events WHERE creator = "$creator"');
+    return cnt;
   }
 
   Future<bool> insert(Event e) async {
@@ -120,6 +128,35 @@ class EventDB {
       l1.addAll(l2);
       return l1;
     });
+  }
+
+  Event _convertToEvent(Map<String, Object?> vals) {
+    if (int.parse(vals['type'].toString()) == 0) {
+      return Event.singular(
+          title: vals['title'].toString(),
+          description: vals['desc'].toString(),
+          stime: vals['stime'].toString(),
+          etime: vals['etime'].toString(),
+          displayDate: vals['startDate'].toString(),
+          creator: vals['creator'].toString());
+    } else {
+      return Event.recurring(
+          title: vals['title'].toString(),
+          description: vals['desc'].toString(),
+          startDate: vals['startDate'].toString(),
+          endDate: vals['endDate'].toString(),
+          mask: int.parse(vals['mask'].toString()),
+          stime: vals['stime'].toString(),
+          etime: vals['etime'].toString(),
+          displayDate: dateString(DateTime.now()),
+          creator: vals['creator'].toString());
+    }
+  }
+
+  Future<List<Event>> fetchOf(String creator) async {
+    var events =
+        await _db!.rawQuery('SELECT * FROM events WHERE creator = "$creator";');
+    return List.from(events.map((e) => _convertToEvent(e)));
   }
 
   Future<bool> loadCourse(List<String> course_id) async {
@@ -165,22 +202,22 @@ class EventDB {
               : ('${course_id[i]} Class');
           String time = times[j];
           var l = time.split(' ');
-          String day = l[0];
+          String day = l[0].toLowerCase();
           int mask = 0;
-          if (day.toLowerCase().compareTo('monday') == 0) {
-            mask = (1 << 1);
-          } else if (day.toLowerCase().compareTo('tuesday') == 0) {
-            mask = (1 << 2);
-          } else if (day.toLowerCase().compareTo('wednesday') == 0) {
-            mask = (1 << 3);
-          } else if (day.toLowerCase().compareTo('thursday') == 0) {
-            mask = (1 << 4);
-          } else if (day.toLowerCase().compareTo('friday') == 0) {
-            mask = (1 << 5);
-          } else if (day.toLowerCase().compareTo('saturday') == 0) {
-            mask = (1 << 6);
-          } else if (day.toLowerCase().compareTo('sunday') == 0) {
-            mask = (1 << 7);
+          const weekdays = [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday'
+          ];
+          for (int k = 0; k < 7; k++) {
+            if (day.compareTo(weekdays[k]) == 0) {
+              mask = 1 << (k + 1);
+              break;
+            }
           }
           String stime = '${l[1]} ${l[4]}';
           String etime = '${l[3]} ${l[4]}';

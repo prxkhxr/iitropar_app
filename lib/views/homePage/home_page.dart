@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
@@ -36,6 +37,9 @@ abstract class AbstractHomeState extends State<AbstractHome> {
   List<Widget> buttons();
 
   Future<bool> _signout() async {
+    if (Ids.role == 'student') {
+      await EventDB().deleteOf('admin');
+    }
     await FirebaseServices().signOut();
     return true;
   }
