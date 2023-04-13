@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/PBTabView.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
@@ -22,7 +23,7 @@ class _SignInScreenState extends State<SignInScreen> {
       fit: BoxFit.fitWidth,
       width: 240,
       height: 240,
-      color: Colors.black,
+      color: Color(secondaryLight),
     );
   }
 
@@ -60,26 +61,36 @@ class _SignInScreenState extends State<SignInScreen> {
         child: Container(
           decoration: const BoxDecoration(
               gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            stops: [
-              0.1,
-              0.4,
-              0.6,
-              0.9,
-            ],
-            colors: [
-              Colors.grey,
-              Colors.blue,
-              Colors.blue,
-              Colors.grey,
-            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            // stops: const [
+            //   0.1,
+            //   0.4,
+            //   0.6,
+            //   0.9,
+            // ],
+            colors: [Color(0xff111111), Color(0xff333333)],
           )),
           // margin: EdgeInsets.symmetric(horizontal: 80),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                SizedBox(
+                  width: screenSize.width * 0.9,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "IIT Connect",
+                        style: TextStyle(
+                            color: Color(secondaryLight),
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
                 logoWidget('assets/iitropar_logo.png'),
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                   Container(
@@ -94,17 +105,17 @@ class _SignInScreenState extends State<SignInScreen> {
                         if (states.contains(MaterialState.pressed)) {
                           return Colors.black26;
                         }
-                        return Colors.grey[100];
+                        return Color(secondaryLight);
                       })),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(
                               width: buttonWidth * 0.8,
-                              child: const Text(
+                              child: Text(
                                 "Login with Gmail",
                                 style: TextStyle(
-                                  color: Colors.black87,
+                                  color: Color(primaryLight),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 24,
                                 ),
@@ -118,6 +129,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ]),
                     ),
                   ),
+                  const SizedBox(height: 5,),
                   Container(
                     margin:
                         const EdgeInsets.symmetric(horizontal: buttonMargin),
@@ -130,16 +142,21 @@ class _SignInScreenState extends State<SignInScreen> {
                           if (states.contains(MaterialState.pressed)) {
                             return Colors.black26;
                           }
-                          return Colors.grey[100];
+                          return Color(secondaryLight);
                         })),
                         child: SizedBox(
                           width: buttonWidth,
-                          child: const Text(
-                            "Login as Guest",
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Login as Guest",
+                                style: TextStyle(
+                                    color: Color(primaryLight),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24),
+                              ),
+                            ],
                           ),
                         )),
                   ),

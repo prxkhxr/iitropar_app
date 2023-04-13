@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
 
@@ -79,11 +80,18 @@ class _EventsState extends State<Events> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Center(
-              child: Text(
-            "Events",
-            style: TextStyle(color: Color(primaryLight), fontSize: 24),
-          )),
+          toolbarHeight: 50,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              themeButtonWidget(),
+              Text(
+                "EVENTS",
+                style: appbarTitleStyle(),
+              ),
+              signoutButtonWidget(context),
+            ],
+          ),
           elevation: 0,
           backgroundColor: Color(secondaryLight),
         ),

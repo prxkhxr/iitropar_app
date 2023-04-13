@@ -53,18 +53,16 @@ abstract class AbstractHomeState extends State<AbstractHome> {
     return Scaffold(
       backgroundColor: Color(secondaryLight),
       appBar: AppBar(
+        toolbarHeight: 50,
         elevation: 0,
         backgroundColor: Color(secondaryLight),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.wb_sunny_rounded,
-              ),
-              color: Color(primaryLight),
-              iconSize: 28,
+            themeButtonWidget(),
+            Text(
+              "HOME",
+              style: appbarTitleStyle(),
             ),
             IconButton(
               icon: const Icon(Icons.logout_rounded),

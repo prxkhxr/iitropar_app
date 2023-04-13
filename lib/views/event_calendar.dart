@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
@@ -406,11 +408,17 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: Center(
-            child: Text(
-              "Event Calendar",
-              style: TextStyle(color: Color(primaryLight), fontSize: 24),
-            ),
+          toolbarHeight: 50,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              themeButtonWidget(),
+              Text(
+                "EVENT CALENDAR",
+                style: appbarTitleStyle(),
+              ),
+              signoutButtonWidget(context),
+            ],
           ),
           backgroundColor: Color(secondaryLight),
           elevation: 0,
@@ -448,10 +456,10 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               },
               availableCalendarFormats: const {CalendarFormat.month: 'Month'},
               currentDay: DateTime.now(),
-              calendarStyle: const CalendarStyle(
+              calendarStyle: CalendarStyle(
                   selectedDecoration: BoxDecoration(
-                      color: Color(0xff555555), shape: BoxShape.circle),
-                  todayDecoration: BoxDecoration(
+                      color: Color(primaryLight), shape: BoxShape.circle),
+                  todayDecoration: const BoxDecoration(
                       color: Color(0xffAAAAAA), shape: BoxShape.circle)),
             ),
             const SizedBox(
@@ -549,6 +557,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               },
             );
           },
+          backgroundColor: Color(primaryLight),
           child: const Icon(Icons.add),
         ));
   }

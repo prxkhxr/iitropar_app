@@ -1,10 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
+import 'package:iitropar/utilities/firebase_services.dart';
+import 'package:iitropar/views/landing_page.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 
 import 'database/event.dart';
+import 'database/local_db.dart';
 
 String dateString(DateTime d) {
   return DateFormat('yyyy-MM-dd').format(d);
@@ -156,4 +160,50 @@ class LoadingScreen {
       },
     );
   }
+}
+
+Future<bool> _signout() async {
+  if (Ids.role == 'student') {
+    await EventDB().deleteOf('admin');
+  }
+  await FirebaseServices().signOut();
+  return true;
+}
+
+Widget signoutButtonWidget(BuildContext context) {
+  return IconButton(
+    icon: const Icon(Icons.logout_rounded),
+    color: Color(primaryLight),
+    iconSize: 28,
+    onPressed: () {
+      LoadingScreen.setTask(_signout);
+      LoadingScreen.setPrompt('Signing Out');
+      LoadingScreen.setBuilder((context) => const RootPage());
+      RootPage.signin(true);
+
+      Navigator.of(context, rootNavigator: true).pushReplacement(
+          MaterialPageRoute(
+              builder: LoadingScreen.build,
+              settings: const RouteSettings(name: '/')));
+    },
+  );
+}
+
+Widget themeButtonWidget() {
+  return IconButton(
+    onPressed: () {},
+    icon: const Icon(
+      Icons.wb_sunny_rounded,
+    ),
+    color: Color(primaryLight),
+    iconSize: 28,
+  );
+}
+
+TextStyle appbarTitleStyle() {
+  return TextStyle(
+      color: Color(primaryLight),
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.5);
 }
