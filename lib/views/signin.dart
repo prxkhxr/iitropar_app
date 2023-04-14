@@ -112,12 +112,14 @@ class _SignInScreenState extends State<SignInScreen> {
                           children: [
                             SizedBox(
                               width: buttonWidth * 0.8,
-                              child: Text(
-                                "Login with Gmail",
-                                style: TextStyle(
-                                  color: Color(primaryLight),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
+                              child: FittedBox(
+                                child: Text(
+                                  "Login with Gmail",
+                                  style: TextStyle(
+                                    color: Color(primaryLight),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24,
+                                  ),
                                 ),
                               ),
                             ),
@@ -129,36 +131,53 @@ class _SignInScreenState extends State<SignInScreen> {
                           ]),
                     ),
                   ),
-                  const SizedBox(height: 5,),
+                  const SizedBox(
+                    height: 5,
+                  ),
                   Container(
                     margin:
                         const EdgeInsets.symmetric(horizontal: buttonMargin),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          _moveToHome();
-                        },
-                        style: ButtonStyle(backgroundColor:
-                            MaterialStateProperty.resolveWith((states) {
-                          if (states.contains(MaterialState.pressed)) {
-                            return Colors.black26;
-                          }
-                          return Color(secondaryLight);
-                        })),
-                        child: SizedBox(
-                          width: buttonWidth,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Login as Guest",
-                                style: TextStyle(
-                                    color: Color(primaryLight),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24),
-                              ),
-                            ],
+                    // child: ElevatedButton(
+                    //     onPressed: () {
+                    //       _moveToHome();
+                    //     },
+                    //     style: ButtonStyle(backgroundColor:
+                    //         MaterialStateProperty.resolveWith((states) {
+                    //       if (states.contains(MaterialState.pressed)) {
+                    //         return Colors.black26;
+                    //       }
+                    //       return Color(secondaryLight);
+                    //     })),
+                    //     child: SizedBox(
+                    //       height: 30,
+                    //       child: FittedBox(
+                    //         child: Row(
+                    //           mainAxisAlignment: MainAxisAlignment.center,
+                    //           children: [
+                    //             Text(
+                    //               "Login as Guest",
+                    //               style: TextStyle(
+                    //                   color: Color(primaryLight),
+                    //                   fontWeight: FontWeight.bold,
+                    //                   fontSize: 24),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     )),
+
+                    child: TextButton(
+                      onPressed: () => _moveToHome(),
+                      child: SizedBox(
+                        height: 18,
+                        child: FittedBox(
+                          child: Text(
+                            "Don't have an account? Login as Guest.",
+                            style: TextStyle(color: Color(secondaryLight)),
                           ),
-                        )),
+                        ),
+                      ),
+                    ),
                   ),
                 ])
               ]),

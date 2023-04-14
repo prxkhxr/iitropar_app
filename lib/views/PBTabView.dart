@@ -21,6 +21,11 @@ class MainLandingPage extends StatelessWidget {
       items: _navbarItems(),
       navBarStyle: NavBarStyle.style9,
       backgroundColor: Color(secondaryLight),
+      screenTransitionAnimation: const ScreenTransitionAnimation(
+        animateTabTransition: false,
+        duration: Duration(seconds: 1),
+        curve: Curves.ease
+      ),
     );
   }
 

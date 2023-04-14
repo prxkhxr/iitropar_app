@@ -409,21 +409,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              themeButtonWidget(),
-              Text(
-                "EVENT CALENDAR",
-                style: appbarTitleStyle(),
-              ),
-              signoutButtonWidget(context),
-            ],
-          ),
+          title: buildTitleBar("EVENT CALENDAR", context),
           backgroundColor: Color(secondaryLight),
           elevation: 0,
         ),
         // drawer: const NavDrawer(),
+        backgroundColor: Color(secondaryLight),
         body: Column(
           children: [
             TableCalendar(

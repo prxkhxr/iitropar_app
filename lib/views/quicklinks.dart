@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() {
@@ -58,8 +60,12 @@ class _QuickLinksState extends State<QuickLinks> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quick Links'),
+        toolbarHeight: 50,
+        elevation: 0,
+        backgroundColor: Color(secondaryLight),
+        title: buildTitleBar("QUICK LINKS", context),
       ),
+      backgroundColor: Color(secondaryLight),
       body: GridView.count(
         crossAxisCount: 3, // 2 columns
         children: links.entries.map((entry) {
