@@ -81,17 +81,7 @@ class _EventsState extends State<Events> {
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              themeButtonWidget(),
-              Text(
-                "EVENTS",
-                style: appbarTitleStyle(),
-              ),
-              signoutButtonWidget(context),
-            ],
-          ),
+          title: buildTitleBar("EVENTS", context),
           elevation: 0,
           backgroundColor: Color(secondaryLight),
         ),
@@ -142,6 +132,7 @@ class _EventsState extends State<Events> {
             ),
           ],
         ),
+        backgroundColor: Color(secondaryLight),
         bottomNavigationBar: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
