@@ -21,9 +21,26 @@ DateTime stringDate(String d) {
   return DateTime(year, month, day);
 }
 
+class holidays {
+  late DateTime date;
+  late String desc;
+  holidays(date, desc) {
+    this.date = DateFormat('yyyy-MM-dd').parse(date);
+    this.desc = desc;
+  }
+}
+
+class changedDay {
+  late DateTime date;
+  late String day_to_followed;
+  changedDay(date, day_to_followed) {
+    this.date = DateFormat('yyyy-MM-dd').parse(date);
+    this.day_to_followed = day_to_followed;
+  }
+}
+
 class Ids {
   static List<String> admins = [
-    // "2020csb1082@iitrpr.ac.in",
     "2020csb1086@iitrpr.ac.in",
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();

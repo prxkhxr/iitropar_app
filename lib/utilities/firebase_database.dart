@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iitropar/database/event.dart';
+import 'package:iitropar/frequently_used.dart';
 
 class firebaseDatabase {
   static void addEventFB(
@@ -32,7 +33,63 @@ class firebaseDatabase {
     ref_event_nr
         .set(event)
         .then((value) => print("event added"))
-        .catchError((error) => print("failed to add event: $error"));
+        .catchError((error) => print("failed to add event.\n ERROR =  $error"));
+  }
+
+  static void addHolidayFB(String date, String desc) {
+    String docName = date.replaceAll('/', '-');
+    DocumentReference doc_ref =
+        FirebaseFirestore.instance.collection('holidays').doc(docName);
+    Map<String, String> holiday = {"date": date, "desc": desc};
+    doc_ref
+        .set(holiday)
+        .then((value) => print("holiday added successfully"))
+        .catchError(
+            (error) => print("failed to add holiday.\n ERROR = $error "));
+  }
+
+  static Future<List<holidays>> getHolidayFB() async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('holidays');
+    QuerySnapshot querySnapshot = await collectionRef.get();
+
+    // Get data from docs and convert map to List
+    List<holidays> hols = [];
+    var len = querySnapshot.docs.length;
+    for (int i = 0; i < len; i++) {
+      hols.add(holidays(
+          querySnapshot.docs[i]['date'], querySnapshot.docs[i]['desc']));
+    }
+    return hols;
+  }
+
+  static void switchTimetableFB(String date, String day) {
+    String docName = date.replaceAll('/', '-');
+    DocumentReference doc_ref =
+        FirebaseFirestore.instance.collection('switchTimetable').doc(docName);
+    Map<String, String> switchTimetable = {
+      "date": date,
+      "day_to_be_followed": day
+    };
+    doc_ref
+        .set(switchTimetable)
+        .then((value) => print("added successfully"))
+        .catchError((error) => print("failed to add data.\n ERROR = $error "));
+  }
+
+  static Future<List<changedDay>> getChangedDays() async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('switchTimetable');
+    QuerySnapshot querySnapshot = await collectionRef.get();
+
+    // Get data from docs and convert map to List
+    List<changedDay> changedDays = [];
+    var len = querySnapshot.docs.length;
+    for (int i = 0; i < len; i++) {
+      changedDays.add(changedDay(querySnapshot.docs[i]['date'],
+          querySnapshot.docs[i]['day_to_be_followed']));
+    }
+    return changedDays;
   }
 
   static void addCourseFB(String entryNumber, List<dynamic> courses) {
