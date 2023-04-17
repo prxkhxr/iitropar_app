@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:iitropar/views/admin/add_event.dart';
 import 'package:iitropar/views/admin/add_event_csv.dart';
 import 'package:iitropar/views/admin/add_course_csv.dart';
+import 'package:iitropar/views/admin/add_holidays.dart';
 import 'package:iitropar/views/admin/registerClub.dart';
-
+import 'package:iitropar/views/admin/change_time_table.dart';
 import 'home_page.dart';
 
 class AdminHome extends AbstractHome {
@@ -48,6 +49,20 @@ class _AdminHomeState extends AbstractHomeState {
             MaterialPageRoute(builder: (context) => const registerClub()));
       },
       child: const Text("Register a club"),
+    ));
+    l.add(ElevatedButton(
+      onPressed: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const addHoliday()));
+      },
+      child: const Text("Declare Holiday"),
+    ));
+    l.add(ElevatedButton(
+      onPressed: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const changeTimetable()));
+      },
+      child: const Text("Change time table"),
     ));
 
     return l;

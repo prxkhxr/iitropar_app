@@ -36,14 +36,6 @@ abstract class AbstractHomeState extends State<AbstractHome> {
 
   List<Widget> buttons();
 
-  Future<bool> _signout() async {
-    if (Ids.role == 'student') {
-      await EventDB().deleteOf('admin');
-    }
-    await FirebaseServices().signOut();
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
@@ -56,32 +48,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
         toolbarHeight: 50,
         elevation: 0,
         backgroundColor: Color(secondaryLight),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            themeButtonWidget(),
-            Text(
-              "HOME",
-              style: appbarTitleStyle(),
-            ),
-            IconButton(
-              icon: const Icon(Icons.logout_rounded),
-              color: Color(primaryLight),
-              iconSize: 28,
-              onPressed: () {
-                LoadingScreen.setTask(_signout);
-                LoadingScreen.setPrompt('Signing Out');
-                LoadingScreen.setBuilder((context) => const RootPage());
-                RootPage.signin(true);
-
-                Navigator.of(context, rootNavigator: true).pushReplacement(
-                    MaterialPageRoute(
-                        builder: LoadingScreen.build,
-                        settings: const RouteSettings(name: '/')));
-              },
-            )
-          ],
-        ),
+        title: buildTitleBar("HOME", context),
       ),
       body: Column(
         children: [

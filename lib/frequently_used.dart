@@ -21,9 +21,26 @@ DateTime stringDate(String d) {
   return DateTime(year, month, day);
 }
 
+class holidays {
+  late DateTime date;
+  late String desc;
+  holidays(date, desc) {
+    this.date = DateFormat('yyyy-MM-dd').parse(date);
+    this.desc = desc;
+  }
+}
+
+class changedDay {
+  late DateTime date;
+  late String day_to_followed;
+  changedDay(date, day_to_followed) {
+    this.date = DateFormat('yyyy-MM-dd').parse(date);
+    this.day_to_followed = day_to_followed;
+  }
+}
+
 class Ids {
   static List<String> admins = [
-    // "2020csb1082@iitrpr.ac.in",
     "2020csb1086@iitrpr.ac.in",
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
@@ -205,7 +222,28 @@ Widget themeButtonWidget() {
 TextStyle appbarTitleStyle() {
   return TextStyle(
       color: Color(primaryLight),
-      fontSize: 24,
+      // fontSize: 24,
       fontWeight: FontWeight.bold,
       letterSpacing: 1.5);
+}
+
+Row buildTitleBar(String text, BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      themeButtonWidget(),
+      Flexible(
+        child: SizedBox(
+          height: 30,
+          child: FittedBox(
+            child: Text(
+              text,
+              style: appbarTitleStyle(),
+            ),
+          ),
+        ),
+      ),
+      signoutButtonWidget(context),
+    ],
+  );
 }
