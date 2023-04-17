@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:iitropar/database/event.dart';
@@ -7,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
+
+import '../frequently_used.dart';
 
 class EventCalendarScreen extends StatefulWidget {
   const EventCalendarScreen({super.key});
@@ -24,7 +28,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   DateTime endDate = DateTime.now();
   Map<String, List<Event>> mySelectedEvents = {};
   Map<String, List> weeklyEvents = {};
-
+  List<holidays> listofHolidays = [];
+  Map<String, String> mapofHolidays = {};
+  bool holidaysLoaded = false;
   EventDB edb = EventDB();
 
   final titleController = TextEditingController();
@@ -35,9 +41,24 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   @override
   void initState() {
     super.initState();
-
+    getHols();
     mySelectedEvents = {};
     loadEvents(_selectedDate);
+  }
+
+  Future<bool> getHols() async {
+    listofHolidays = await firebaseDatabase.getHolidayFB();
+
+    for (int i = 0; i < listofHolidays.length; i++) {
+      mapofHolidays[DateFormat('yyyy-MM-dd').format(listofHolidays[i].date)] =
+          listofHolidays[i].desc;
+    }
+
+    print(mapofHolidays);
+    setState(() {
+      holidaysLoaded = true;
+    });
+    return true;
   }
 
   loadLocalDB() async {
@@ -88,6 +109,21 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       return l;
     }
     return List.empty();
+  }
+
+  bool isHoliday(DateTime day) {
+    if (day.weekday >= 6) {
+      return true;
+    }
+
+    if (holidaysLoaded == true) {
+      String cmp = DateFormat('yyyy-MM-dd').format(day);
+      if (mapofHolidays[cmp] != null) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   _showSingleAddEventDialog() async {
@@ -417,41 +453,66 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         backgroundColor: Color(secondaryLight),
         body: Column(
           children: [
-            TableCalendar(
-              focusedDay: _focused,
-              firstDay: DateTime(2023),
-              lastDay: DateTime(2024).subtract(const Duration(days: 1)),
-              calendarFormat: CalendarFormat.month,
-              onDaySelected: (selectedDay, focusedDay) {
-                if (!isSameDay(_selectedDate, selectedDay)) {
-                  setState(() {
-                    _selectedDate = selectedDay;
-                    _focused = focusedDay;
-                  });
-                }
-              },
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDate, day);
-              },
-              enabledDayPredicate: (day) {
-                return _focused.month == day.month;
-              },
-              onPageChanged: (focusedDay) {
-                _focused = focusedDay;
-                loadEvents(focusedDay);
-              },
-              eventLoader: (datetime) {
-                List l = _listOfDayEvents(datetime);
-                if (l.isNotEmpty) return [1];
-                return [];
-              },
-              availableCalendarFormats: const {CalendarFormat.month: 'Month'},
-              currentDay: DateTime.now(),
-              calendarStyle: CalendarStyle(
-                  selectedDecoration: BoxDecoration(
-                      color: Color(primaryLight), shape: BoxShape.circle),
-                  todayDecoration: const BoxDecoration(
-                      color: Color(0xffAAAAAA), shape: BoxShape.circle)),
+            SizedBox(
+              height: (MediaQuery.of(context).size.height - 80)/2,
+              child: TableCalendar(
+                shouldFillViewport: true,
+                focusedDay: _focused,
+                firstDay: DateTime(2023),
+                lastDay: DateTime(2024).subtract(const Duration(days: 1)),
+                calendarFormat: CalendarFormat.month,
+                onDaySelected: (selectedDay, focusedDay) {
+                  if (!isSameDay(_selectedDate, selectedDay)) {
+                    setState(() {
+                      _selectedDate = selectedDay;
+                      _focused = focusedDay;
+                    });
+                  }
+                },
+                selectedDayPredicate: (day) {
+                  return isSameDay(_selectedDate, day);
+                },
+                enabledDayPredicate: (day) {
+                  return _focused.month == day.month;
+                },
+                onPageChanged: (focusedDay) {
+                  _focused = focusedDay;
+                  loadEvents(focusedDay);
+                },
+                eventLoader: (datetime) {
+                  return _listOfDayEvents(datetime);
+                },
+                holidayPredicate: (day) {
+                  return isHoliday(day);
+                },
+                availableCalendarFormats: const {CalendarFormat.month: 'Month'},
+                currentDay: DateTime.now(),
+                calendarStyle: CalendarStyle(
+                    selectedDecoration: BoxDecoration(
+                        color: Color(primaryLight), shape: BoxShape.circle),
+                    todayDecoration: const BoxDecoration(
+                        color: Color(0xffAAAAAA), shape: BoxShape.circle)),
+                calendarBuilders: CalendarBuilders(
+                  markerBuilder: (context, day, events) {
+                    if (events.isEmpty) {
+                      return Container();
+                    }
+            
+                    return Container(
+                      height: 8,
+                      width: 8,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.cyan),
+                    );
+                  },
+                  holidayBuilder: (context, day, focusedDay) {
+                    return Center(
+                      child: Text("${day.day}",
+                          style: TextStyle(color: Color(holidayColor))),
+                    );
+                  },
+                ),
+              ),
             ),
             const SizedBox(
               height: 20,
