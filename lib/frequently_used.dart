@@ -173,13 +173,15 @@ class LoadingScreen {
           return Expanded(
             child: Scaffold(
               body: Center(
-                child: Column(children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Text((_msg != null) ? _msg! : 'Loading...'),
-                ]),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text((_msg != null) ? _msg! : 'Loading...'),
+                    ]),
               ),
             ),
           );

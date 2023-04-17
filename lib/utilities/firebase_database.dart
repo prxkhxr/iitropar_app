@@ -214,12 +214,12 @@ class firebaseDatabase {
       if (doc_eventDate.year == date.year &&
           doc_eventDate.month == date.month &&
           doc_eventDate.day == date.day) {
-        Event e = Event.singular(
+        Event e = Event(
             title: doc['eventTitle'],
-            description: doc['eventDesc'],
+            desc: doc['eventDesc'],
             stime: doc['startTime'],
             etime: doc['endTime'],
-            displayDate: doc['eventDate'],
+            // displayDate: doc['eventDate'],
             creator: doc['creator']); //TODO : add image as well to Event
         events.add(e);
       }
