@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
@@ -35,8 +33,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   @override
   void initState() {
     super.initState();
-
-    mySelectedEvents = {};
     loadEvents(_selectedDate);
   }
 
@@ -62,14 +58,20 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     }
   }
 
-  void _insertEvent(Event e) async {
-    edb.insert(e);
-    loadEvents(e.displayDate);
+  void _insertSingularEvent(Event e, DateTime date) async {
+    edb.addSingularEvent(e, date, edb.getID());
+    setState(() {});
   }
 
-  void _deleteEvent(Event e) async {
-    edb.delete(e);
-    loadEvents(e.displayDate);
+  void _insertRecurringEvent(
+      Event r, DateTime start, DateTime end, int mask) async {
+    edb.addRecurringEvent(r, start, end, edb.getID(), mask);
+    setState(() {});
+  }
+
+  void _deleteEntireEvent(Event e) async {
+    await edb.delete(e);
+    setState(() {});
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -208,15 +210,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     return;
                   } else {
                     print("Adding Singular Event");
-                    Event s = Event.singular(
+                    Event s = Event(
                       title: titleController.text,
-                      description: descpController.text,
+                      desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      displayDate: _selectedDate,
                       creator: 'user',
                     );
-                    _insertEvent(s);
+                    _insertSingularEvent(s, _selectedDate);
 
                     titleController.clear();
                     descpController.clear();
@@ -375,18 +376,15 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     return;
                   } else {
                     print("Adding Recurring Event");
-                    Event r = Event.recurring(
+                    Event r = Event(
                       title: titleController.text,
-                      description: descpController.text,
+                      desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      startDate: startDate,
-                      endDate: endDate,
-                      displayDate: _selectedDate,
-                      mask: (1 << startDate.weekday),
                       creator: 'user',
                     );
-                    _insertEvent(r);
+                    _insertRecurringEvent(
+                        r, startDate, endDate, ((1 << startDate.weekday)));
 
                     titleController.clear();
                     descpController.clear();
@@ -405,6 +403,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    loadEvents(_selectedDate);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -495,7 +494,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                         trailing: SizedBox(
                           width: buttonsize,
                           child: IconButton(
-                            onPressed: () => _deleteEvent(myEvents),
+                            onPressed: () => _deleteEntireEvent(myEvents),
                             icon: const Icon(Icons.delete),
                           ),
                         ),
@@ -503,7 +502,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Description: ${myEvents.description}",
+                              "Description: ${myEvents.desc}",
                               style: TextStyle(color: Color(primaryLight)),
                             ),
                             const SizedBox(

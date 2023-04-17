@@ -129,7 +129,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           ]),
                     ),
                   ),
-                  const SizedBox(height: 5,),
+                  const SizedBox(
+                    height: 5,
+                  ),
                   Container(
                     margin:
                         const EdgeInsets.symmetric(horizontal: buttonMargin),
