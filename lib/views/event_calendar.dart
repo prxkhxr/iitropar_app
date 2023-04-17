@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
@@ -60,18 +61,24 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   void _insertSingularEvent(Event e, DateTime date) async {
     edb.addSingularEvent(e, date, edb.getID());
-    setState(() {});
+    setState(() {
+      loadEvents(_selectedDate);
+    });
   }
 
   void _insertRecurringEvent(
       Event r, DateTime start, DateTime end, int mask) async {
     edb.addRecurringEvent(r, start, end, edb.getID(), mask);
-    setState(() {});
+    setState(() {
+      loadEvents(_selectedDate);
+    });
   }
 
   void _deleteEntireEvent(Event e) async {
     await edb.delete(e);
-    setState(() {});
+    setState(() {
+      loadEvents(_selectedDate);
+    });
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -215,7 +222,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      creator: 'user',
+                      creator: FirebaseAuth.instance.currentUser!.email!,
                     );
                     _insertSingularEvent(s, _selectedDate);
 
@@ -383,8 +390,8 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       etime: endTime,
                       creator: 'user',
                     );
-                    _insertRecurringEvent(
-                        r, startDate, endDate, ((1 << startDate.weekday)));
+                    _insertRecurringEvent(r, startDate, endDate,
+                        ((1 << (startDate.weekday - 1))));
 
                     titleController.clear();
                     descpController.clear();
@@ -403,7 +410,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    loadEvents(_selectedDate);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(

@@ -22,15 +22,15 @@ class EventDB {
 
   Future<List<Event>> _fetchSingularEvents(DateTime date) async {
     var t = await _db!.rawQuery(''
-        'SELECT e.title as title, e.desc as desc, e.stime as stime, e.etime as etime, e.creator as creator '
-        'FROM events as e, events_meta as em '
+        'SELECT e.id as id, e.title as title, e.desc as desc, e.stime as stime, e.etime as etime, e.creator as creator '
+        'FROM events as e, event_meta as em '
         'WHERE e.id = em.event_id and em.key = "date" and em.val = "${dateString(date)}"');
     return Future(
         () => List.generate(t.length, (idx) => _convertToEvent(t[idx])));
   }
 
   Future<List<Event>> _fetchRecurringEvents(DateTime date) async {
-    int mask = 1 << date.weekday;
+    int mask = 1 << (date.weekday - 1);
     String maskstr = _mask2str(mask);
 
     String datestr = dateString(date);
@@ -38,40 +38,30 @@ class EventDB {
     var t = await _db!.rawQuery(''
         'SELECT e.id as id, e.title as title, e.desc as desc, e.stime as stime, e.etime as etime, e.creator as creator '
         'FROM events as e, event_meta as em1, event_meta as em2, event_meta as em3 '
-        'WHERE e.id = em1.event_id e.id = em2.event_id and e.id = em3.event_id e.id = em4.event_id and '
-        ' em1.key = "start_date" and em1.val <= $datestr and '
-        ' em2.key = "end_date" and em2.val >= $datestr and '
-        ' em3.key = "mask" and em3.val LIKE $maskstr '
+        'WHERE e.id = em1.event_id and e.id = em2.event_id and e.id = em3.event_id and '
+        ' em1.key = "start_date" and em1.val <= "$datestr" and '
+        ' em2.key = "end_date" and em2.val >= "$datestr" and '
+        ' em3.key = "mask" and em3.val LIKE "$maskstr" '
         '');
 
     var lt = List.generate(t.length, (idx) => _convertToEvent(t[idx]));
     var dt = await deletedForDay(lt, date);
 
-    for (int i = 0; i < lt.length; i++) {
+    for (int i = 0; i < dt.length; i++) {
       lt.remove(dt[i]);
     }
     return lt;
   }
 
-  Future<List<Event>> deletedForDay(List<Event> l, DateTime day) async {
-    var t = await _db!.rawQuery(''
-        'SELECT e.id as id, e.title as title, e.desc as desc, e.stime as stime, e.etime as etime, e.creator as creator '
-        'FROM events as e and event_meta as em '
-        'WHERE e.id = em.event_id and em.key = "deleted_for" and em.val = ${dateString(day)} '
-        '');
-    var lt = List.generate(t.length, (idx) => _convertToEvent(t[idx]));
-    return lt;
-  }
-
   Future<void> _addEvent(Event e, int id) async {
     await _db!.rawInsert(
-        'INSERT INTO event(id, title, desc, stime, etime, creator) VALUES'
-        ' ("$id", "${e.title}", "${e.desc}", "${(e.startTime())}", "${(e.endTime())}, ${e.creator}");');
+        'INSERT INTO events(id, title, desc, stime, etime, creator) VALUES'
+        ' ($id, "${e.title}", "${e.desc}", "${e.startTime()}", "${e.endTime()}", "${e.creator}");');
   }
 
   Future<void> _addEventMeta(int id, String key, String val) async {
     await _db!.rawInsert(
-        'INSERT INTO event_meta(events_id, key, val) VALUES ($id, "$key", "$val")');
+        'INSERT INTO event_meta(event_id, key, val) VALUES ($id, "$key", "$val")');
   }
 
   Event _convertToEvent(Map<String, Object?> vals) {
@@ -130,40 +120,45 @@ class EventDB {
         await db.execute(
             "CREATE TABLE events(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, stime TEXT, etime TEXT, creator TEXT);");
         await db.execute(
-            "CREATE TABLE events_meta(event_id INTEGER, key TEXT, val TEXT, FOREIGN KEY(event_id) REFERENCES event(id), PRIMARY KEY(event_id, key));");
+            "CREATE TABLE event_meta(event_id INTEGER, key TEXT, val TEXT, FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE, PRIMARY KEY(event_id, key));");
 
         _lock.acquire();
         _next = 1;
         _lock.release();
       },
       onOpen: (db) async {
-        var q = (await db.rawQuery('SELECT max(id) FROM events;'));
+        var q = (await db.rawQuery('SELECT MAX(id) as id FROM events;'));
+
+        if (q[0]['id'] == null) return;
 
         _lock.acquire();
-        _next = int.parse(q[0]['max(id)'].toString());
+        _next = int.parse(q[0]['id'].toString()) + 1;
         _lock.release();
       },
     );
   }
 
   Future<void> addSingularEvent(Event se, DateTime day, int id) async {
-    var f1 = _addEvent(se, id);
-    var f2 = _addEventMeta(id, "date", dateString(day));
-    await f1;
-    await f2;
+    await _addEvent(se, id);
+    await _addEventMeta(id, "date", dateString(day));
   }
 
   Future<void> addRecurringEvent(
       Event re, DateTime startDate, DateTime endDate, int id, int mask) async {
-    var t1 = _addEvent(re, id);
-    var t2 = _addEventMeta(id, "start_date", dateString(startDate));
-    var t3 = _addEventMeta(id, "end_date", dateString(endDate));
-    var t4 = _addEventMeta(id, "mask", "$mask");
+    await _addEvent(re, id);
+    await _addEventMeta(id, "start_date", dateString(startDate));
+    await _addEventMeta(id, "end_date", dateString(endDate));
+    await _addEventMeta(id, "mask", _mask2str(mask));
+  }
 
-    await t1;
-    await t2;
-    await t3;
-    await t4;
+  Future<List<Event>> deletedForDay(List<Event> l, DateTime day) async {
+    var t = await _db!.rawQuery(''
+        'SELECT e.id as id, e.title as title, e.desc as desc, e.stime as stime, e.etime as etime, e.creator as creator '
+        'FROM events as e, event_meta as em '
+        'WHERE e.id = em.event_id and em.key = "deleted_for" and em.val = "${dateString(day)}" '
+        '');
+    var lt = List.generate(t.length, (idx) => _convertToEvent(t[idx]));
+    return lt;
   }
 
   Future<void> deleteForDay(Event e, DateTime date) async {
@@ -175,14 +170,15 @@ class EventDB {
 
   Future<void> delete(Event e) async {
     await _db!.rawDelete(''
-        'DELETE CASCADE FROM events as e '
-        'WHERE e.title = "${e.title}" and e.desc = "${e.desc}" and e.stime = "${e.stime}" and e.etime = "${e.etime}" '
+        'DELETE FROM events as e '
+        'WHERE e.title = "${e.title}" and e.desc = "${e.desc}" and e.stime = "${e.startTime()}" and e.etime = "${e.endTime()}" '
         '');
+    // await _db!.rawDelete('')
   }
 
   Future<int> deleteOf(String creator) async {
-    var cnt = await _db!
-        .rawDelete('DELETE CASCADE FROM events WHERE creator = "$creator"');
+    var cnt =
+        await _db!.rawDelete('DELETE FROM events WHERE creator = "$creator"');
     return cnt;
   }
 
@@ -193,11 +189,13 @@ class EventDB {
     List<Event> l2 = await re;
     l1.addAll(l2);
     if (of != null) {
+      var n = List<Event>.empty(growable: true);
       for (var e in l1) {
-        if (e.creator.compareTo(of) != 0) {
-          l1.remove(e);
+        if (e.creator.compareTo(of) == 0) {
+          n.add(e);
         }
       }
+      l1 = n;
     }
     return l1;
   }
@@ -281,7 +279,7 @@ class EventDB {
           ];
           for (int k = 0; k < 7; k++) {
             if (day.compareTo(weekdays[k]) == 0) {
-              mask = 1 << (k + 1);
+              mask = 1 << k;
               break;
             }
           }
@@ -323,7 +321,7 @@ class EventDB {
 
   Future<Event> fillID(Event e) async {
     var t = await _db!.rawQuery(
-        "SELECT e.id FROM events as e WHERE e.title = ${e.title} and e.desc = ${e.desc} and e.stime = ${e.stime} and e.etime = ${e.etime} and e.creator = ${e.creator}");
+        "SELECT e.id FROM events as e WHERE e.title = ${e.title} and e.desc = ${e.desc} and e.stime = ${e.startTime()} and e.etime = ${e.endTime()} and e.creator = ${e.creator}");
     e.id = int.parse(t[0]['id'].toString());
     return e;
   }
