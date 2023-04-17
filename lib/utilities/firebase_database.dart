@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/views/admin/registerFaculty.dart';
 
 class firebaseDatabase {
   static void addEventFB(
@@ -102,6 +103,21 @@ class firebaseDatabase {
         .catchError((error) => print("failed to add courses: $error"));
   }
 
+  static void registerFacultyFB(
+      String facultyName, String facultyDep, String facultyEmail) {
+    DocumentReference ref_event_nr =
+        FirebaseFirestore.instance.collection("faculty").doc(facultyName);
+    Map<String, dynamic> faculty = {
+      "name": facultyName,
+      "dep": facultyDep,
+      "email": facultyEmail,
+    };
+    ref_event_nr
+        .set(faculty)
+        .then((value) => print("Faculty added"))
+        .catchError((error) => print("failed to add faculty: $error"));
+  }
+
   static void registerClubFB(String clubTitle, String clubDesc, String email) {
     DocumentReference ref_event_nr =
         FirebaseFirestore.instance.collection("clubs").doc(clubTitle);
@@ -127,6 +143,17 @@ class firebaseDatabase {
     return emails;
   }
 
+  static Future<List<dynamic>> getFacultyIDs() async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('faculty');
+    QuerySnapshot querySnapshot = await collectionRef.get();
+
+    // Get data from docs and convert map to List
+    List<dynamic> emails =
+        querySnapshot.docs.map((doc) => doc['email']).toList();
+    return emails;
+  }
+
   static Future<String> getClubName(String clubEmail) async {
     CollectionReference collectionRef =
         FirebaseFirestore.instance.collection('clubs');
@@ -142,9 +169,30 @@ class firebaseDatabase {
     return "noclub";
   }
 
+  static Future<List<String>> getFacultyDetail(String email) async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('faculty');
+    QuerySnapshot querySnapshot = await collectionRef.get();
+    List<String> details = [];
+    // Get data from docs and convert map to List
+    var len = querySnapshot.docs.length;
+    for (int i = 0; i < len; i++) {
+      if (querySnapshot.docs[i]['email'] == email) {
+        details.add(querySnapshot.docs[i]['name']);
+        details.add(querySnapshot.docs[i]['dep']);
+        return details;
+      }
+    }
+    return details;
+  }
+
   static Future<List<String>> getCourses(String entryNumber) async {
     DocumentReference ref_event_nr =
         FirebaseFirestore.instance.collection("courses").doc(entryNumber);
+    bool hasCourses = await checkIfDocExists("courses", entryNumber);
+    if (!hasCourses) {
+      return [];
+    }
     DocumentSnapshot snapshot = await ref_event_nr.get();
     List<String> courses = List.from(snapshot['courses']);
     return courses;

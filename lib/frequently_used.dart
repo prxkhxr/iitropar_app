@@ -41,22 +41,34 @@ class changedDay {
 
 class Ids {
   static List<String> admins = [
-    "2020csb1086@iitrpr.ac.in",
+    "2020csb1082@iitrpr.ac.in",
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
+  static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
+
   static String role = "guest";
   static bool assigned = false;
+  static String name = ""; //only for faculty
+  static String dep = ""; //only for faculty
 
   static Future<String> resolveUser() async {
     if (assigned == true) return role;
     String user;
     var clubEmails = await Ids.fclub;
+    var facultyEmails = await Ids.faculty;
     if (FirebaseAuth.instance.currentUser != null &&
         admins.contains(FirebaseAuth.instance.currentUser!.email)) {
       user = "admin";
     } else if (FirebaseAuth.instance.currentUser != null &&
         clubEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
       user = "club";
+    } else if (FirebaseAuth.instance.currentUser != null &&
+        facultyEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
+      user = "faculty";
+      var details = await firebaseDatabase
+          .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+      name = details[0];
+      dep = details[1];
     } else if (FirebaseAuth.instance.currentUser != null) {
       user = "student";
     } else {

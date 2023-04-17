@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/homePage/admin_home.dart';
 import 'package:iitropar/views/homePage/club_home.dart';
+import 'package:iitropar/views/homePage/faculty_home.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/views/landing_page.dart';
 
@@ -30,11 +32,31 @@ abstract class AbstractHomeState extends State<AbstractHome> {
   }
 
   String getUserName() {
+    if (Ids.role.compareTo("faculty") == 0) {
+      return Ids.name;
+    }
     if (FirebaseAuth.instance.currentUser == null) return "Guest User";
     return FirebaseAuth.instance.currentUser!.displayName.toString();
   }
 
   List<Widget> buttons();
+
+  Widget getText() {
+    if (Ids.role.compareTo("faculty") == 0) {
+      return Text(Ids.dep,
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            color: Color(primaryLight), // Set text color to blue
+            fontSize: 18, // Set text size to 24// Set text font to bold
+          ));
+    }
+    return Text('How are you doing today?',
+        textAlign: TextAlign.right,
+        style: TextStyle(
+          color: Color(primaryLight), // Set text color to blue
+          fontSize: 18, // Set text size to 24// Set text font to bold
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,14 +95,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
                             ))),
                     SizedBox(
                       width: textSize,
-                      child: Text('How are you doing today?',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color:
-                                Color(primaryLight), // Set text color to blue
-                            fontSize:
-                                18, // Set text size to 24// Set text font to bold
-                          )),
+                      child: getText(),
                     )
                   ],
                 ),
@@ -129,6 +144,8 @@ class _HomePageState extends State<HomePage> {
       return const AdminHome();
     } else if (user.compareTo('club') == 0) {
       return const ClubHome();
+    } else if (user.compareTo('faculty') == 0) {
+      return const FacultyHome();
     }
     return const StudentHome();
   }
