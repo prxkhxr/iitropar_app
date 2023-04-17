@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
@@ -47,6 +49,7 @@ class _MessMenuPageState extends State<MessMenuPage>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: initialDay(),
       length: myTabs.length,
       child: Scaffold(
         appBar: AppBar(
@@ -107,7 +110,7 @@ class _MessMenuPageState extends State<MessMenuPage>
               child: ExpansionTile(
                 title: Text(meal.name, style: TextStyle(fontWeight: FontWeight.bold, color: Color(primaryLight)),),
                 subtitle: Text(checkTime(meal.name), style: TextStyle(color: Color(primaryLight)),),
-                initiallyExpanded: meal.name == "Breakfast" ? true : false,
+                initiallyExpanded: meal.name == mealOpen() ? true : false,
                 children: [
                   ...parseString(meal.description).map((myMeal) {
                     return ListTile(
@@ -124,6 +127,17 @@ class _MessMenuPageState extends State<MessMenuPage>
     );
   }
 
+  String mealOpen(){
+    TimeOfDay now = TimeOfDay.now();
+    
+    if((now.hour > 0 && (now.hour <= 9 && now.minute <= 15)) || (now.hour >= 21 && now.minute >= 15)){
+      return "Breakfast";
+    }else if((now.hour < 14 && now.minute <= 15) && (now.hour > 9 && now.minute > 15)){
+      return "Lunch";
+    }else{
+      return "Dinner";
+    }
+  }
   String checkTime(String name) {
     if (name == 'Breakfast') {
       return "7:30 AM to 9:15 AM";
@@ -136,5 +150,19 @@ class _MessMenuPageState extends State<MessMenuPage>
 
   List<String> parseString(String desc) {
     return desc.split(", ");
+  }
+}
+
+int initialDay() {
+  DateTime now = DateTime.now();
+  
+  if(now.hour <= 21 && now.minute <= 15){
+    return now.weekday - 1;
+  }else{
+    if (now.weekday == 7){
+      return 0;
+    }else{
+      return now.weekday;
+    }
   }
 }
