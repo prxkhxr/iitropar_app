@@ -41,7 +41,7 @@ class changedDay {
 
 class Ids {
   static List<String> admins = [
-    "2020csb1082@iitrpr.ac.in",
+    // "2020csb1082@iitrpr.ac.in",
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
   static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
