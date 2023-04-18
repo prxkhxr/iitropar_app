@@ -77,13 +77,13 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   }
 
   void _insertSingularEvent(Event e, DateTime date) async {
-    await edb.addSingularEvent(e, date, edb.getID());
+    await edb.addSingularEvent(e, date);
     updateEvents(date);
   }
 
   void _insertRecurringEvent(
       Event r, DateTime start, DateTime end, DateTime current, int mask) async {
-    await edb.addRecurringEvent(r, start, end, edb.getID(), mask);
+    await edb.addRecurringEvent(r, start, end, mask);
     updateEventsRecurring(_selectedDate);
   }
 

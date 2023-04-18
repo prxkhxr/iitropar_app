@@ -195,7 +195,6 @@ class LoadingScreen {
 
 Future<bool> _signout() async {
   if (Ids.role == 'student') {
-    await EventDB().deleteOf('admin');
     await EventDB().deleteOf('course');
     await EventDB().deleteOf('exam');
   }
