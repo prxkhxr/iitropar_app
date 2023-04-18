@@ -29,22 +29,28 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _signin() async {
     await FirebaseServices().signInWithGoogle();
-    if (FirebaseAuth.instance.currentUser == null) return;
-    if ((await Ids.resolveUser()).compareTo('student') == 0) {
-      await EventDB().loadCourse(await firebaseDatabase
-          .getCourses(FirebaseAuth.instance.currentUser!.email!.split('@')[0]));
-    }
     _moveToHome();
   }
 
   void _moveToHome() {
     RootPage.signin(false);
+    LoadingScreen.setPrompt("Loading Home ...");
+    LoadingScreen.setTask(() async {
+      if (FirebaseAuth.instance.currentUser == null) return true;
+      if ((await Ids.resolveUser()).compareTo('student') == 0) {
+        EventDB().loadCourse(await firebaseDatabase.getCourses(
+            FirebaseAuth.instance.currentUser!.email!.split('@')[0]));
+      }
+      return true;
+    });
+    LoadingScreen.setBuilder((context) => const RootPage());
+
     Navigator.popUntil(context, ModalRoute.withName('/'));
     Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (BuildContext context) => const RootPage(),
+        builder: (BuildContext context) => LoadingScreen.build(context),
         settings: const RouteSettings(name: '/'),
       ),
     );
