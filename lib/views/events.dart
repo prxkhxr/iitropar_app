@@ -107,8 +107,6 @@ class _EventsState extends State<Events> {
                               int.parse(date_split[1]),
                               int.parse(date_split[0]),
                             );
-                            print(doc_eventDate);
-                            print(doc["eventDate"]);
                             if (doc_eventDate.year == _selectedDate!.year &&
                                 doc_eventDate.month == _selectedDate!.month &&
                                 doc_eventDate.day == _selectedDate!.day) {

@@ -50,7 +50,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
             fontSize: 18, // Set text size to 24// Set text font to bold
           ));
     }
-    return Text('How are you doing today?',
+    return Text('How are you doing today? ',
         textAlign: TextAlign.right,
         style: TextStyle(
           color: Color(primaryLight), // Set text color to blue

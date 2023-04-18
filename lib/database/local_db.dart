@@ -325,4 +325,24 @@ class EventDB {
     e.id = int.parse(t[0]['id'].toString());
     return e;
   }
+
+  List<int> getConflicts(
+      int slotLenght, DateTime date, List<String> entryNumber) {
+    // return list containing conflicts in slots starting from 8 am to 8 pm
+    List<int> conflicts = [
+      1,
+      2,
+      3,
+      4,
+      5,
+      9,
+      0,
+      12,
+      12,
+      12,
+      0,
+      0
+    ]; // example for one hour slot.
+    return conflicts;
+  }
 }
