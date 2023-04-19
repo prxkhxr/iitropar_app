@@ -198,6 +198,11 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       }
     }
   }
+  if(holidaysLoaded){
+    if(mapofHolidays[DateFormat("yyyy-MM-dd").format(datetime)] != null){
+      return datetime.add(Duration(days: 1000));
+    }
+  }
   return datetime;
 }
 
