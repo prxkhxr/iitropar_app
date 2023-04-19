@@ -130,9 +130,11 @@ class _MessMenuPageState extends State<MessMenuPage>
   String mealOpen(){
     TimeOfDay now = TimeOfDay.now();
     
-    if((now.hour > 0 && (now.hour <= 9 && now.minute <= 15)) || (now.hour >= 21 && now.minute >= 15)){
+    print(now.hour);
+    print(now.minute);
+    if((now.hour > 0 && (now.hour <= 9)) || (now.hour >= 21)){
       return "Breakfast";
-    }else if((now.hour < 14 && now.minute <= 15) && (now.hour > 9 && now.minute > 15)){
+    }else if((now.hour < 14) && (now.hour > 9)){
       return "Lunch";
     }else{
       return "Dinner";
@@ -156,7 +158,7 @@ class _MessMenuPageState extends State<MessMenuPage>
 int initialDay() {
   DateTime now = DateTime.now();
   
-  if(now.hour <= 21 && now.minute <= 15){
+  if(now.hour <= 22){
     return now.weekday - 1;
   }else{
     if (now.weekday == 7){
