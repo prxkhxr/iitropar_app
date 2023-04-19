@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, camel_case_types
+// ignore_for_file: file_names, camel_case_types, sort_child_properties_last
 
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
@@ -79,26 +79,26 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildFacultyDep() {
     List<DropdownMenuItem<String>> items = [
-      DropdownMenuItem(
+      const DropdownMenuItem(
           child: Text("BioMedical Engineering"),
           value: "BioMedical Engineering"),
-      DropdownMenuItem(
+      const DropdownMenuItem(
           child: Text("Chemical Engineering"), value: "Chemical Engineering"),
-      DropdownMenuItem(
+      const DropdownMenuItem(
           child: Text("Civil Engineering"), value: "Civil Engineering"),
-      DropdownMenuItem(
+      const DropdownMenuItem(
           child: Text("Electrical Engineering"),
           value: "Electrical Engineering"),
-      DropdownMenuItem(
+      const DropdownMenuItem(
           child: Text("Computer Science & Engineering"),
           value: "Computer Science & Engineering"),
-      DropdownMenuItem(
+      const DropdownMenuItem(
           child: Text("Metallurgical and Materials Engineering"),
           value: "Metallurgical and Materials Engineering"),
-      DropdownMenuItem(child: Text("Chemistry"), value: "Chemistry"),
-      DropdownMenuItem(child: Text("Physics"), value: "Physics"),
-      DropdownMenuItem(child: Text("Mathematics"), value: "Mathematics"),
-      DropdownMenuItem(
+      const DropdownMenuItem(child: Text("Chemistry"), value: "Chemistry"),
+      const DropdownMenuItem(child: Text("Physics"), value: "Physics"),
+      const DropdownMenuItem(child: Text("Mathematics"), value: "Mathematics"),
+      const DropdownMenuItem(
           child: Text("Humanities and Social Sciences"),
           value: "Humanities and Social Sciences"),
     ];
@@ -106,8 +106,8 @@ class AddEventFormState extends State<AddEventForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             'Department',
             textAlign: TextAlign.left,
           ),

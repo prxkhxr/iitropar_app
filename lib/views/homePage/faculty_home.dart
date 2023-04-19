@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iitropar/utilities/firebase_database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:iitropar/views/club/add_club_event.dart';
 import 'package:iitropar/views/faculty/findSlot.dart';
 
 import '../../utilities/colors.dart';
@@ -23,8 +20,8 @@ class _FacultyHomeState extends AbstractHomeState {
     List<Widget> l = List.empty(growable: true);
     l.add(ElevatedButton(
       onPressed: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => findSlots()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const findSlots()));
       },
       child: Text(
         "Check Free Slots",

@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types, non_constant_identifier_names
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/colors.dart';
@@ -5,9 +7,7 @@ import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 
-import 'database/event.dart';
 import 'database/local_db.dart';
 
 String dateString(DateTime d) {
@@ -24,18 +24,16 @@ DateTime stringDate(String d) {
 class holidays {
   late DateTime date;
   late String desc;
-  holidays(date, desc) {
+  holidays(date, this.desc) {
     this.date = DateFormat('yyyy-MM-dd').parse(date);
-    this.desc = desc;
   }
 }
 
 class changedDay {
   late DateTime date;
   late String day_to_followed;
-  changedDay(date, day_to_followed) {
+  changedDay(date, this.day_to_followed) {
     this.date = DateFormat('yyyy-MM-dd').parse(date);
-    this.day_to_followed = day_to_followed;
   }
 }
 

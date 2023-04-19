@@ -1,15 +1,12 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, camel_case_types, file_names
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/database/loader.dart';
-import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
-import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:csv/csv.dart';
@@ -32,7 +29,7 @@ class _findSlotsState extends State<findSlots> {
   TextEditingController entryInput = TextEditingController();
 
   bool verifyHeader(List<dynamic> csv_head) {
-    if (csv_head.length == 0) {
+    if (csv_head.isEmpty) {
       return false;
     }
     String header = csv_head[0].toLowerCase();
@@ -55,7 +52,6 @@ class _findSlotsState extends State<findSlots> {
       }
       return check;
     }
-    ;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Entry Number ${entryInput.text} is not valid")));
     return false;

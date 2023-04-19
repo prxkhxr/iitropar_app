@@ -1,10 +1,6 @@
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, file_names, no_logic_in_create_state
 
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:iitropar/utilities/firebase_database.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class seeSlots extends StatefulWidget {
   const seeSlots(
@@ -38,17 +34,17 @@ class _seeSlotsState extends State<seeSlots> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Start Time',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 14,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 startT.toString(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -59,17 +55,17 @@ class _seeSlotsState extends State<seeSlots> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'End Time',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 14,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 endT.toString(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -80,17 +76,17 @@ class _seeSlotsState extends State<seeSlots> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Conflicts',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 14,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 conflict.toString(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

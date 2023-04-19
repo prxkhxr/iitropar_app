@@ -1,14 +1,10 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:path/path.dart' as p;
 import 'package:iitropar/frequently_used.dart';
-import 'package:csv/csv.dart';
 import 'package:mutex/mutex.dart';
-
-import 'package:flutter/services.dart' show rootBundle;
 
 String _dbName = "Events.db";
 
@@ -97,7 +93,7 @@ class EventDB {
         await db.execute(
             "CREATE TABLE events(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, stime TEXT, etime TEXT, creator TEXT);");
         await db.execute(
-            "CREATE TABLE event_meta(event_id INTEGER, key TEXT, val TEXT, CONSTRAINT fk_events FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE, PRIMARY KEY(event_id, key, val)) WITHOUT ROWID;");
+            "CREATE TABLE event_meta(event_id INTEGER, key TEXT, val TEXT, FOREIGN KEY(event_id) REFERENCES events(id), PRIMARY KEY(event_id, key, val)) WITHOUT ROWID;");
 
         _lock.acquire();
         _next = 1;

@@ -3,7 +3,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/frequently_used.dart';
-import 'package:iitropar/views/admin/registerFaculty.dart';
 
 class firebaseDatabase {
   static void addEventFB(

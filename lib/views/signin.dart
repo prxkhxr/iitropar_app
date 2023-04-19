@@ -3,12 +3,9 @@ import 'package:iitropar/database/loader.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
-import 'package:iitropar/views/PBTabView.dart';
-import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:iitropar/database/local_db.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
