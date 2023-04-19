@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/rendering.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
@@ -75,6 +76,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     List<Event> l = List.empty(growable: true);
     while (d1.compareTo(d2) < 0) {
       l = await edb.fetchEvents(d1);
+      // l.addAll(await firebaseDatabase.getEvents(d1));
       setState(() {
         mySelectedEvents[DateFormat('yyyy-MM-dd').format(d1)] = l;
       });
@@ -461,7 +463,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         body: Column(
           children: [
             SizedBox(
-              height: (MediaQuery.of(context).size.height - 80)/2,
+              height: (MediaQuery.of(context).size.height - 80) / 2,
               child: TableCalendar(
                 shouldFillViewport: true,
                 focusedDay: _focused,
@@ -504,12 +506,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     if (events.isEmpty) {
                       return Container();
                     }
-            
+
                     return Container(
                       height: 8,
                       width: 8,
                       decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.cyan),
+                          shape: BoxShape.circle, color: Colors.orangeAccent),
                     );
                   },
                   holidayBuilder: (context, day, focusedDay) {
@@ -522,7 +524,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 0,
+            ),
+            Divider(
+              height: 0,
+              thickness: 1,
+              color: Color(primaryLight).withOpacity(0.05),
             ),
             Expanded(
                 child: ListView(
@@ -532,51 +539,117 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   final textsize = (8 / 10) * width;
                   final buttonsize = (1 / 10) * width;
                   final iconsize = (1 / 10) * width;
+                  // return Column(
+                  //   children: [
+                  //     ListTile(
+                  //       horizontalTitleGap: 25,
+                  //       leading: Text(myEvents.startTime()),
+                  //       title: SizedBox(
+                  //         width: textsize,
+                  //         child: Text(
+                  //           myEvents.title,
+                  //           overflow: TextOverflow.ellipsis,
+                  //           style: TextStyle(color: Color(primaryLight)),
+                  //         ),
+                  //       ),
+                  //       trailing: SizedBox(
+                  //         width: buttonsize,
+                  //         child: IconButton(
+                  //           onPressed: () => _deleteEntireEvent(myEvents),
+                  //           icon: const Icon(Icons.delete),
+                  //         ),
+                  //       ),
+                  //       subtitle: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           Text(
+                  //             "Description: ${myEvents.desc}",
+                  //             style: TextStyle(color: Color(primaryLight)),
+                  //           ),
+                  //           const SizedBox(
+                  //             width: 5,
+                  //           ),
+                  //           Text(
+                  //             'Time: ${myEvents.displayTime()}',
+                  //             style: TextStyle(color: Color(primaryLight)),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     const SizedBox(
+                  //       height: 10,
+                  //     ),
+                  //   ],
+                  // );
+
                   return Column(
                     children: [
-                      ListTile(
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          width: iconsize,
-                          child: Icon(
-                            Icons.event,
-                            color: Color(primaryLight),
-                          ),
-                        ),
-                        title: SizedBox(
-                          width: textsize,
-                          child: Text(
-                            myEvents.title,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: Color(primaryLight)),
-                          ),
-                        ),
-                        trailing: SizedBox(
-                          width: buttonsize,
-                          child: IconButton(
-                            onPressed: () => _deleteEntireEvent(myEvents),
-                            icon: const Icon(Icons.delete),
-                          ),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              "Description: ${myEvents.desc}",
-                              style: TextStyle(color: Color(primaryLight)),
+                            SizedBox(
+                              width: 1.25 / 5.5 * width,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(myEvents.startTime(),
+                                      style: TextStyle(
+                                        color: Color(primaryLight),
+                                        fontSize: 14,
+                                      )),
+                                  Text(
+                                    myEvents.endTime(),
+                                    style: TextStyle(
+                                        color: Color(primaryLight)
+                                            .withOpacity(0.6),
+                                        fontSize: 14),
+                                  ),
+                                ],
+                              ),
                             ),
-                            const SizedBox(
-                              width: 5,
+                            const VerticalDivider(
+                              thickness: 3.5,
+                              width: 0,
+                              color: Colors.green,
                             ),
-                            Text(
-                              'Time: ${myEvents.displayTime()}',
-                              style: TextStyle(color: Color(primaryLight)),
+                            SizedBox(
+                              width: 0.5 / 5.5 * width,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  myEvents.title,
+                                  style: TextStyle(
+                                      color: Color(primaryLight), fontSize: 16),
+                                ),
+                                Text(
+                                  "LHC M5",
+                                  style: TextStyle(
+                                      color:
+                                          Color(primaryLight).withOpacity(0.6)),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            IconButton(
+                              onPressed: () => _deleteEntireEvent(myEvents),
+                              icon: const Icon(Icons.delete),
+                              color: Color(primaryLight).withOpacity(0.8),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
+                      Divider(
+                        height: 2,
+                        thickness: 1,
+                        color: Color(primaryLight).withOpacity(0.05),
                       ),
                     ],
                   );
