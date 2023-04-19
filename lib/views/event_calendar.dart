@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/rendering.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +30,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   List<holidays> listofHolidays = [];
   Map<String, String> mapofHolidays = {};
   bool holidaysLoaded = false;
+  List<changedDay> listofCD = [];
+  Map<String, int> mapofCD = {};
+  bool CDLoaded = false;
   EventDB edb = EventDB();
 
   final titleController = TextEditingController();
@@ -42,6 +44,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   void initState() {
     super.initState();
     getHols();
+    getCD();
     mySelectedEvents = {};
     loadEvents(_selectedDate);
   }
@@ -58,6 +61,36 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     setState(() {
       holidaysLoaded = true;
     });
+    return true;
+  }
+
+  Future<bool> getCD() async {
+    listofCD = await firebaseDatabase.getChangedDays();
+    print(listofCD[0].day_to_followed);
+    for (int i = 0; i < listofCD.length; i++) {
+      switch (listofCD[i].day_to_followed) {
+        case "Monday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 0;
+          break;
+        case "Tuesday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 1;
+          break;
+        case "Wednesday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 2;
+          break;
+        case "Thrusday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 3;
+          break;
+        case "Friday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 4;
+          break;
+        default:
+      }
+    }
+    setState(() {
+      CDLoaded = true;
+    });
+    print(mapofCD);
     return true;
   }
 
@@ -152,6 +185,21 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
     return false;
   }
+
+  DateTime whatDatetocall(DateTime datetime) {
+  if (CDLoaded) {
+    if (mapofCD[DateFormat("yyyy-MM-dd").format(datetime)] != null) {
+      int wkday = datetime.weekday - 1;
+      int dtf = mapofCD[DateFormat("yyyy-MM-dd").format(datetime)]!;
+      if (dtf > wkday) {
+        return datetime.add(Duration(days: dtf - wkday));
+      } else {
+        return datetime.subtract(Duration(days: wkday - dtf));
+      }
+    }
+  }
+  return datetime;
+}
 
   _showSingleAddEventDialog() async {
     await showDialog(
@@ -500,11 +548,26 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 },
                 onPageChanged: (focusedDay) {
                   setState(() {
-                  _focused = focusedDay;
+                    _focused = focusedDay;
                   });
-                loadEvents(focusedDay);
+                  loadEvents(focusedDay);
                 },
                 eventLoader: (datetime) {
+                  if (CDLoaded) {
+                    if (mapofCD[DateFormat("yyyy-MM-dd").format(datetime)] !=
+                        null) {
+                      int wkday = datetime.weekday - 1;
+                      int dtf =
+                          mapofCD[DateFormat("yyyy-MM-dd").format(datetime)]!;
+                      if (dtf > wkday) {
+                        return _listOfDayEvents(
+                            datetime.add(Duration(days: dtf - wkday)));
+                      } else {
+                        return _listOfDayEvents(
+                            datetime.subtract(Duration(days: wkday - dtf)));
+                      }
+                    }
+                  }
                   return _listOfDayEvents(datetime);
                 },
                 holidayPredicate: (day) {
@@ -550,7 +613,8 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             Expanded(
                 child: ListView(
               children: [
-                ..._listOfDayEvents(_selectedDate).map((myEvents) {
+                ..._listOfDayEvents(whatDatetocall(_selectedDate))
+                    .map((myEvents) {
                   final width = MediaQuery.of(context).size.width;
                   final textsize = (8 / 10) * width;
                   final buttonsize = (1 / 10) * width;
