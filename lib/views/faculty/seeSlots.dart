@@ -104,15 +104,26 @@ class _seeSlotsState extends State<seeSlots> {
   }
 
   Widget viewSlots() {
-    TimeOfDay slotStart = TimeOfDay(hour: 8, minute: 0);
+    TimeOfDay slotStart = const TimeOfDay(hour: 8, minute: 0);
     TimeOfDay slotEnd = TimeOfDay(hour: 8 + slotLength, minute: 0);
-    int totalSlots = 12 - slotLength + 1;
+    int totalSlots = 12 - 2 * slotLength;
     List<Widget> wids = [];
     for (int i = 0; i < totalSlots; i++) {
-      wids.add(createWid("${slotStart.hour}:${slotEnd.minute}",
-          "${slotEnd.hour}:${slotEnd.minute}", conflicts[i]));
+      wids.add(createWid(
+          "${slotStart.hour.toString().padLeft(2, "0")}:${slotEnd.minute.toString().padLeft(2, "0")}",
+          "${slotEnd.hour.toString().padLeft(2, "0")}:${slotEnd.minute.toString().padLeft(2, "0")}",
+          conflicts[i]));
       slotStart = TimeOfDay(hour: slotStart.hour + 1, minute: 0);
       slotEnd = TimeOfDay(hour: slotEnd.hour + 1, minute: 0);
+
+      if (slotStart.hour == 13) {
+        wids.add(Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [Text("Lunch Break")],
+        ));
+        slotStart = TimeOfDay(hour: slotStart.hour + 1, minute: 0);
+        slotEnd = TimeOfDay(hour: slotEnd.hour + 1, minute: 0);
+      }
     }
     return Container(
         child: SingleChildScrollView(child: Column(children: wids)));

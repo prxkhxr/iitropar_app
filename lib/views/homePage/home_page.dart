@@ -1,15 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
-import 'package:iitropar/utilities/firebase_database.dart';
-import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/homePage/admin_home.dart';
 import 'package:iitropar/views/homePage/club_home.dart';
 import 'package:iitropar/views/homePage/faculty_home.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
-import 'package:iitropar/views/landing_page.dart';
 
 abstract class AbstractHome extends StatefulWidget {
   const AbstractHome({super.key});

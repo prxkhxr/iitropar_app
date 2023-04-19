@@ -2,6 +2,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:iitropar/database/event.dart';
+import 'package:iitropar/database/loader.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
@@ -64,9 +66,9 @@ class _findSlotsState extends State<findSlots> {
     Set<String> studs = {};
     for (int i = 1; i < fields.length; i++) {
       String entryNumber = fields[i][0].toString().toLowerCase();
-      if (await checkEntryNumber(entryNumber))
+      if (await checkEntryNumber(entryNumber)) {
         studs.add(entryNumber);
-      else {
+      } else {
         print(entryNumber);
         inputFormat = false;
       }
@@ -106,12 +108,12 @@ class _findSlotsState extends State<findSlots> {
           width: MediaQuery.of(context).size.width * 0.7,
           child: TextFormField(
             controller: entryInput,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
                 icon: Icon(Icons.description),
                 labelText: "Enter Entry Number "),
           )),
       IconButton(
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
           onPressed: () async {
             if (await checkEntryNumber(entryInput.text)) {
               setState(() {
@@ -147,7 +149,7 @@ class _findSlotsState extends State<findSlots> {
   Widget showSelectedStudents() {
     return Column(
       children: [
-        Text('Selected Students'),
+        const Text('Selected Students'),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.2,
           child: Expanded(
@@ -156,7 +158,7 @@ class _findSlotsState extends State<findSlots> {
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
                       leading: IconButton(
-                        icon: Icon(Icons.clear),
+                        icon: const Icon(Icons.clear),
                         onPressed: () {
                           setState(() {
                             students.remove(students.elementAt(index));
@@ -175,12 +177,12 @@ class _findSlotsState extends State<findSlots> {
     return Center(
       child: Column(
         children: [
-          Text('Select Slot Lenght (in hours)'),
+          const Text('Select Slot Lenght (in hours)'),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
-                icon: Icon(Icons.remove),
+                icon: const Icon(Icons.remove),
                 onPressed: () {
                   if (slotLength != 1) {
                     setState(() {
@@ -191,10 +193,10 @@ class _findSlotsState extends State<findSlots> {
               ),
               Text(
                 '$slotLength',
-                style: TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20),
               ),
               IconButton(
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
                 onPressed: () {
                   if (slotLength != 12) {
                     setState(() {
@@ -205,7 +207,7 @@ class _findSlotsState extends State<findSlots> {
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         ],
       ),
     );
@@ -243,7 +245,7 @@ class _findSlotsState extends State<findSlots> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: ElevatedButton(
-        onPressed: () {
+        onPressed: () async {
           // Validating form inputs
           DateTime currentDate = DateTime(
               DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -261,7 +263,7 @@ class _findSlotsState extends State<findSlots> {
             return;
           }
           List<int> conflicts =
-              EventDB().getConflicts(slotLength, date, students.toList());
+              await getConflicts(slotLength, date, students.toList());
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -271,6 +273,67 @@ class _findSlotsState extends State<findSlots> {
         child: const Text('Submit'),
       ),
     );
+  }
+
+  Future<List<int>> getConflicts(
+      int slotLength, DateTime date, List<String> students) async {
+    List<int> conflicts = List.filled(12 - 2 * slotLength, 0);
+
+    if (Loader.courseToSlot == null) {
+      await Loader.loadCourseSlot();
+    }
+    if (Loader.slotToTime == null) {
+      await Loader.loadSlotTime();
+    }
+    for (int m = 0; m < students.length; m++) {
+      var courses = await firebaseDatabase.getCourses(students[m]);
+      for (int i = 0; i < courses.length; i++) {
+        courses[i] = courses[i].replaceAll(' ', '');
+      }
+
+      for (int i = 0; i < courses.length; i++) {
+        for (int j = 0; j < 2; j++) {
+          String? slot = Loader.courseToSlot![courses[i]];
+          //  Processes as Tutorial or Class
+          slot = (j == 0) ? (slot) : ('T-$slot');
+          List<String>? times = Loader.slotToTime![slot];
+          if (times == null) continue;
+
+          for (int k = 0; k < times.length; k++) {
+            var l = times[k].split('|');
+            String day = l[0];
+            const weekdays = [
+              'monday',
+              'tuesday',
+              'wednesday',
+              'thursday',
+              'friday',
+              'saturday',
+              'sunday'
+            ];
+            if (day.compareTo(weekdays[date.weekday - 1]) != 0) continue;
+
+            TimeOfDay s = str2tod(l[1]);
+            TimeOfDay e = str2tod(l[2]);
+
+            int from = s.hour - slotLength + 1;
+            int to = (e.minute == 0) ? (e.hour) : (e.hour + 1);
+
+            for (int starthour = from; starthour < to; starthour++) {
+              int idx = 0;
+              if (starthour > 14) {
+                idx = starthour - 9;
+              }
+              if (starthour < 13) {
+                idx = starthour - 8;
+              }
+              conflicts[idx]++;
+            }
+          }
+        }
+      }
+    }
+    return conflicts;
   }
 
   @override

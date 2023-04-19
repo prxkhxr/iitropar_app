@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/database/loader.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
@@ -40,8 +41,8 @@ class _SignInScreenState extends State<SignInScreen> {
       if ((await Ids.resolveUser()).compareTo('student') == 0) {
         var cl = await firebaseDatabase.getCourses(
             FirebaseAuth.instance.currentUser!.email!.split('@')[0]);
-        await EventDB().loadCourses(cl);
-        await EventDB().loadMidSem(
+        await Loader.loadCourses(cl);
+        await Loader.loadMidSem(
           DateTime(2023, 2, 27),
           const TimeOfDay(hour: 9, minute: 30),
           const TimeOfDay(hour: 12, minute: 30),
