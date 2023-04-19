@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types, non_constant_identifier_names
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/colors.dart';
@@ -5,9 +7,7 @@ import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 
-import 'database/event.dart';
 import 'database/local_db.dart';
 
 String dateString(DateTime d) {
@@ -24,18 +24,16 @@ DateTime stringDate(String d) {
 class holidays {
   late DateTime date;
   late String desc;
-  holidays(date, desc) {
+  holidays(date, this.desc) {
     this.date = DateFormat('yyyy-MM-dd').parse(date);
-    this.desc = desc;
   }
 }
 
 class changedDay {
   late DateTime date;
   late String day_to_followed;
-  changedDay(date, day_to_followed) {
+  changedDay(date, this.day_to_followed) {
     this.date = DateFormat('yyyy-MM-dd').parse(date);
-    this.day_to_followed = day_to_followed;
   }
 }
 
@@ -45,19 +43,31 @@ class Ids {
     "2020csb1111@iitrpr.ac.in",
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
+  static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
+
   static String role = "guest";
   static bool assigned = false;
+  static String name = ""; //only for faculty
+  static String dep = ""; //only for faculty
 
   static Future<String> resolveUser() async {
     if (assigned == true) return role;
     String user;
     var clubEmails = await Ids.fclub;
+    var facultyEmails = await Ids.faculty;
     if (FirebaseAuth.instance.currentUser != null &&
         admins.contains(FirebaseAuth.instance.currentUser!.email)) {
       user = "admin";
     } else if (FirebaseAuth.instance.currentUser != null &&
         clubEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
       user = "club";
+    } else if (FirebaseAuth.instance.currentUser != null &&
+        facultyEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
+      user = "faculty";
+      var details = await firebaseDatabase
+          .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+      name = details[0];
+      dep = details[1];
     } else if (FirebaseAuth.instance.currentUser != null) {
       user = "student";
     } else {
@@ -184,7 +194,8 @@ class LoadingScreen {
 
 Future<bool> _signout() async {
   if (Ids.role == 'student') {
-    await EventDB().deleteOf('admin');
+    await EventDB().deleteOf('course');
+    await EventDB().deleteOf('exam');
   }
   await FirebaseServices().signOut();
   return true;

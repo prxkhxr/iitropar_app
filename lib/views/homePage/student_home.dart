@@ -108,7 +108,7 @@ class _StudentHomeState extends AbstractHomeState {
   List<Event> events = [];
 
   Future<bool> loadClasses() async {
-    classes = await EventDB().fetchEvents(DateTime.now(), 'admin');
+    classes = await EventDB().fetchEvents(DateTime.now(), 'course');
     classes.sort(((a, b) => a.compareTo(b)));
     return true;
   }

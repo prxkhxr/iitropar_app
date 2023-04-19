@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, no_logic_in_create_state
 
 import 'package:flutter/material.dart';
 import 'dart:io';

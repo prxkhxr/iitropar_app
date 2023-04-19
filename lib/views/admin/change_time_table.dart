@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: camel_case_types, non_constant_identifier_names, sort_child_properties_last
+
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:io';
 import 'package:intl/intl.dart';
 
 class changeTimetable extends StatefulWidget {
@@ -63,9 +61,10 @@ class AddFormState extends State<AddForm> {
           if (pickedDate.compareTo(currentDate) < 0) {
             return "Previous date event are not allowed";
           }
+          return null;
         },
         controller: dateinput, //editing controller of this TextField
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             icon: Icon(Icons.calendar_today), //icon of text field
             labelText: "Enter Date" //label text of field
             ),
@@ -91,18 +90,18 @@ class AddFormState extends State<AddForm> {
 
   Widget dayWidget() {
     List<DropdownMenuItem<String>> items = [
-      DropdownMenuItem(child: Text("Monday"), value: "Monday"),
-      DropdownMenuItem(child: Text("Tuesday"), value: "Tuesday"),
-      DropdownMenuItem(child: Text("Wednesday"), value: "Wednesday"),
-      DropdownMenuItem(child: Text("Thrusday"), value: "Thrusday"),
-      DropdownMenuItem(child: Text("Friday"), value: "Friday"),
+      const DropdownMenuItem(child: Text("Monday"), value: "Monday"),
+      const DropdownMenuItem(child: Text("Tuesday"), value: "Tuesday"),
+      const DropdownMenuItem(child: Text("Wednesday"), value: "Wednesday"),
+      const DropdownMenuItem(child: Text("Thrusday"), value: "Thrusday"),
+      const DropdownMenuItem(child: Text("Friday"), value: "Friday"),
     ];
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Text('Time table to be followed of '),
+            const Text('Time table to be followed of '),
             DropdownButton(
               items: items,
               value: selected_day,
@@ -126,7 +125,7 @@ class AddFormState extends State<AddForm> {
   Widget previous() {
     return Column(
       children: [
-        Text('Previously Time table Changes'),
+        const Text('Previously Time table Changes'),
         FutureBuilder<bool>(
             future: getchgs(),
             builder: (context, snapshot) {
@@ -164,13 +163,13 @@ class AddFormState extends State<AddForm> {
                 firebaseDatabase.switchTimetableFB(
                     dateinput.text, selected_day);
                 ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text("Added data")));
+                    .showSnackBar(const SnackBar(content: Text("Added data")));
                 setState(() {
                   hasUpdated = true;
                 });
               }
             },
-            child: Text("Submit")),
+            child: const Text("Submit")),
       ),
     );
   }

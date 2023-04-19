@@ -76,34 +76,48 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     List<Event> l = List.empty(growable: true);
     while (d1.compareTo(d2) < 0) {
       l = await edb.fetchEvents(d1);
-      // l.addAll(await firebaseDatabase.getEvents(d1));
-      setState(() {
-        mySelectedEvents[DateFormat('yyyy-MM-dd').format(d1)] = l;
-      });
+      mySelectedEvents[DateFormat('yyyy-MM-dd').format(d1)] = l;
       d1 = d1.add(const Duration(days: 1));
+    }
+    edb.printAll();
+    setState(() {
+      mySelectedEvents;
+    });
+  }
+
+  updateEvents(DateTime d) async {
+    var l = await edb.fetchEvents(d);
+    setState(() {
+      mySelectedEvents[dateString(d)] = l;
+    });
+  }
+
+  updateEventsRecurring(DateTime d) async {
+    DateTime s = DateTime(d.year, d.month);
+    s = s.add(Duration(
+        days: (d.weekday >= s.weekday)
+            ? (d.weekday - s.weekday)
+            : (d.weekday - s.weekday + 7)));
+    while (s.month == d.month) {
+      updateEvents(s);
+      s = s.add(const Duration(days: 7));
     }
   }
 
   void _insertSingularEvent(Event e, DateTime date) async {
-    edb.addSingularEvent(e, date, edb.getID());
-    setState(() {
-      loadEvents(_selectedDate);
-    });
+    await edb.addSingularEvent(e, date);
+    updateEvents(date);
   }
 
   void _insertRecurringEvent(
-      Event r, DateTime start, DateTime end, int mask) async {
-    edb.addRecurringEvent(r, start, end, edb.getID(), mask);
-    setState(() {
-      loadEvents(_selectedDate);
-    });
+      Event r, DateTime start, DateTime end, DateTime current, int mask) async {
+    await edb.addRecurringEvent(r, start, end, mask);
+    updateEventsRecurring(_selectedDate);
   }
 
   void _deleteEntireEvent(Event e) async {
     await edb.delete(e);
-    setState(() {
-      loadEvents(_selectedDate);
-    });
+    loadEvents(_selectedDate);
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -430,7 +444,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       etime: endTime,
                       creator: 'user',
                     );
-                    _insertRecurringEvent(r, startDate, endDate,
+                    _insertRecurringEvent(r, startDate, endDate, _selectedDate,
                         ((1 << (startDate.weekday - 1))));
 
                     titleController.clear();
@@ -485,8 +499,10 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   return _focused.month == day.month;
                 },
                 onPageChanged: (focusedDay) {
+                  setState(() {
                   _focused = focusedDay;
-                  loadEvents(focusedDay);
+                  });
+                loadEvents(focusedDay);
                 },
                 eventLoader: (datetime) {
                   return _listOfDayEvents(datetime);

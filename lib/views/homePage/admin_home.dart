@@ -5,6 +5,7 @@ import 'package:iitropar/views/admin/add_course_csv.dart';
 import 'package:iitropar/views/admin/add_holidays.dart';
 import 'package:iitropar/views/admin/registerClub.dart';
 import 'package:iitropar/views/admin/change_time_table.dart';
+import 'package:iitropar/views/admin/registerFaculty.dart';
 import 'home_page.dart';
 
 class AdminHome extends AbstractHome {
@@ -63,6 +64,13 @@ class _AdminHomeState extends AbstractHomeState {
             MaterialPageRoute(builder: (context) => const changeTimetable()));
       },
       child: const Text("Change time table"),
+    ));
+    l.add(ElevatedButton(
+      onPressed: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const registerFaculty()));
+      },
+      child: const Text("Register Faculty"),
     ));
 
     return l;

@@ -4,10 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:path/path.dart' as p;
 import 'package:iitropar/frequently_used.dart';
-import 'package:csv/csv.dart';
 import 'package:mutex/mutex.dart';
-
-import 'package:flutter/services.dart' show rootBundle;
 
 String _dbName = "Events.db";
 
@@ -23,25 +20,22 @@ class EventDB {
   Future<List<Event>> _fetchSingularEvents(DateTime date) async {
     var t = await _db!.rawQuery(''
         'SELECT e.id as id, e.title as title, e.desc as desc, e.stime as stime, e.etime as etime, e.creator as creator '
-        'FROM events as e, event_meta as em '
+        'FROM events e, event_meta em '
         'WHERE e.id = em.event_id and em.key = "date" and em.val = "${dateString(date)}"');
     return Future(
         () => List.generate(t.length, (idx) => _convertToEvent(t[idx])));
   }
 
   Future<List<Event>> _fetchRecurringEvents(DateTime date) async {
-    int mask = 1 << (date.weekday - 1);
-    String maskstr = _mask2str(mask);
-
     String datestr = dateString(date);
 
     var t = await _db!.rawQuery(''
         'SELECT e.id as id, e.title as title, e.desc as desc, e.stime as stime, e.etime as etime, e.creator as creator '
-        'FROM events as e, event_meta as em1, event_meta as em2, event_meta as em3 '
+        'FROM events e, event_meta em1, event_meta em2, event_meta em3 '
         'WHERE e.id = em1.event_id and e.id = em2.event_id and e.id = em3.event_id and '
         ' em1.key = "start_date" and em1.val <= "$datestr" and '
         ' em2.key = "end_date" and em2.val >= "$datestr" and '
-        ' em3.key = "mask" and em3.val LIKE "$maskstr" '
+        ' em3.key = "recur_on" and em3.val = "${date.weekday}" '
         '');
 
     var lt = List.generate(t.length, (idx) => _convertToEvent(t[idx]));
@@ -53,15 +47,23 @@ class EventDB {
     return lt;
   }
 
-  Future<void> _addEvent(Event e, int id) async {
+  Future<int> _addEvent(Event e) async {
+    var l = await _db!.rawQuery(
+        'SELECT * FROM events WHERE title = "${e.title}" and desc = "${e.desc}" and stime = "${e.startTime()}" and etime = "${e.endTime()}" and creator = "${e.creator}"');
+    if (l.isNotEmpty) {
+      return int.parse(l[0]['id'].toString());
+    }
+
+    var id = _getID();
     await _db!.rawInsert(
         'INSERT INTO events(id, title, desc, stime, etime, creator) VALUES'
         ' ($id, "${e.title}", "${e.desc}", "${e.startTime()}", "${e.endTime()}", "${e.creator}");');
+    return id;
   }
 
   Future<void> _addEventMeta(int id, String key, String val) async {
     await _db!.rawInsert(
-        'INSERT INTO event_meta(event_id, key, val) VALUES ($id, "$key", "$val")');
+        'INSERT OR IGNORE INTO event_meta(event_id, key, val) VALUES ($id, "$key", "$val")');
   }
 
   Event _convertToEvent(Map<String, Object?> vals) {
@@ -75,40 +77,11 @@ class EventDB {
     );
   }
 
-  String _convertTo24(String time, String segment) {
-    int hour = int.parse(time.split('.')[0]);
-    int min = int.parse(time.split('.')[1]);
-    if (segment.toLowerCase().compareTo('am') != 0) {
-      if (hour != 12) hour += 12;
-    } else if (hour == 12) {
-      hour = 0;
-    }
-    return '${hour.toString().padLeft(2, "0")}:${min.toString().padLeft(2, "0")}';
-  }
-
-  String _mask2str(int mask) {
-    String str = '';
-    for (int i = 0; i < 7; i++) {
-      if (mask % 2 == 0) {
-        str = '_$str';
-      } else {
-        str = '1$str';
-      }
-      mask = mask >> 1;
-    }
-    return str;
-  }
-
-  int _str2mask(String str) {
-    int mask = 0;
-    for (int i = 0; i < 7; i++) {
-      if (str[i].compareTo('0') == 0 || str[i].compareTo('_') == 0) {
-        mask = mask << 1;
-      } else {
-        mask = (mask << 1) + 1;
-      }
-    }
-    return mask;
+  void printAll() async {
+    var e = await _db!.rawQuery('SELECT * FROM events');
+    var em = await _db!.rawQuery('SELECT * FROM event_meta');
+    print(e);
+    print(em);
   }
 
   static Future<void> startInstance() async {
@@ -120,7 +93,7 @@ class EventDB {
         await db.execute(
             "CREATE TABLE events(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, stime TEXT, etime TEXT, creator TEXT);");
         await db.execute(
-            "CREATE TABLE event_meta(event_id INTEGER, key TEXT, val TEXT, FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE, PRIMARY KEY(event_id, key));");
+            "CREATE TABLE event_meta(event_id INTEGER, key TEXT, val TEXT, FOREIGN KEY(event_id) REFERENCES events(id), PRIMARY KEY(event_id, key, val)) WITHOUT ROWID;");
 
         _lock.acquire();
         _next = 1;
@@ -129,7 +102,12 @@ class EventDB {
       onOpen: (db) async {
         var q = (await db.rawQuery('SELECT MAX(id) as id FROM events;'));
 
-        if (q[0]['id'] == null) return;
+        if (q[0]['id'] == null) {
+          _lock.acquire();
+          _next = 1;
+          _lock.release();
+          return;
+        }
 
         _lock.acquire();
         _next = int.parse(q[0]['id'].toString()) + 1;
@@ -138,23 +116,26 @@ class EventDB {
     );
   }
 
-  Future<void> addSingularEvent(Event se, DateTime day, int id) async {
-    await _addEvent(se, id);
+  Future<void> addSingularEvent(Event se, DateTime day) async {
+    var id = await _addEvent(se);
     await _addEventMeta(id, "date", dateString(day));
   }
 
   Future<void> addRecurringEvent(
-      Event re, DateTime startDate, DateTime endDate, int id, int mask) async {
-    await _addEvent(re, id);
+      Event re, DateTime startDate, DateTime endDate, int mask) async {
+    var id = await _addEvent(re);
     await _addEventMeta(id, "start_date", dateString(startDate));
     await _addEventMeta(id, "end_date", dateString(endDate));
-    await _addEventMeta(id, "mask", _mask2str(mask));
+    for (int i = 0; i < 7; i++) {
+      if (mask % 2 == 1) await _addEventMeta(id, "recur_on", "${i + 1}");
+      mask = (mask >> 1);
+    }
   }
 
   Future<List<Event>> deletedForDay(List<Event> l, DateTime day) async {
     var t = await _db!.rawQuery(''
         'SELECT e.id as id, e.title as title, e.desc as desc, e.stime as stime, e.etime as etime, e.creator as creator '
-        'FROM events as e, event_meta as em '
+        'FROM events e, event_meta em '
         'WHERE e.id = em.event_id and em.key = "deleted_for" and em.val = "${dateString(day)}" '
         '');
     var lt = List.generate(t.length, (idx) => _convertToEvent(t[idx]));
@@ -169,9 +150,14 @@ class EventDB {
   }
 
   Future<void> delete(Event e) async {
+    e = await fillID(e);
     await _db!.rawDelete(''
-        'DELETE FROM events as e '
-        'WHERE e.title = "${e.title}" and e.desc = "${e.desc}" and e.stime = "${e.startTime()}" and e.etime = "${e.endTime()}" '
+        'DELETE FROM events '
+        'WHERE id = ${e.id} '
+        '');
+    await _db!.rawDelete(''
+        'DELETE FROM event_meta '
+        'WHERE event_id = ${e.id} '
         '');
     // await _db!.rawDelete('')
   }
@@ -206,108 +192,7 @@ class EventDB {
     return List.from(events.map((e) => _convertToEvent(e)));
   }
 
-  Future<bool> loadCourse(List<String> course_id) async {
-    //  Preprocess
-    for (int i = 0; i < course_id.length; i++) {
-      course_id[i] = course_id[i].replaceAll(' ', '');
-    }
-
-    //  Load Slots of each Course
-    var courseSlots = const CsvToListConverter()
-        .convert(await rootBundle.loadString('assets/CourseSlots.csv'));
-    int len = courseSlots.length;
-    Map<String, String> courseToSlot = {};
-    for (int i = 0; i < len; i++) {
-      if (courseSlots[i][0].runtimeType == int) {
-        courseToSlot[courseSlots[i][1].replaceAll(' ', '')] = courseSlots[i][3];
-      }
-    }
-
-    var slotTimes = const CsvToListConverter()
-        .convert(await rootBundle.loadString('assets/TimeTable.csv'));
-    len = slotTimes.length;
-    Map<String, List<String>> slotToTime = {};
-
-    // Process Times
-    List<String> timings = slotTimes[0].cast<String>();
-    for (int i = 1; i < timings.length; i++) {
-      List<String> tokens = timings[i].split(' ');
-      if (tokens.length != 4) continue;
-      timings[i] =
-          '${_convertTo24(tokens[0], tokens[3])} ${_convertTo24(tokens[2], tokens[3])}';
-    }
-
-    //  Load time corresponding to slots
-    for (int i = 1; i < len; i++) {
-      int sz = slotTimes[i].length;
-      String weekday = slotTimes[i][0];
-
-      for (int j = 1; j < sz; j++) {
-        String slot = slotTimes[i][j].replaceAll(' ', '');
-        if (slotToTime[slot] == null) {
-          slotToTime[slot] = List.empty(growable: true);
-        }
-        //  Add time to corresponding slot
-        slotToTime[slot]!.add(
-            '${weekday.toLowerCase()} ${timings[j].toLowerCase()}'); // monday 8 - 8.50 AM
-      }
-    }
-
-    for (int i = 0; i < course_id.length; i++) {
-      for (int j = 0; j < 2; j++) {
-        String? slot = courseToSlot[course_id[i]];
-        //  Processes as Tutorial or Class
-        slot = (j == 0) ? (slot) : ('T-$slot');
-        String title =
-            (j == 0) ? ('${course_id[i]} Class') : '${course_id[i]} Tutorial';
-
-        List<String>? times = slotToTime[slot];
-        if (times == null) continue;
-
-        for (int j = 0; j < times.length; j++) {
-          var l = times[j].split(' ');
-          String day = l[0];
-          int mask = 0;
-          const weekdays = [
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday'
-          ];
-          for (int k = 0; k < 7; k++) {
-            if (day.compareTo(weekdays[k]) == 0) {
-              mask = 1 << k;
-              break;
-            }
-          }
-
-          String stime = l[1];
-          String etime = l[2];
-          Event e = Event(
-              title: title,
-              desc: title,
-              stime: str2tod(stime),
-              etime: str2tod(etime),
-              creator: 'admin');
-          int id = getID();
-          await addRecurringEvent(
-            e,
-            DateTime(2023),
-            DateTime(2024),
-            id,
-            mask,
-          );
-        }
-      }
-    }
-
-    return true;
-  }
-
-  int getID() {
+  int _getID() {
     _lock.acquire();
     int ans = _next++;
     _lock.release();
@@ -321,7 +206,7 @@ class EventDB {
 
   Future<Event> fillID(Event e) async {
     var t = await _db!.rawQuery(
-        "SELECT e.id FROM events as e WHERE e.title = ${e.title} and e.desc = ${e.desc} and e.stime = ${e.startTime()} and e.etime = ${e.endTime()} and e.creator = ${e.creator}");
+        'SELECT e.id FROM events e WHERE e.title = "${e.title}" and e.desc = "${e.desc}" and e.stime = "${e.startTime()}" and e.etime = "${e.endTime()}" and e.creator = "${e.creator}"');
     e.id = int.parse(t[0]['id'].toString());
     return e;
   }
