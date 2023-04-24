@@ -1,7 +1,12 @@
 // ignore_for_file: file_names, camel_case_types, sort_child_properties_last
 
 import 'package:flutter/material.dart';
+import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:csv/csv.dart';
+import 'dart:convert';
+import 'dart:io';
 
 class registerFaculty extends StatefulWidget {
   const registerFaculty({super.key});
@@ -42,7 +47,12 @@ class AddEventFormState extends State<AddEventForm> {
   late String facultyName;
   late String facultyDep;
   late String facultyEmail;
+  late Set<String> facultyCourses;
+  List<List<dynamic>> _data = [];
+  String? filePath;
+  TextEditingController coursesInput = TextEditingController();
   AddEventFormState() {
+    facultyCourses = {};
     facultyEmail = "";
     facultyName = "";
     facultyDep = "Computer Science & Engineering";
@@ -78,30 +88,6 @@ class AddEventFormState extends State<AddEventForm> {
   }
 
   Widget _buildFacultyDep() {
-    List<DropdownMenuItem<String>> items = [
-      const DropdownMenuItem(
-          child: Text("BioMedical Engineering"),
-          value: "BioMedical Engineering"),
-      const DropdownMenuItem(
-          child: Text("Chemical Engineering"), value: "Chemical Engineering"),
-      const DropdownMenuItem(
-          child: Text("Civil Engineering"), value: "Civil Engineering"),
-      const DropdownMenuItem(
-          child: Text("Electrical Engineering"),
-          value: "Electrical Engineering"),
-      const DropdownMenuItem(
-          child: Text("Computer Science & Engineering"),
-          value: "Computer Science & Engineering"),
-      const DropdownMenuItem(
-          child: Text("Metallurgical and Materials Engineering"),
-          value: "Metallurgical and Materials Engineering"),
-      const DropdownMenuItem(child: Text("Chemistry"), value: "Chemistry"),
-      const DropdownMenuItem(child: Text("Physics"), value: "Physics"),
-      const DropdownMenuItem(child: Text("Mathematics"), value: "Mathematics"),
-      const DropdownMenuItem(
-          child: Text("Humanities and Social Sciences"),
-          value: "Humanities and Social Sciences"),
-    ];
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +99,7 @@ class AddEventFormState extends State<AddEventForm> {
           ),
           DropdownButton(
             isExpanded: true,
-            items: items,
+            items: departments,
             value: facultyDep,
             onChanged: (value) {
               setState(() {
@@ -124,6 +110,131 @@ class AddEventFormState extends State<AddEventForm> {
         ],
       ),
     );
+  }
+
+  bool validCourse(String courseCode) {
+    return allCourses.contains(courseCode);
+  }
+
+  bool validDep(String dep) {
+    for (int i = 0; i < departments.length; i++) {
+      if (dep == departments[i].value) return true;
+    }
+    return false;
+  }
+
+  Widget _buildRemoveCourses() {
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          children: facultyCourses
+              .map(
+                (course) => Chip(
+                  label: Text(course),
+                  deleteIcon: const Icon(Icons.clear),
+                  onDeleted: () {
+                    setState(() {
+                      facultyCourses.remove(course);
+                    });
+                  },
+                ),
+              )
+              .toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFacultyCourses() {
+    List<String> courses;
+
+    return Column(
+      children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: TextFormField(
+                controller: coursesInput,
+                decoration: const InputDecoration(
+                    icon: Icon(Icons.school), labelText: "Enter Courses "),
+              )),
+          IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                if (validCourse(coursesInput.text)) {
+                  setState(() {
+                    facultyCourses.add(coursesInput.text);
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("CourseCode not valid.")),
+                  );
+                }
+              }),
+        ]),
+      ],
+    );
+  }
+
+  void uploadData(List<List<dynamic>> f) {
+    int len = f.length;
+    for (int i = 1; i < len; i++) {
+      if (!validDep(f[i][1])) {
+        print("Invalid DEP");
+        continue;
+      }
+      Set<String> courses = {};
+      int attrs = f[i].length;
+      for (int j = 3; j < attrs; j++) {
+        if (validCourse(f[i][j].toString())) {
+          courses.add(f[i][j]);
+        } //invalid courses are rejected
+      }
+      faculty fac = faculty(f[i][0], f[i][1], f[i][2], courses);
+      firebaseDatabase.registerFacultyFB(fac);
+    }
+  }
+
+  void _pickFile(ScaffoldMessengerState sm) async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+
+    // if no file is picked
+    if (result == null) return;
+    // we will log the name, size and path of the
+    // first picked file (if multiple are selected)
+    print(result.files.first.name);
+    filePath = result.files.first.path!;
+
+    final input = File(filePath!).openRead();
+    final fields = await input
+        .transform(utf8.decoder)
+        .transform(const CsvToListConverter())
+        .toList();
+    print(fields[0]);
+    if (!verifyHeader(fields[0])) {
+      sm.showSnackBar(
+          const SnackBar(content: Text("Header format in csv incorrect!")));
+    } else {
+      sm.showSnackBar(
+          const SnackBar(content: Text("Header format in csv correct!")));
+      uploadData(fields);
+    }
+    setState(() {
+      _data = fields;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Data Added with CSV")),
+    );
+  }
+
+  bool verifyHeader(List<dynamic> header) {
+    if (header[0].toString().toLowerCase() == "facultyname" &&
+        header[1].toString().toLowerCase() == "department" &&
+        header[2].toString().toLowerCase() == "email" &&
+        header[3].toString().toLowerCase() == "courses") return true;
+    return false;
   }
 
   @override
@@ -141,24 +252,97 @@ class AddEventFormState extends State<AddEventForm> {
               _buildFacultyName(),
               _buildFacultyDep(),
               _buildFacultyEmail(),
+              _buildFacultyCourses(),
+              _buildRemoveCourses(),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        // If the form is valid, display a snackbar. In the real world,
+                        // you'd often call a server or save the information in a database.
+                        _formKey.currentState!.save();
+                        String espcl =
+                            await firebaseDatabase.emailCheck(facultyEmail);
+                        if (espcl == "faculty" || espcl == "club") {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text("Email already taken by $espcl")),
+                          );
+                          return;
+                        }
+                        faculty f = faculty(facultyName, facultyDep,
+                            facultyEmail, facultyCourses);
+                        firebaseDatabase.registerFacultyFB(f);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Faculty has been registered!")),
+                        );
+                      }
+                    },
+                    child: const Text('Submit'),
+                  ),
+                ),
+              ),
+              Center(child: Text('OR')),
+              SizedBox(height: 10),
+              Center(
                 child: ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      // If the form is valid, display a snackbar. In the real world,
-                      // you'd often call a server or save the information in a database.
-                      _formKey.currentState!.save();
-                      firebaseDatabase.registerFacultyFB(
-                          facultyName, facultyDep, facultyEmail);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Faculty has been registered!")),
-                      );
-                    }
+                  onPressed: () {
+                    // Show an alert dialog with a confirmation prompt
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Given CSV format'),
+                          content: SizedBox(
+                            height: MediaQuery.of(context).size.width * 0.5,
+                            child: Column(
+                              children: [
+                                Image.asset("assets/faculty_register.png"),
+                                SizedBox(height: 10),
+                                Text(
+                                    '1.All faculty must have unique email ID and Name'),
+                                SizedBox(height: 10),
+                                Text('2.Course Code must be valid.'),
+                                SizedBox(height: 10),
+                                Text('3.Department should be valid'),
+                              ],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            Center(
+                              child: ElevatedButton(
+                                child: Text('Upload File'),
+                                onPressed: () {
+                                  // Close the dialog and call the onPressed function
+                                  _pickFile(ScaffoldMessenger.of(context));
+
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              child: TextButton(
+                                child: Text('Cancel'),
+                                onPressed: () {
+                                  // Close the dialog and do nothing
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
-                  child: const Text('Submit'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  child: Text('Upload via CSV'),
                 ),
               ),
             ],

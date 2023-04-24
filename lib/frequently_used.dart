@@ -10,6 +10,39 @@ import 'package:intl/intl.dart';
 
 import 'database/local_db.dart';
 
+List<String> allCourses = [
+  'CS301',
+  'CS304',
+  'CS306',
+  'HS301',
+  'CS305',
+  'CS306',
+  'CP301',
+  'CS503',
+  'CS535'
+];
+List<DropdownMenuItem<String>> departments = [
+  const DropdownMenuItem(
+      child: Text("BioMedical Engineering"), value: "BioMedical Engineering"),
+  const DropdownMenuItem(
+      child: Text("Chemical Engineering"), value: "Chemical Engineering"),
+  const DropdownMenuItem(
+      child: Text("Civil Engineering"), value: "Civil Engineering"),
+  const DropdownMenuItem(
+      child: Text("Electrical Engineering"), value: "Electrical Engineering"),
+  const DropdownMenuItem(
+      child: Text("Computer Science & Engineering"),
+      value: "Computer Science & Engineering"),
+  const DropdownMenuItem(
+      child: Text("Metallurgical and Materials Engineering"),
+      value: "Metallurgical and Materials Engineering"),
+  const DropdownMenuItem(child: Text("Chemistry"), value: "Chemistry"),
+  const DropdownMenuItem(child: Text("Physics"), value: "Physics"),
+  const DropdownMenuItem(child: Text("Mathematics"), value: "Mathematics"),
+  const DropdownMenuItem(
+      child: Text("Humanities and Social Sciences"),
+      value: "Humanities and Social Sciences"),
+];
 String dateString(DateTime d) {
   return DateFormat('yyyy-MM-dd').format(d);
 }
@@ -37,10 +70,23 @@ class changedDay {
   }
 }
 
+class faculty {
+  late String name;
+  late String department;
+  late String email;
+  late Set<dynamic> courses;
+  faculty(name, dep, email, courses) {
+    this.name = name;
+    this.department = dep;
+    this.email = email;
+    this.courses = courses;
+  }
+}
+
 class Ids {
   static List<String> admins = [
     "2020csb1086@iitrpr.ac.in",
-    "2020csb1111@iitrpr.ac.in",
+    "2020csb1073@iitrpr.ac.in",
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
   static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
