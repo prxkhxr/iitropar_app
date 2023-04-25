@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/frequently_used.dart';
 
@@ -34,6 +35,21 @@ class firebaseDatabase {
         .set(event)
         .then((value) => print("event added"))
         .catchError((error) => print("failed to add event.\n ERROR =  $error"));
+  }
+
+  static Future<List<dynamic>> getStudents(String courseID) async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('courses');
+    QuerySnapshot querySnapshot = await collectionRef.get();
+    int len = querySnapshot.docs.length;
+    List<dynamic> students = [];
+    for (int i = 0; i < len; i++) {
+      List<dynamic> courses = querySnapshot.docs[i]['courses'];
+      if (courses.contains(courseID)) {
+        students.add(querySnapshot.docs[i].id);
+      }
+    }
+    return students;
   }
 
   static void updateFaculty(faculty f) {
@@ -176,7 +192,7 @@ class firebaseDatabase {
     return "noclub";
   }
 
-  static Future<List<String>> getFacultyDetail(String email) async {
+  static Future<faculty> getFacultyDetail(String email) async {
     CollectionReference collectionRef =
         FirebaseFirestore.instance.collection('faculty');
     QuerySnapshot querySnapshot = await collectionRef.get();
@@ -185,12 +201,16 @@ class firebaseDatabase {
     var len = querySnapshot.docs.length;
     for (int i = 0; i < len; i++) {
       if (querySnapshot.docs[i]['email'] == email) {
-        details.add(querySnapshot.docs[i]['name']);
-        details.add(querySnapshot.docs[i]['dep']);
-        return details;
+        faculty f = faculty(
+            querySnapshot.docs[i]['name'],
+            querySnapshot.docs[i]['dep'],
+            querySnapshot.docs[i]['email'],
+            Set.from(querySnapshot.docs[i]['courses']));
+        return f;
       }
     }
-    return details;
+    faculty f = faculty("", "", "", Set());
+    return f;
   }
 
   static Future<List<faculty>> getFaculty() async {
@@ -279,5 +299,58 @@ class firebaseDatabase {
     } catch (e) {
       rethrow;
     }
+  }
+
+  static Future<bool> addExtraClass(ExtraClass c) async {
+    DocumentReference docRef = FirebaseFirestore.instance
+        .collection(c.courseID)
+        .doc(
+            '${c.courseID}-${dateString(c.date).replaceAll('/', '-')}-${TimeString(c.startTime)}-${TimeString(c.endTime)}');
+    Map<String, dynamic> exClass = {
+      "courseID": c.courseID,
+      "date": dateString(c.date),
+      "startTime": TimeString(c.startTime),
+      "endTime": TimeString(c.endTime),
+      "venue": c.venue,
+      "desc": c.description
+    };
+    docRef.set(exClass);
+    return true;
+  }
+
+  static Future<List<ExtraClass>> getExtraCass(String courseID) async {
+    List<ExtraClass> ec = [];
+
+    var snapshots = await FirebaseFirestore.instance.collection(courseID).get();
+    for (int i = 0; i < snapshots.docs.length; i++) {
+      var doc = snapshots.docs[i];
+
+      DateTime date = stringDate(doc["date"]);
+      TimeOfDay startTime = StringTime(doc["startTime"]);
+      TimeOfDay endTime = StringTime(doc["endTime"]);
+      String description = doc["desc"];
+      String venue = doc["venue"];
+      ExtraClass new_c = ExtraClass(
+          courseID: courseID,
+          date: date,
+          startTime: startTime,
+          endTime: endTime,
+          description: description,
+          venue: venue);
+      ec.add(new_c);
+    }
+    return ec;
+  }
+
+  static void deleteClass(ExtraClass c) {
+    DocumentReference docRef = FirebaseFirestore.instance
+        .collection(c.courseID)
+        .doc(
+            '${c.courseID}-${dateString(c.date).replaceAll('/', '-')}-${TimeString(c.startTime)}-${TimeString(c.endTime)}');
+    docRef.delete().then((value) {
+      print('Document deleted successfully.');
+    }).catchError((error) {
+      print('Error deleting document: $error');
+    });
   }
 }

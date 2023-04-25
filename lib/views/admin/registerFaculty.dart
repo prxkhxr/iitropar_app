@@ -1,5 +1,7 @@
 // ignore_for_file: file_names, camel_case_types, sort_child_properties_last
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
@@ -178,11 +180,18 @@ class AddEventFormState extends State<AddEventForm> {
     );
   }
 
-  void uploadData(List<List<dynamic>> f) {
+  void uploadData(List<List<dynamic>> f) async {
     int len = f.length;
     for (int i = 1; i < len; i++) {
       if (!validDep(f[i][1])) {
         print("Invalid DEP");
+        continue;
+      }
+      String av = await firebaseDatabase.emailCheck(f[i][2]);
+      if (av != "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Email not free")),
+        );
         continue;
       }
       Set<String> courses = {};

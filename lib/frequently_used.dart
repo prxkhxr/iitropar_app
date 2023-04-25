@@ -10,6 +10,20 @@ import 'package:intl/intl.dart';
 
 import 'database/local_db.dart';
 
+DateTime getTodayDateTime() {
+  return DateTime(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day);
+}
+
+String TimeString(TimeOfDay t) {
+  return "${t.hour}:${t.minute}";
+}
+
+TimeOfDay StringTime(String t) {
+  List<String> t_split = t.split(':');
+  return TimeOfDay(hour: int.parse(t_split[0]), minute: int.parse(t_split[1]));
+}
+
 List<String> allCourses = [
   'CS301',
   'CS304',
@@ -99,21 +113,20 @@ class Ids {
   static Future<String> resolveUser() async {
     if (assigned == true) return role;
     String user;
-    var clubEmails = await Ids.fclub;
-    var facultyEmails = await Ids.faculty;
-    if (FirebaseAuth.instance.currentUser != null &&
-        admins.contains(FirebaseAuth.instance.currentUser!.email)) {
+    if (FirebaseAuth.instance.currentUser == null) {
+      user = "guest";
+      role = user;
+      assigned = true;
+      return role;
+    }
+    String email_check = await firebaseDatabase
+        .emailCheck(FirebaseAuth.instance.currentUser!.email!);
+    if (admins.contains(FirebaseAuth.instance.currentUser!.email)) {
       user = "admin";
-    } else if (FirebaseAuth.instance.currentUser != null &&
-        clubEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
+    } else if (email_check == "club") {
       user = "club";
-    } else if (FirebaseAuth.instance.currentUser != null &&
-        facultyEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
+    } else if (email_check == "faculty") {
       user = "faculty";
-      var details = await firebaseDatabase
-          .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
-      name = details[0];
-      dep = details[1];
     } else if (FirebaseAuth.instance.currentUser != null) {
       user = "student";
     } else {
@@ -304,4 +317,20 @@ Row buildTitleBar(String text, BuildContext context) {
       signoutButtonWidget(context),
     ],
   );
+}
+
+class ExtraClass {
+  String venue;
+  String description;
+  String courseID;
+  DateTime date;
+  TimeOfDay startTime;
+  TimeOfDay endTime;
+  ExtraClass(
+      {required this.courseID,
+      required this.date,
+      required this.startTime,
+      required this.endTime,
+      required this.description,
+      required this.venue});
 }
