@@ -3,6 +3,7 @@ import 'package:iitropar/views/admin/add_event.dart';
 import 'package:iitropar/views/admin/add_event_csv.dart';
 import 'package:iitropar/views/admin/add_course_csv.dart';
 import 'package:iitropar/views/admin/add_holidays.dart';
+import 'package:iitropar/views/admin/faculty_courses.dart';
 import 'package:iitropar/views/admin/registerClub.dart';
 import 'package:iitropar/views/admin/change_time_table.dart';
 import 'package:iitropar/views/admin/registerFaculty.dart';
@@ -71,6 +72,13 @@ class _AdminHomeState extends AbstractHomeState {
             MaterialPageRoute(builder: (context) => const registerFaculty()));
       },
       child: const Text("Register Faculty"),
+    ));
+    l.add(ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => FacultyList()));
+      },
+      child: const Text("Manage Faculty and Courses"),
     ));
 
     return l;

@@ -10,6 +10,53 @@ import 'package:intl/intl.dart';
 
 import 'database/local_db.dart';
 
+DateTime getTodayDateTime() {
+  return DateTime(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day);
+}
+
+String TimeString(TimeOfDay t) {
+  return "${t.hour}:${t.minute}";
+}
+
+TimeOfDay StringTime(String t) {
+  List<String> t_split = t.split(':');
+  return TimeOfDay(hour: int.parse(t_split[0]), minute: int.parse(t_split[1]));
+}
+
+List<String> allCourses = [
+  'CS301',
+  'CS304',
+  'CS306',
+  'HS301',
+  'CS305',
+  'CS306',
+  'CP301',
+  'CS503',
+  'CS535'
+];
+List<DropdownMenuItem<String>> departments = [
+  const DropdownMenuItem(
+      child: Text("BioMedical Engineering"), value: "BioMedical Engineering"),
+  const DropdownMenuItem(
+      child: Text("Chemical Engineering"), value: "Chemical Engineering"),
+  const DropdownMenuItem(
+      child: Text("Civil Engineering"), value: "Civil Engineering"),
+  const DropdownMenuItem(
+      child: Text("Electrical Engineering"), value: "Electrical Engineering"),
+  const DropdownMenuItem(
+      child: Text("Computer Science & Engineering"),
+      value: "Computer Science & Engineering"),
+  const DropdownMenuItem(
+      child: Text("Metallurgical and Materials Engineering"),
+      value: "Metallurgical and Materials Engineering"),
+  const DropdownMenuItem(child: Text("Chemistry"), value: "Chemistry"),
+  const DropdownMenuItem(child: Text("Physics"), value: "Physics"),
+  const DropdownMenuItem(child: Text("Mathematics"), value: "Mathematics"),
+  const DropdownMenuItem(
+      child: Text("Humanities and Social Sciences"),
+      value: "Humanities and Social Sciences"),
+];
 String dateString(DateTime d) {
   return DateFormat('yyyy-MM-dd').format(d);
 }
@@ -37,6 +84,19 @@ class changedDay {
   }
 }
 
+class faculty {
+  late String name;
+  late String department;
+  late String email;
+  late Set<dynamic> courses;
+  faculty(name, dep, email, courses) {
+    this.name = name;
+    this.department = dep;
+    this.email = email;
+    this.courses = courses;
+  }
+}
+
 class Ids {
   static List<String> admins = [
     "2020csb1086@iitrpr.ac.in",
@@ -52,21 +112,20 @@ class Ids {
   static Future<String> resolveUser() async {
     if (assigned == true) return role;
     String user;
-    var clubEmails = await Ids.fclub;
-    var facultyEmails = await Ids.faculty;
-    if (FirebaseAuth.instance.currentUser != null &&
-        admins.contains(FirebaseAuth.instance.currentUser!.email)) {
+    if (FirebaseAuth.instance.currentUser == null) {
+      user = "guest";
+      role = user;
+      assigned = true;
+      return role;
+    }
+    String email_check = await firebaseDatabase
+        .emailCheck(FirebaseAuth.instance.currentUser!.email!);
+    if (admins.contains(FirebaseAuth.instance.currentUser!.email)) {
       user = "admin";
-    } else if (FirebaseAuth.instance.currentUser != null &&
-        clubEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
+    } else if (email_check == "club") {
       user = "club";
-    } else if (FirebaseAuth.instance.currentUser != null &&
-        facultyEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
+    } else if (email_check == "faculty") {
       user = "faculty";
-      var details = await firebaseDatabase
-          .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
-      name = details[0];
-      dep = details[1];
     } else if (FirebaseAuth.instance.currentUser != null) {
       user = "student";
     } else {
@@ -257,4 +316,20 @@ Row buildTitleBar(String text, BuildContext context) {
       signoutButtonWidget(context),
     ],
   );
+}
+
+class ExtraClass {
+  String venue;
+  String description;
+  String courseID;
+  DateTime date;
+  TimeOfDay startTime;
+  TimeOfDay endTime;
+  ExtraClass(
+      {required this.courseID,
+      required this.date,
+      required this.startTime,
+      required this.endTime,
+      required this.description,
+      required this.venue});
 }

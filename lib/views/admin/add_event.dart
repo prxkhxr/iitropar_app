@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -234,7 +235,7 @@ class AddEventFormState extends State<AddEventForm> {
               child: ElevatedButton(
                 onPressed: () {
                   // Validating form inputs
-                  if (eventDate.compareTo(DateTime.now()) < 0) {
+                  if (eventDate.compareTo(getTodayDateTime()) <= 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                           content: Text("Previous date event are not allowed")),
