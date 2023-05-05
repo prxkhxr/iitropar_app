@@ -1,13 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:iitropar/database/loader.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
-import 'package:iitropar/views/PBTabView.dart';
-import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:iitropar/database/local_db.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -29,22 +29,37 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _signin() async {
     await FirebaseServices().signInWithGoogle();
-    if (FirebaseAuth.instance.currentUser == null) return;
-    if ((await Ids.resolveUser()).compareTo('student') == 0) {
-      await EventDB().loadCourse(await firebaseDatabase
-          .getCourses(FirebaseAuth.instance.currentUser!.email!.split('@')[0]));
-    }
     _moveToHome();
   }
 
   void _moveToHome() {
+    if (FirebaseAuth.instance.currentUser == null) return;
     RootPage.signin(false);
+    LoadingScreen.setPrompt("Loading Home ...");
+    LoadingScreen.setTask(() async {
+      if ((await Ids.resolveUser()).compareTo('student') == 0) {
+        var cl = await firebaseDatabase.getCourses(
+            FirebaseAuth.instance.currentUser!.email!.split('@')[0]);
+        await Loader.loadCourses(cl);
+        await Loader.loadMidSem(
+          DateTime(2023, 2, 27),
+          const TimeOfDay(hour: 9, minute: 30),
+          const TimeOfDay(hour: 12, minute: 30),
+          const TimeOfDay(hour: 14, minute: 30),
+          const TimeOfDay(hour: 16, minute: 30),
+          cl,
+        );
+      }
+      return true;
+    });
+    LoadingScreen.setBuilder((context) => const RootPage());
+
     Navigator.popUntil(context, ModalRoute.withName('/'));
     Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (BuildContext context) => const RootPage(),
+        builder: (BuildContext context) => LoadingScreen.build(context),
         settings: const RouteSettings(name: '/'),
       ),
     );
@@ -112,12 +127,14 @@ class _SignInScreenState extends State<SignInScreen> {
                           children: [
                             SizedBox(
                               width: buttonWidth * 0.8,
-                              child: Text(
-                                "Login with Gmail",
-                                style: TextStyle(
-                                  color: Color(primaryLight),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
+                              child: FittedBox(
+                                child: Text(
+                                  "Login with Gmail",
+                                  style: TextStyle(
+                                    color: Color(primaryLight),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24,
+                                  ),
                                 ),
                               ),
                             ),
@@ -129,36 +146,42 @@ class _SignInScreenState extends State<SignInScreen> {
                           ]),
                     ),
                   ),
-                  const SizedBox(height: 5,),
+                  const SizedBox(
+                    height: 5,
+                  ),
                   Container(
                     margin:
                         const EdgeInsets.symmetric(horizontal: buttonMargin),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          _moveToHome();
-                        },
-                        style: ButtonStyle(backgroundColor:
-                            MaterialStateProperty.resolveWith((states) {
-                          if (states.contains(MaterialState.pressed)) {
-                            return Colors.black26;
-                          }
-                          return Color(secondaryLight);
-                        })),
-                        child: SizedBox(
-                          width: buttonWidth,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Login as Guest",
-                                style: TextStyle(
-                                    color: Color(primaryLight),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24),
-                              ),
-                            ],
+                    child: TextButton(
+                      onPressed: () {
+                        RootPage.signin(false);
+                        Navigator.popUntil(context, ModalRoute.withName('/'));
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return const RootPage();
+                              // LoadingScreen.setTask(() async {
+
+                              //   return true;
+                              // });
+                              // return LoadingScreen.build(context);
+                            },
+                            settings: const RouteSettings(name: '/'),
                           ),
-                        )),
+                        );
+                      },
+                      child: SizedBox(
+                        height: 18,
+                        child: FittedBox(
+                          child: Text(
+                            "Don't have an account? Login as Guest.",
+                            style: TextStyle(color: Color(secondaryLight)),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ])
               ]),

@@ -1,5 +1,8 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/colors.dart';
 
 class MessMenuPage extends StatefulWidget {
   const MessMenuPage({super.key});
@@ -46,17 +49,26 @@ class _MessMenuPageState extends State<MessMenuPage>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: initialDay(),
       length: myTabs.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Mess Menu'),
-          bottom: const TabBar(
-            unselectedLabelColor: Colors.white30,
+          toolbarHeight: 50,
+          elevation: 0,
+          backgroundColor: Color(secondaryLight),
+          title: buildTitleBar("MESS MENU", context),
+          bottom: TabBar(
+            labelColor: Colors.black,
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            unselectedLabelStyle:
+                const TextStyle(fontWeight: FontWeight.normal),
+            unselectedLabelColor: Color(primaryLight),
             isScrollable: true,
             indicator: UnderlineTabIndicator(
-              borderSide:
-                  BorderSide(color: Colors.white, width: 2), // Indicator height
-              insets: EdgeInsets.symmetric(horizontal: 48), // Indicator width
+              borderSide: BorderSide(
+                  color: Color(primaryLight), width: 2), // Indicator height
+              insets:
+                  const EdgeInsets.symmetric(horizontal: 48), // Indicator width
             ),
             tabs: myTabs,
           ),
@@ -66,6 +78,7 @@ class _MessMenuPageState extends State<MessMenuPage>
             ..._daysOfWeek.map((day) => _buildMenuList(day)),
           ],
         ),
+        backgroundColor: Color(secondaryLight),
       ),
     );
   }
@@ -76,22 +89,57 @@ class _MessMenuPageState extends State<MessMenuPage>
       itemBuilder: (context, index) {
         final meal = _menu[day]![index];
 
-        return ExpansionTile(
-          title: Text(meal.name),
-          subtitle: Text(checkTime(meal.name)),
-          initiallyExpanded: meal.name == "Breakfast" ? true : false,
+        return Column(
           children: [
-            ...parseString(meal.description).map((myMeal) {
-              return ListTile(
-                title: Text(myMeal),
-              );
-            })
+            const SizedBox(
+              height: 20,
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xff555555)),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(primaryLight).withOpacity(.5), 
+                      blurStyle: BlurStyle.outer,
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+              child: ExpansionTile(
+                title: Text(meal.name, style: TextStyle(fontWeight: FontWeight.bold, color: Color(primaryLight)),),
+                subtitle: Text(checkTime(meal.name), style: TextStyle(color: Color(primaryLight)),),
+                initiallyExpanded: meal.name == mealOpen() ? true : false,
+                children: [
+                  ...parseString(meal.description).map((myMeal) {
+                    return ListTile(
+                      leading: Icon(Icons.arrow_right_alt_rounded, color: Color(primaryLight),),
+                      title: Text(myMeal, style: TextStyle(color: Color(primaryLight)),),
+                    );
+                  })
+                ],
+              ),
+            ),
           ],
         );
       },
     );
   }
 
+  String mealOpen(){
+    TimeOfDay now = TimeOfDay.now();
+    
+    print(now.hour);
+    print(now.minute);
+    if((now.hour > 0 && (now.hour <= 9)) || (now.hour >= 21)){
+      return "Breakfast";
+    }else if((now.hour < 14) && (now.hour > 9)){
+      return "Lunch";
+    }else{
+      return "Dinner";
+    }
+  }
   String checkTime(String name) {
     if (name == 'Breakfast') {
       return "7:30 AM to 9:15 AM";
@@ -104,5 +152,19 @@ class _MessMenuPageState extends State<MessMenuPage>
 
   List<String> parseString(String desc) {
     return desc.split(", ");
+  }
+}
+
+int initialDay() {
+  DateTime now = DateTime.now();
+  
+  if(now.hour <= 22){
+    return now.weekday - 1;
+  }else{
+    if (now.weekday == 7){
+      return 0;
+    }else{
+      return now.weekday;
+    }
   }
 }

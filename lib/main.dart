@@ -9,7 +9,7 @@ void main() async {
   await Firebase.initializeApp();
   await EventDB.startInstance();
   bool signin = false;
-  if (await EventDB.firstRun() || FirebaseAuth.instance.currentUser == null) {
+  if (EventDB.firstRun() || FirebaseAuth.instance.currentUser == null) {
     signin = true;
   }
   RootPage.signin(signin);

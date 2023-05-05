@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types, non_constant_identifier_names
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/colors.dart';
@@ -5,11 +7,56 @@ import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 
-import 'database/event.dart';
 import 'database/local_db.dart';
 
+DateTime getTodayDateTime() {
+  return DateTime(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day);
+}
+
+String TimeString(TimeOfDay t) {
+  return "${t.hour}:${t.minute}";
+}
+
+TimeOfDay StringTime(String t) {
+  List<String> t_split = t.split(':');
+  return TimeOfDay(hour: int.parse(t_split[0]), minute: int.parse(t_split[1]));
+}
+
+List<String> allCourses = [
+  'CS301',
+  'CS304',
+  'CS306',
+  'HS301',
+  'CS305',
+  'CS306',
+  'CP301',
+  'CS503',
+  'CS535'
+];
+List<DropdownMenuItem<String>> departments = [
+  const DropdownMenuItem(
+      child: Text("BioMedical Engineering"), value: "BioMedical Engineering"),
+  const DropdownMenuItem(
+      child: Text("Chemical Engineering"), value: "Chemical Engineering"),
+  const DropdownMenuItem(
+      child: Text("Civil Engineering"), value: "Civil Engineering"),
+  const DropdownMenuItem(
+      child: Text("Electrical Engineering"), value: "Electrical Engineering"),
+  const DropdownMenuItem(
+      child: Text("Computer Science & Engineering"),
+      value: "Computer Science & Engineering"),
+  const DropdownMenuItem(
+      child: Text("Metallurgical and Materials Engineering"),
+      value: "Metallurgical and Materials Engineering"),
+  const DropdownMenuItem(child: Text("Chemistry"), value: "Chemistry"),
+  const DropdownMenuItem(child: Text("Physics"), value: "Physics"),
+  const DropdownMenuItem(child: Text("Mathematics"), value: "Mathematics"),
+  const DropdownMenuItem(
+      child: Text("Humanities and Social Sciences"),
+      value: "Humanities and Social Sciences"),
+];
 String dateString(DateTime d) {
   return DateFormat('yyyy-MM-dd').format(d);
 }
@@ -21,25 +68,65 @@ DateTime stringDate(String d) {
   return DateTime(year, month, day);
 }
 
+class holidays {
+  late DateTime date;
+  late String desc;
+  holidays(date, this.desc) {
+    this.date = DateFormat('yyyy-MM-dd').parse(date);
+  }
+}
+
+class changedDay {
+  late DateTime date;
+  late String day_to_followed;
+  changedDay(date, this.day_to_followed) {
+    this.date = DateFormat('yyyy-MM-dd').parse(date);
+  }
+}
+
+class faculty {
+  late String name;
+  late String department;
+  late String email;
+  late Set<dynamic> courses;
+  faculty(name, dep, email, courses) {
+    this.name = name;
+    this.department = dep;
+    this.email = email;
+    this.courses = courses;
+  }
+}
+
 class Ids {
   static List<String> admins = [
-    // "2020csb1082@iitrpr.ac.in",
     "2020csb1086@iitrpr.ac.in",
+    "2020csb1073@iitrpr.ac.in",
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
+  static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
+
   static String role = "guest";
   static bool assigned = false;
+  static String name = ""; //only for faculty
+  static String dep = ""; //only for faculty
 
   static Future<String> resolveUser() async {
     if (assigned == true) return role;
     String user;
-    var clubEmails = await Ids.fclub;
-    if (FirebaseAuth.instance.currentUser != null &&
-        admins.contains(FirebaseAuth.instance.currentUser!.email)) {
+    if (FirebaseAuth.instance.currentUser == null) {
+      user = "guest";
+      role = user;
+      assigned = true;
+      return role;
+    }
+    String email_check = await firebaseDatabase
+        .emailCheck(FirebaseAuth.instance.currentUser!.email!);
+    if (admins.contains(FirebaseAuth.instance.currentUser!.email)) {
       user = "admin";
-    } else if (FirebaseAuth.instance.currentUser != null &&
-        clubEmails.contains(FirebaseAuth.instance.currentUser!.email)) {
+    } else if (email_check == "club") {
       user = "club";
+    } else if (email_check == "faculty") {
+      user = "faculty";
     } else if (FirebaseAuth.instance.currentUser != null) {
       user = "student";
     } else {
@@ -144,13 +231,15 @@ class LoadingScreen {
           return Expanded(
             child: Scaffold(
               body: Center(
-                child: Column(children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Text((_msg != null) ? _msg! : 'Loading...'),
-                ]),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text((_msg != null) ? _msg! : 'Loading...'),
+                    ]),
               ),
             ),
           );
@@ -164,7 +253,8 @@ class LoadingScreen {
 
 Future<bool> _signout() async {
   if (Ids.role == 'student') {
-    await EventDB().deleteOf('admin');
+    await EventDB().deleteOf('course');
+    await EventDB().deleteOf('exam');
   }
   await FirebaseServices().signOut();
   return true;
@@ -203,7 +293,44 @@ Widget themeButtonWidget() {
 TextStyle appbarTitleStyle() {
   return TextStyle(
       color: Color(primaryLight),
-      fontSize: 24,
+      // fontSize: 24,
       fontWeight: FontWeight.bold,
       letterSpacing: 1.5);
+}
+
+Row buildTitleBar(String text, BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      themeButtonWidget(),
+      Flexible(
+        child: SizedBox(
+          height: 30,
+          child: FittedBox(
+            child: Text(
+              text,
+              style: appbarTitleStyle(),
+            ),
+          ),
+        ),
+      ),
+      signoutButtonWidget(context),
+    ],
+  );
+}
+
+class ExtraClass {
+  String venue;
+  String description;
+  String courseID;
+  DateTime date;
+  TimeOfDay startTime;
+  TimeOfDay endTime;
+  ExtraClass(
+      {required this.courseID,
+      required this.date,
+      required this.startTime,
+      required this.endTime,
+      required this.description,
+      required this.venue});
 }

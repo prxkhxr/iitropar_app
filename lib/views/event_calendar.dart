@@ -1,5 +1,5 @@
-import 'dart:io';
-
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
+
+import '../frequently_used.dart';
 
 class EventCalendarScreen extends StatefulWidget {
   const EventCalendarScreen({super.key});
@@ -24,7 +27,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   DateTime endDate = DateTime.now();
   Map<String, List<Event>> mySelectedEvents = {};
   Map<String, List> weeklyEvents = {};
-
+  List<holidays> listofHolidays = [];
+  Map<String, String> mapofHolidays = {};
+  bool holidaysLoaded = false;
+  List<changedDay> listofCD = [];
+  Map<String, int> mapofCD = {};
+  bool CDLoaded = false;
   EventDB edb = EventDB();
 
   final titleController = TextEditingController();
@@ -35,9 +43,55 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   @override
   void initState() {
     super.initState();
-
+    getHols();
+    getCD();
     mySelectedEvents = {};
     loadEvents(_selectedDate);
+  }
+
+  Future<bool> getHols() async {
+    listofHolidays = await firebaseDatabase.getHolidayFB();
+
+    for (int i = 0; i < listofHolidays.length; i++) {
+      mapofHolidays[DateFormat('yyyy-MM-dd').format(listofHolidays[i].date)] =
+          listofHolidays[i].desc;
+    }
+
+    print(mapofHolidays);
+    setState(() {
+      holidaysLoaded = true;
+    });
+    return true;
+  }
+
+  Future<bool> getCD() async {
+    listofCD = await firebaseDatabase.getChangedDays();
+    print(listofCD[0].day_to_followed);
+    for (int i = 0; i < listofCD.length; i++) {
+      switch (listofCD[i].day_to_followed) {
+        case "Monday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 0;
+          break;
+        case "Tuesday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 1;
+          break;
+        case "Wednesday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 2;
+          break;
+        case "Thrusday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 3;
+          break;
+        case "Friday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 4;
+          break;
+        default:
+      }
+    }
+    setState(() {
+      CDLoaded = true;
+    });
+    print(mapofCD);
+    return true;
   }
 
   loadLocalDB() async {
@@ -55,21 +109,48 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     List<Event> l = List.empty(growable: true);
     while (d1.compareTo(d2) < 0) {
       l = await edb.fetchEvents(d1);
-      setState(() {
-        mySelectedEvents[DateFormat('yyyy-MM-dd').format(d1)] = l;
-      });
+      mySelectedEvents[DateFormat('yyyy-MM-dd').format(d1)] = l;
       d1 = d1.add(const Duration(days: 1));
+    }
+    edb.printAll();
+    setState(() {
+      mySelectedEvents;
+    });
+  }
+
+  updateEvents(DateTime d) async {
+    var l = await edb.fetchEvents(d);
+    setState(() {
+      mySelectedEvents[dateString(d)] = l;
+    });
+  }
+
+  updateEventsRecurring(DateTime d) async {
+    DateTime s = DateTime(d.year, d.month);
+    s = s.add(Duration(
+        days: (d.weekday >= s.weekday)
+            ? (d.weekday - s.weekday)
+            : (d.weekday - s.weekday + 7)));
+    while (s.month == d.month) {
+      updateEvents(s);
+      s = s.add(const Duration(days: 7));
     }
   }
 
-  void _insertEvent(Event e) async {
-    edb.insert(e);
-    loadEvents(e.displayDate);
+  void _insertSingularEvent(Event e, DateTime date) async {
+    await edb.addSingularEvent(e, date);
+    updateEvents(date);
   }
 
-  void _deleteEvent(Event e) async {
-    edb.delete(e);
-    loadEvents(e.displayDate);
+  void _insertRecurringEvent(
+      Event r, DateTime start, DateTime end, DateTime current, int mask) async {
+    await edb.addRecurringEvent(r, start, end, mask);
+    updateEventsRecurring(_selectedDate);
+  }
+
+  void _deleteEntireEvent(Event e) async {
+    await edb.delete(e);
+    loadEvents(_selectedDate);
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -89,6 +170,36 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     }
     return List.empty();
   }
+
+  bool isHoliday(DateTime day) {
+    if (day.weekday >= 6) {
+      return true;
+    }
+
+    if (holidaysLoaded == true) {
+      String cmp = DateFormat('yyyy-MM-dd').format(day);
+      if (mapofHolidays[cmp] != null) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  DateTime whatDatetocall(DateTime datetime) {
+  if (CDLoaded) {
+    if (mapofCD[DateFormat("yyyy-MM-dd").format(datetime)] != null) {
+      int wkday = datetime.weekday - 1;
+      int dtf = mapofCD[DateFormat("yyyy-MM-dd").format(datetime)]!;
+      if (dtf > wkday) {
+        return datetime.add(Duration(days: dtf - wkday));
+      } else {
+        return datetime.subtract(Duration(days: wkday - dtf));
+      }
+    }
+  }
+  return datetime;
+}
 
   _showSingleAddEventDialog() async {
     await showDialog(
@@ -208,15 +319,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     return;
                   } else {
                     print("Adding Singular Event");
-                    Event s = Event.singular(
+                    Event s = Event(
                       title: titleController.text,
-                      description: descpController.text,
+                      desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      displayDate: _selectedDate,
-                      creator: 'user',
+                      creator: FirebaseAuth.instance.currentUser!.email!,
                     );
-                    _insertEvent(s);
+                    _insertSingularEvent(s, _selectedDate);
 
                     titleController.clear();
                     descpController.clear();
@@ -375,18 +485,15 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     return;
                   } else {
                     print("Adding Recurring Event");
-                    Event r = Event.recurring(
+                    Event r = Event(
                       title: titleController.text,
-                      description: descpController.text,
+                      desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      startDate: startDate,
-                      endDate: endDate,
-                      displayDate: _selectedDate,
-                      mask: (1 << startDate.weekday),
                       creator: 'user',
                     );
-                    _insertEvent(r);
+                    _insertRecurringEvent(r, startDate, endDate, _selectedDate,
+                        ((1 << (startDate.weekday - 1))));
 
                     titleController.clear();
                     descpController.clear();
@@ -409,115 +516,220 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              themeButtonWidget(),
-              Text(
-                "EVENT CALENDAR",
-                style: appbarTitleStyle(),
-              ),
-              signoutButtonWidget(context),
-            ],
-          ),
+          title: buildTitleBar("EVENT CALENDAR", context),
           backgroundColor: Color(secondaryLight),
           elevation: 0,
         ),
         // drawer: const NavDrawer(),
+        backgroundColor: Color(secondaryLight),
         body: Column(
           children: [
-            TableCalendar(
-              focusedDay: _focused,
-              firstDay: DateTime(2023),
-              lastDay: DateTime(2024).subtract(const Duration(days: 1)),
-              calendarFormat: CalendarFormat.month,
-              onDaySelected: (selectedDay, focusedDay) {
-                if (!isSameDay(_selectedDate, selectedDay)) {
+            SizedBox(
+              height: (MediaQuery.of(context).size.height - 80) / 2,
+              child: TableCalendar(
+                shouldFillViewport: true,
+                focusedDay: _focused,
+                firstDay: DateTime(2023),
+                lastDay: DateTime(2024).subtract(const Duration(days: 1)),
+                calendarFormat: CalendarFormat.month,
+                onDaySelected: (selectedDay, focusedDay) {
+                  if (!isSameDay(_selectedDate, selectedDay)) {
+                    setState(() {
+                      _selectedDate = selectedDay;
+                      _focused = focusedDay;
+                    });
+                  }
+                },
+                selectedDayPredicate: (day) {
+                  return isSameDay(_selectedDate, day);
+                },
+                enabledDayPredicate: (day) {
+                  return _focused.month == day.month;
+                },
+                onPageChanged: (focusedDay) {
                   setState(() {
-                    _selectedDate = selectedDay;
                     _focused = focusedDay;
                   });
-                }
-              },
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDate, day);
-              },
-              enabledDayPredicate: (day) {
-                return _focused.month == day.month;
-              },
-              onPageChanged: (focusedDay) {
-                _focused = focusedDay;
-                loadEvents(focusedDay);
-              },
-              eventLoader: (datetime) {
-                List l = _listOfDayEvents(datetime);
-                if (l.isNotEmpty) return [1];
-                return [];
-              },
-              availableCalendarFormats: const {CalendarFormat.month: 'Month'},
-              currentDay: DateTime.now(),
-              calendarStyle: CalendarStyle(
-                  selectedDecoration: BoxDecoration(
-                      color: Color(primaryLight), shape: BoxShape.circle),
-                  todayDecoration: const BoxDecoration(
-                      color: Color(0xffAAAAAA), shape: BoxShape.circle)),
+                  loadEvents(focusedDay);
+                },
+                eventLoader: (datetime) {
+                  if (CDLoaded) {
+                    if (mapofCD[DateFormat("yyyy-MM-dd").format(datetime)] !=
+                        null) {
+                      int wkday = datetime.weekday - 1;
+                      int dtf =
+                          mapofCD[DateFormat("yyyy-MM-dd").format(datetime)]!;
+                      if (dtf > wkday) {
+                        return _listOfDayEvents(
+                            datetime.add(Duration(days: dtf - wkday)));
+                      } else {
+                        return _listOfDayEvents(
+                            datetime.subtract(Duration(days: wkday - dtf)));
+                      }
+                    }
+                  }
+                  return _listOfDayEvents(datetime);
+                },
+                holidayPredicate: (day) {
+                  return isHoliday(day);
+                },
+                availableCalendarFormats: const {CalendarFormat.month: 'Month'},
+                currentDay: DateTime.now(),
+                calendarStyle: CalendarStyle(
+                    selectedDecoration: BoxDecoration(
+                        color: Color(primaryLight), shape: BoxShape.circle),
+                    todayDecoration: const BoxDecoration(
+                        color: Color(0xffAAAAAA), shape: BoxShape.circle)),
+                calendarBuilders: CalendarBuilders(
+                  markerBuilder: (context, day, events) {
+                    if (events.isEmpty) {
+                      return Container();
+                    }
+
+                    return Container(
+                      height: 8,
+                      width: 8,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.orangeAccent),
+                    );
+                  },
+                  holidayBuilder: (context, day, focusedDay) {
+                    return Center(
+                      child: Text("${day.day}",
+                          style: TextStyle(color: Color(holidayColor))),
+                    );
+                  },
+                ),
+              ),
             ),
             const SizedBox(
-              height: 20,
+              height: 0,
+            ),
+            Divider(
+              height: 0,
+              thickness: 1,
+              color: Color(primaryLight).withOpacity(0.05),
             ),
             Expanded(
                 child: ListView(
               children: [
-                ..._listOfDayEvents(_selectedDate).map((myEvents) {
+                ..._listOfDayEvents(whatDatetocall(_selectedDate))
+                    .map((myEvents) {
                   final width = MediaQuery.of(context).size.width;
                   final textsize = (8 / 10) * width;
                   final buttonsize = (1 / 10) * width;
                   final iconsize = (1 / 10) * width;
+                  // return Column(
+                  //   children: [
+                  //     ListTile(
+                  //       horizontalTitleGap: 25,
+                  //       leading: Text(myEvents.startTime()),
+                  //       title: SizedBox(
+                  //         width: textsize,
+                  //         child: Text(
+                  //           myEvents.title,
+                  //           overflow: TextOverflow.ellipsis,
+                  //           style: TextStyle(color: Color(primaryLight)),
+                  //         ),
+                  //       ),
+                  //       trailing: SizedBox(
+                  //         width: buttonsize,
+                  //         child: IconButton(
+                  //           onPressed: () => _deleteEntireEvent(myEvents),
+                  //           icon: const Icon(Icons.delete),
+                  //         ),
+                  //       ),
+                  //       subtitle: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           Text(
+                  //             "Description: ${myEvents.desc}",
+                  //             style: TextStyle(color: Color(primaryLight)),
+                  //           ),
+                  //           const SizedBox(
+                  //             width: 5,
+                  //           ),
+                  //           Text(
+                  //             'Time: ${myEvents.displayTime()}',
+                  //             style: TextStyle(color: Color(primaryLight)),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     const SizedBox(
+                  //       height: 10,
+                  //     ),
+                  //   ],
+                  // );
+
                   return Column(
                     children: [
-                      ListTile(
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          width: iconsize,
-                          child: Icon(
-                            Icons.event,
-                            color: Color(primaryLight),
-                          ),
-                        ),
-                        title: SizedBox(
-                          width: textsize,
-                          child: Text(
-                            myEvents.title,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: Color(primaryLight)),
-                          ),
-                        ),
-                        trailing: SizedBox(
-                          width: buttonsize,
-                          child: IconButton(
-                            onPressed: () => _deleteEvent(myEvents),
-                            icon: const Icon(Icons.delete),
-                          ),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              "Description: ${myEvents.description}",
-                              style: TextStyle(color: Color(primaryLight)),
+                            SizedBox(
+                              width: 1.25 / 5.5 * width,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(myEvents.startTime(),
+                                      style: TextStyle(
+                                        color: Color(primaryLight),
+                                        fontSize: 14,
+                                      )),
+                                  Text(
+                                    myEvents.endTime(),
+                                    style: TextStyle(
+                                        color: Color(primaryLight)
+                                            .withOpacity(0.6),
+                                        fontSize: 14),
+                                  ),
+                                ],
+                              ),
                             ),
-                            const SizedBox(
-                              width: 5,
+                            const VerticalDivider(
+                              thickness: 3.5,
+                              width: 0,
+                              color: Colors.green,
                             ),
-                            Text(
-                              'Time: ${myEvents.displayTime()}',
-                              style: TextStyle(color: Color(primaryLight)),
+                            SizedBox(
+                              width: 0.5 / 5.5 * width,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  myEvents.title,
+                                  style: TextStyle(
+                                      color: Color(primaryLight), fontSize: 16),
+                                ),
+                                Text(
+                                  "LHC M5",
+                                  style: TextStyle(
+                                      color:
+                                          Color(primaryLight).withOpacity(0.6)),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            IconButton(
+                              onPressed: () => _deleteEntireEvent(myEvents),
+                              icon: const Icon(Icons.delete),
+                              color: Color(primaryLight).withOpacity(0.8),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
+                      Divider(
+                        height: 2,
+                        thickness: 1,
+                        color: Color(primaryLight).withOpacity(0.05),
                       ),
                     ],
                   );

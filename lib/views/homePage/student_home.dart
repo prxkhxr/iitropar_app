@@ -108,7 +108,7 @@ class _StudentHomeState extends AbstractHomeState {
   List<Event> events = [];
 
   Future<bool> loadClasses() async {
-    classes = await EventDB().fetchEvents(DateTime.now(), 'admin');
+    classes = await EventDB().fetchEvents(DateTime.now(), 'course');
     classes.sort(((a, b) => a.compareTo(b)));
     return true;
   }
@@ -138,7 +138,7 @@ class _StudentHomeState extends AbstractHomeState {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Description: ${myEvents.description}"),
+              Text("Description: ${myEvents.desc}"),
               const SizedBox(
                 width: 5,
               ),
@@ -222,7 +222,7 @@ class _StudentHomeState extends AbstractHomeState {
           if (snapshot.data == null) {
             return const Text('Loading today\'s Events ...');
           } else {
-            if (classes.isEmpty) {
+            if (events.isEmpty) {
               return const Text('No Events today');
             }
             return Container(

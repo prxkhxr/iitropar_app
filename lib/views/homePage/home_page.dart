@@ -1,19 +1,29 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
-import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/homePage/admin_home.dart';
 import 'package:iitropar/views/homePage/club_home.dart';
+import 'package:iitropar/views/homePage/faculty_home.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
-import 'package:iitropar/views/landing_page.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
 
 abstract class AbstractHome extends StatefulWidget {
   const AbstractHome({super.key});
 }
 
 abstract class AbstractHomeState extends State<AbstractHome> {
+  faculty f = faculty("name", "dep", "email", Set());
+  void getDetails() async {
+    f = await firebaseDatabase
+        .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+    setState(() {});
+  }
+
+  AbstractHomeState() {
+    getDetails();
+  }
+
   CircleAvatar getUserImage(double radius) {
     ImageProvider image;
     if (FirebaseAuth.instance.currentUser != null &&
@@ -30,18 +40,30 @@ abstract class AbstractHomeState extends State<AbstractHome> {
   }
 
   String getUserName() {
+    if (Ids.role.compareTo("faculty") == 0) {
+      return f.name;
+    }
     if (FirebaseAuth.instance.currentUser == null) return "Guest User";
     return FirebaseAuth.instance.currentUser!.displayName.toString();
   }
 
   List<Widget> buttons();
 
-  Future<bool> _signout() async {
-    if (Ids.role == 'student') {
-      await EventDB().deleteOf('admin');
+  Widget getText() {
+    if (Ids.role.compareTo("faculty") == 0) {
+      return Text(f.department,
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            color: Color(primaryLight), // Set text color to blue
+            fontSize: 18, // Set text size to 24// Set text font to bold
+          ));
     }
-    await FirebaseServices().signOut();
-    return true;
+    return Text('How are you doing today? ',
+        textAlign: TextAlign.right,
+        style: TextStyle(
+          color: Color(primaryLight), // Set text color to blue
+          fontSize: 18, // Set text size to 24// Set text font to bold
+        ));
   }
 
   @override
@@ -56,32 +78,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
         toolbarHeight: 50,
         elevation: 0,
         backgroundColor: Color(secondaryLight),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            themeButtonWidget(),
-            Text(
-              "HOME",
-              style: appbarTitleStyle(),
-            ),
-            IconButton(
-              icon: const Icon(Icons.logout_rounded),
-              color: Color(primaryLight),
-              iconSize: 28,
-              onPressed: () {
-                LoadingScreen.setTask(_signout);
-                LoadingScreen.setPrompt('Signing Out');
-                LoadingScreen.setBuilder((context) => const RootPage());
-                RootPage.signin(true);
-
-                Navigator.of(context, rootNavigator: true).pushReplacement(
-                    MaterialPageRoute(
-                        builder: LoadingScreen.build,
-                        settings: const RouteSettings(name: '/')));
-              },
-            )
-          ],
-        ),
+        title: buildTitleBar("HOME", context),
       ),
       body: Column(
         children: [
@@ -106,14 +103,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
                             ))),
                     SizedBox(
                       width: textSize,
-                      child: Text('How are you doing today?',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color:
-                                Color(primaryLight), // Set text color to blue
-                            fontSize:
-                                18, // Set text size to 24// Set text font to bold
-                          )),
+                      child: getText(),
                     )
                   ],
                 ),
@@ -162,6 +152,8 @@ class _HomePageState extends State<HomePage> {
       return const AdminHome();
     } else if (user.compareTo('club') == 0) {
       return const ClubHome();
+    } else if (user.compareTo('faculty') == 0) {
+      return const FacultyHome();
     }
     return const StudentHome();
   }
