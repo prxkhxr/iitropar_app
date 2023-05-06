@@ -284,8 +284,8 @@ class firebaseDatabase {
         Event e = Event(
             title: doc['eventTitle'],
             desc: doc['eventDesc'],
-            stime: doc['startTime'],
-            etime: doc['endTime'],
+            stime: str2tod(doc['startTime']),
+            etime: str2tod(doc['endTime']),
             // displayDate: doc['eventDate'],
             creator: doc['creator']); //TODO : add image as well to Event
         events.add(e);
@@ -306,7 +306,23 @@ class firebaseDatabase {
       var doc = csnapshots.docs[i];
       if (doc['email'] == email) return "club";
     }
+    if (Ids.admins.contains(email)) {
+      return "admin";
+    }
     return "";
+  }
+
+  static Future<changedDay?> getChangedDay(DateTime dt) async {
+    String docName =
+        "${dt.year.toString()}-${dt.month.toString()}-${dt.day.toString()}";
+    DocumentReference documentRef =
+        FirebaseFirestore.instance.collection('switchTimetable').doc(docName);
+    DocumentSnapshot ds = await documentRef.get();
+    if (ds.exists) {
+      return changedDay(ds['date'], ds['day_to_be_followed']);
+    } else {
+      return null;
+    }
   }
 
   static Future<bool> checkIfDocExists(

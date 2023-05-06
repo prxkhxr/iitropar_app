@@ -1,6 +1,8 @@
 // ignore_for_file: file_names, camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 
 class registerClub extends StatefulWidget {
@@ -16,7 +18,11 @@ class _registerClubState extends State<registerClub> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text("Register Club"),
+          toolbarHeight: 50,
+          elevation: 0,
+          backgroundColor: Color(secondaryLight),
+          automaticallyImplyLeading: false,
+          title: buildTitleBar("REGISTER CLUB", context),
         ),
         body: const AddEventForm());
   }
@@ -106,23 +112,25 @@ class AddEventFormState extends State<AddEventForm> {
             _buildclubDesc(),
             _buildclubEmail(),
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
-                    _formKey.currentState!.save();
-                    firebaseDatabase.registerClubFB(
-                        clubTitle, clubDesc, clubEmail);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Club has been registered!")),
-                    );
-                  }
-                },
-                child: const Text('Submit'),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      // If the form is valid, display a snackbar. In the real world,
+                      // you'd often call a server or save the information in a database.
+                      _formKey.currentState!.save();
+                      firebaseDatabase.registerClubFB(
+                          clubTitle, clubDesc, clubEmail);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Club has been registered!")),
+                      );
+                    }
+                  },
+                  child: const Text('Submit'),
+                ),
               ),
             ),
           ],
