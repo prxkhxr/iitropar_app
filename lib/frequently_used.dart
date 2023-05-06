@@ -345,7 +345,6 @@ class faculty {
 class Ids {
   static List<String> admins = [
     "taklubalm@gmail.com",
-    "2020csb1086@iitrpr.ac.in",
     "2020csb1073@iitrpr.ac.in",
     "2020csb1111@iitrpr.ac.in",
   ];
@@ -460,7 +459,7 @@ Widget AdminCard(BuildContext context, Widget route, String text) {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: <Color> [
+          colors: <Color>[
             Color(primaryLight),
             // Colors.amber,
             Colors.black.withOpacity(0.69)
