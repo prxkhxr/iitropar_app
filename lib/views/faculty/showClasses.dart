@@ -15,7 +15,7 @@ class _MyClassState extends State<MyClass> {
   late String selectedCourse;
   late List<ExtraClass> allClasses;
   getAllClasses() async {
-    allClasses = await firebaseDatabase.getExtraCass(selectedCourse);
+    allClasses = await firebaseDatabase.getExtraClass(selectedCourse);
     filteredEc =
         allClasses.where((ec) => ec.courseID == selectedCourse).toList();
     setState(() {});
@@ -105,7 +105,9 @@ class _MyClassState extends State<MyClass> {
                                     'End Time: ${TimeString(ec.endTime)}')),
                           ],
                         ),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [

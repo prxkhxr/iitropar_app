@@ -188,6 +188,18 @@ class _CourseScheduleState extends State<CourseSchedule> {
             // Submit Button
             ElevatedButton(
               onPressed: () async {
+                if (description == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Add description.")),
+                  );
+                  return;
+                }
+                if (venue == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Add venue")),
+                  );
+                  return;
+                }
                 if (date.compareTo(getTodayDateTime()) <= 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
