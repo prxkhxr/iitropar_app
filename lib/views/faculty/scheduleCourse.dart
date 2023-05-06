@@ -4,8 +4,8 @@ import 'package:iitropar/utilities/firebase_database.dart';
 
 class CourseSchedule extends StatefulWidget {
   final Set<dynamic> courses;
-  TimeOfDay st = TimeOfDay(hour: 9, minute: 0);
-  TimeOfDay et = TimeOfDay(hour: 9, minute: 0);
+  TimeOfDay st = const TimeOfDay(hour: 9, minute: 0);
+  TimeOfDay et = const TimeOfDay(hour: 9, minute: 0);
   CourseSchedule({required this.courses, st, et});
 
   @override
@@ -72,7 +72,7 @@ class _CourseScheduleState extends State<CourseSchedule> {
   Widget selectCourse() {
     return Column(
       children: [
-        Text('Select Course'),
+        const Text('Select Course',style: TextStyle(color: Colors.blueGrey,fontWeight: FontWeight.bold)),
         DropdownButton<String>(
           value: selectedCourse,
           items: widget.courses.toList().map((dynamic course) {
@@ -87,7 +87,7 @@ class _CourseScheduleState extends State<CourseSchedule> {
             });
           },
         ),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -97,14 +97,14 @@ class _CourseScheduleState extends State<CourseSchedule> {
       children: [
         Expanded(
           child: ListTile(
-            title: Text('Start Time'),
+            title: const Text('Start Time'),
             trailing: Text('${startTime.format(context)}'),
             onTap: _showStartTimePicker,
           ),
         ),
         Expanded(
           child: ListTile(
-            title: Text('End Time'),
+            title: const Text('End Time'),
             trailing: Text('${endTime.format(context)}'),
             onTap: _showEndTimePicker,
           ),
@@ -115,7 +115,7 @@ class _CourseScheduleState extends State<CourseSchedule> {
 
   Widget selectVenue() {
     return TextField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: 'Venue',
         hintText: 'Enter the venue',
       ),
@@ -125,7 +125,7 @@ class _CourseScheduleState extends State<CourseSchedule> {
 
   Widget selectDescription() {
     return TextField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: 'Description',
         hintText: 'Enter the description',
       ),
@@ -155,7 +155,7 @@ class _CourseScheduleState extends State<CourseSchedule> {
         ),
         const SizedBox(width: 20),
         Text("${date.day}/${date.month}/${date.year}",
-            style: const TextStyle(fontSize: 32)),
+            style: const TextStyle(fontSize: 24,fontWeight: FontWeight.normal)),
       ],
     );
   }
@@ -165,29 +165,30 @@ class _CourseScheduleState extends State<CourseSchedule> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Course Schedule'),
+        title: const Text('Course Schedule'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 16.0),
-            // Courses Dropdown
-            selectCourse(),
-            // Timings (Start time and End Time)
-            selectDate(),
-            selectTime(),
-            SizedBox(height: 16.0),
-            // Venue
-            selectVenue(),
-            SizedBox(height: 16.0),
-            // Description
-            selectDescription(),
-            SizedBox(height: 16.0),
-            // Submit Button
-            ElevatedButton(
-              onPressed: () async {
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 16.0),
+              // Courses Dropdown
+              selectCourse(),
+              // Timings (Start time and End Time)
+              selectDate(),
+              selectTime(),
+              const SizedBox(height: 16.0),
+              // Venue
+              selectVenue(),
+              const SizedBox(height: 16.0),
+              // Description
+              selectDescription(),
+              const SizedBox(height: 16.0),
+              // Submit Button
+              ElevatedButton(
+                onPressed: () async {
                 if (description == "") {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Add description.")),
@@ -200,36 +201,37 @@ class _CourseScheduleState extends State<CourseSchedule> {
                   );
                   return;
                 }
-                if (date.compareTo(getTodayDateTime()) <= 0) {
+                  if (date.compareTo(getTodayDateTime()) <= 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text("Previous date event are not allowed")),
+                    );
+                    return;
+                  }
+                  if (toDouble(startTime) > toDouble(endTime)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              "Invalid Time. End time is before start time.")),
+                    );
+                    return;
+                  }
+                  ExtraClass c = ExtraClass(
+                      courseID: selectedCourse,
+                      date: date,
+                      startTime: startTime,
+                      endTime: endTime,
+                      description: description,
+                      venue: venue);
+                  bool hasSubmit = await firebaseDatabase.addExtraClass(c);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text("Previous date event are not allowed")),
+                    const SnackBar(content: Text("Event Added Succesfully")),
                   );
-                  return;
-                }
-                if (toDouble(startTime) > toDouble(endTime)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text(
-                            "Invalid Time. End time is before start time.")),
-                  );
-                  return;
-                }
-                ExtraClass c = ExtraClass(
-                    courseID: selectedCourse,
-                    date: date,
-                    startTime: startTime,
-                    endTime: endTime,
-                    description: description,
-                    venue: venue);
-                bool hasSubmit = await firebaseDatabase.addExtraClass(c);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Event Added Succesfully")),
-                );
-              },
-              child: Text('Submit'),
-            ),
-          ],
+                },
+                child: const Text('Submit'),
+              ),
+            ],
+          ),
         ),
       ),
     );

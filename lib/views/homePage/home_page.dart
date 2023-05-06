@@ -15,9 +15,12 @@ abstract class AbstractHome extends StatefulWidget {
 abstract class AbstractHomeState extends State<AbstractHome> {
   faculty f = faculty("name", "dep", "email", Set());
   void getDetails() async {
-    f = await firebaseDatabase
-        .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
-    setState(() {});
+    if (FirebaseAuth.instance.currentUser != null) {
+      f = await firebaseDatabase
+          .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+    }
+    if(mounted)
+      setState(() {});
   }
 
   AbstractHomeState() {

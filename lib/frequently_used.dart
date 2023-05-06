@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/utilities/firebase_services.dart';
-import 'package:iitropar/views/admin/add_event.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:intl/intl.dart';
 
@@ -448,25 +447,6 @@ class Menu {
   };
 }
 
-List<Color> randomColor() {
-  List<Color> L = [
-    Colors.purple,
-    Colors.green,
-    Colors.orange,
-    Colors.blue,
-    Colors.red,
-    Colors.pink,
-  ];
-  Random r = Random();
-  int i = r.nextInt(L.length);
-  int j = r.nextInt(L.length);
-  while (j == i) {
-    j = r.nextInt(L.length);
-  }
-
-  return [L[i], L[j]];
-}
-
 Widget AdminCard(BuildContext context, Widget route, String text) {
   return CupertinoButton(
     child: Container(
@@ -474,9 +454,13 @@ Widget AdminCard(BuildContext context, Widget route, String text) {
       width: 120,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: randomColor(),
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color> [
+            Color(primaryLight),
+            // Colors.amber,
+            Colors.black.withOpacity(0.69)
+          ],
         ),
         borderRadius: BorderRadius.circular(12),
       ),

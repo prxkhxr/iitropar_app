@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/frequently_used.dart';
 
@@ -98,10 +99,15 @@ class _FacultyListState extends State<FacultyList> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Faculty List'),
+          toolbarHeight: 50,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          backgroundColor: Color(secondaryLight),
+          title: buildTitleBar("FACULTY LIST", context),
         ),
         body: Column(
           children: [
+            const SizedBox(height: 10,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -117,7 +123,7 @@ class _FacultyListState extends State<FacultyList> {
                         });
                       },
                     )),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () {
                     // Perform search
@@ -127,6 +133,7 @@ class _FacultyListState extends State<FacultyList> {
                 ),
               ],
             ),
+            const SizedBox(height: 10,),
             Expanded(
               child: ListView.builder(
                 itemCount: faculties.length,
@@ -137,16 +144,21 @@ class _FacultyListState extends State<FacultyList> {
                   }
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Card(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(width: 1),
+                      ),
                       child: ListTile(
-                        title: Text(faculties[index].name),
+                        title: Text(faculties[index].name, style: const TextStyle(fontWeight: FontWeight.bold),),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(faculties[index].department),
-                            Text(faculties[index].email),
+                            Text(faculties[index].department, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Text(faculties[index].email, style: const TextStyle(fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
-                            Text('Courses:'),
+                            const Text('Courses:', style: TextStyle(fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
                             Wrap(
                               spacing: 8,
@@ -189,6 +201,7 @@ class _FacultyListState extends State<FacultyList> {
                                 ),
                               ],
                             ),
+                            const SizedBox(height: 10,),
                             submitButton(index)
                           ],
                         ),

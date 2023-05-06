@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
@@ -23,7 +24,11 @@ class _registerFacultyState extends State<registerFaculty> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text("Register Faculty"),
+          toolbarHeight: 50,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          backgroundColor: Color(secondaryLight),
+          title: buildTitleBar("REGISTER FACULTY", context),
         ),
         body: const AddEventForm());
   }
@@ -94,7 +99,6 @@ class AddEventFormState extends State<AddEventForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 10),
           const Text(
             'Department',
             textAlign: TextAlign.left,
@@ -190,7 +194,7 @@ class AddEventFormState extends State<AddEventForm> {
       String av = await firebaseDatabase.emailCheck(f[i][2]);
       if (av != "") {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Email not free")),
+          const SnackBar(content: Text("Email not free")),
         );
         continue;
       }
@@ -234,7 +238,7 @@ class AddEventFormState extends State<AddEventForm> {
       _data = fields;
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Data Added with CSV")),
+      const SnackBar(content: Text("Data Added with CSV")),
     );
   }
 
@@ -249,112 +253,117 @@ class AddEventFormState extends State<AddEventForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
-      key: _formKey,
-      child: Container(
-        margin: const EdgeInsets.all(40),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildFacultyName(),
-              _buildFacultyDep(),
-              _buildFacultyEmail(),
-              _buildFacultyCourses(),
-              _buildRemoveCourses(),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Center(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        // If the form is valid, display a snackbar. In the real world,
-                        // you'd often call a server or save the information in a database.
-                        _formKey.currentState!.save();
-                        String espcl =
-                            await firebaseDatabase.emailCheck(facultyEmail);
-                        if (espcl == "faculty" || espcl == "club") {
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Container(
+          margin: const EdgeInsets.all(20),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildFacultyName(),
+                const SizedBox(height: 20,),
+                _buildFacultyDep(),
+                _buildFacultyEmail(),
+                const SizedBox(height: 20,),
+                _buildFacultyCourses(),
+                const SizedBox(height: 20,),
+                _buildRemoveCourses(),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          // If the form is valid, display a snackbar. In the real world,
+                          // you'd often call a server or save the information in a database.
+                          _formKey.currentState!.save();
+                          String espcl =
+                              await firebaseDatabase.emailCheck(facultyEmail);
+                          if (espcl == "faculty" || espcl == "club") {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text("Email already taken by $espcl")),
+                            );
+                            return;
+                          }
+                          faculty f = faculty(facultyName, facultyDep,
+                              facultyEmail, facultyCourses);
+                          firebaseDatabase.registerFacultyFB(f);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text("Email already taken by $espcl")),
+                            const SnackBar(
+                                content: Text("Faculty has been registered!")),
                           );
-                          return;
                         }
-                        faculty f = faculty(facultyName, facultyDep,
-                            facultyEmail, facultyCourses);
-                        firebaseDatabase.registerFacultyFB(f);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Faculty has been registered!")),
-                        );
-                      }
-                    },
-                    child: const Text('Submit'),
-                  ),
-                ),
-              ),
-              Center(child: Text('OR')),
-              SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Show an alert dialog with a confirmation prompt
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Given CSV format'),
-                          content: SizedBox(
-                            height: MediaQuery.of(context).size.width * 0.5,
-                            child: Column(
-                              children: [
-                                Image.asset("assets/faculty_register.png"),
-                                SizedBox(height: 10),
-                                Text(
-                                    '1.All faculty must have unique email ID and Name'),
-                                SizedBox(height: 10),
-                                Text('2.Course Code must be valid.'),
-                                SizedBox(height: 10),
-                                Text('3.Department should be valid'),
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            Center(
-                              child: ElevatedButton(
-                                child: Text('Upload File'),
-                                onPressed: () {
-                                  // Close the dialog and call the onPressed function
-                                  _pickFile(ScaffoldMessenger.of(context));
-
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              child: TextButton(
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  // Close the dialog and do nothing
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                          ],
-                        );
                       },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                      child: const Text('Submit'),
+                    ),
                   ),
-                  child: Text('Upload via CSV'),
                 ),
-              ),
-            ],
+                const Center(child: Text('OR', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+                const SizedBox(height: 10),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Show an alert dialog with a confirmation prompt
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Given CSV format'),
+                            content: SizedBox(
+                              height: MediaQuery.of(context).size.width * 0.5,
+                              child: Column(
+                                children: [
+                                  Image.asset("assets/faculty_register.png"),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                      '1.All faculty must have unique email ID and Name'),
+                                  const SizedBox(height: 10),
+                                  const Text('2.Course Code must be valid.'),
+                                  const SizedBox(height: 10),
+                                  const Text('3.Department should be valid'),
+                                ],
+                              ),
+                            ),
+                            actions: <Widget>[
+                              Center(
+                                child: ElevatedButton(
+                                  child: const Text('Upload File'),
+                                  onPressed: () {
+                                    // Close the dialog and call the onPressed function
+                                    _pickFile(ScaffoldMessenger.of(context));
+    
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                child: TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    // Close the dialog and do nothing
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Text('Upload via CSV'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
