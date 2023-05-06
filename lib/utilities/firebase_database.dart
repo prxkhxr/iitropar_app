@@ -283,7 +283,23 @@ class firebaseDatabase {
       var doc = csnapshots.docs[i];
       if (doc['email'] == email) return "club";
     }
+    if (Ids.admins.contains(email)) {
+      return "admin";
+    }
     return "";
+  }
+
+  static Future<changedDay?> getChangedDay(DateTime dt) async {
+    String docName =
+        "${dt.year.toString()}-${dt.month.toString()}-${dt.day.toString()}";
+    DocumentReference documentRef =
+        FirebaseFirestore.instance.collection('switchTimetable').doc(docName);
+    DocumentSnapshot ds = await documentRef.get();
+    if (ds.exists) {
+      return changedDay(ds['date'], ds['day_to_be_followed']);
+    } else {
+      return null;
+    }
   }
 
   static Future<bool> checkIfDocExists(

@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,8 +104,8 @@ class faculty {
 
 class Ids {
   static List<String> admins = [
+    "taklubalm@gmail.com",
     "2020csb1086@iitrpr.ac.in",
-    // "jugalchap123@gmail.com",
     "2020csb1073@iitrpr.ac.in",
     "2020csb1111@iitrpr.ac.in"
   ];
@@ -125,22 +126,20 @@ class Ids {
       assigned = true;
       return role;
     }
-    String email_check = await firebaseDatabase
-        .emailCheck(FirebaseAuth.instance.currentUser!.email!);
-    if (admins.contains(FirebaseAuth.instance.currentUser!.email)) {
-      user = "admin";
-    } else if (email_check == "club") {
-      user = "club";
-    } else if (email_check == "faculty") {
-      user = "faculty";
-    } else if (FirebaseAuth.instance.currentUser != null) {
-      user = "student";
-    } else {
-      user = "guest";
+    return _emailCheck(FirebaseAuth.instance.currentUser!.email!);
+  }
+
+  static Future<String> _emailCheck(String email) async {
+    String check1 = await firebaseDatabase.emailCheck(email);
+    if (check1 != "") {
+      return check1;
     }
-    role = user;
-    assigned = true;
-    return role;
+
+    if (email.endsWith("iitrpr.ac.in")) {
+      return "student";
+    }
+
+    return "guest";
   }
 }
 
@@ -219,7 +218,7 @@ List<Color> randomColor() {
   Random r = Random();
   int i = r.nextInt(L.length);
   int j = r.nextInt(L.length);
-  while(j == i){
+  while (j == i) {
     j = r.nextInt(L.length);
   }
 

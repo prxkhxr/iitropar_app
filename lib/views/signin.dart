@@ -40,7 +40,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if ((await Ids.resolveUser()).compareTo('student') == 0) {
         var cl = await firebaseDatabase.getCourses(
             FirebaseAuth.instance.currentUser!.email!.split('@')[0]);
-        await Loader.loadCourses(cl);
+        await Loader.saveCourses(cl);
         await Loader.loadMidSem(
           DateTime(2023, 2, 27),
           const TimeOfDay(hour: 9, minute: 30),
