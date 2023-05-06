@@ -178,85 +178,94 @@ class AddClassFormState extends State<AddClassForm> {
   }
 
   Widget alldeclaredHolidays() {
-    return Column(
-      children: [
-        Text('Upcoming Holidays'),
-        FutureBuilder<bool>(
-            future: getHols(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Container();
-              } else {
-                return SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                      padding: const EdgeInsets.all(8),
-                      itemCount: hols.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        DateTime currentDate = DateTime(DateTime.now().year,
-                            DateTime.now().month, DateTime.now().day);
-                        DateTime d = DateTime(hols[index].date.year,
-                            hols[index].date.month, hols[index].date.day);
-                        if (currentDate.compareTo(d) <= 0) {
-                          return Container(
-                            height: 80,
-                            child: Center(
-                                child: Column(
-                              children: [
-                                Text(
-                                    'Date: ${hols[index].date.day}/${hols[index].date.month}/${hols[index].date.year},  Reason : ${hols[index].desc}'),
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    // Show the confirmation dialog
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text("Confirm"),
-                                          content: Text(
-                                              "Do you really want to delete this holiday?"),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: Text("Cancel"),
-                                              onPressed: () {
-                                                // Close the dialog
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton.icon(
-                                                icon: Icon(Icons.delete),
-                                                label: Text("Delete"),
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        children: [
+          Text('Upcoming Holidays',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const SizedBox(
+            height: 10,
+          ),
+          FutureBuilder<bool>(
+              future: getHols(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container();
+                } else {
+                  return SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        itemCount: hols.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          DateTime currentDate = DateTime(DateTime.now().year,
+                              DateTime.now().month, DateTime.now().day);
+                          DateTime d = DateTime(hols[index].date.year,
+                              hols[index].date.month, hols[index].date.day);
+                          if (currentDate.compareTo(d) <= 0) {
+                            return Container(
+                              height: 80,
+                              child: Center(
+                                  child: Column(
+                                children: [
+                                  Text(
+                                      'Date: ${hols[index].date.day}/${hols[index].date.month}/${hols[index].date.year},  Reason : ${hols[index].desc}'),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      // Show the confirmation dialog
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("Confirm"),
+                                            content: Text(
+                                                "Do you really want to delete this holiday?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: Text("Cancel"),
                                                 onPressed: () {
-                                                  firebaseDatabase.deleteHol(
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(hols[index]
-                                                              .date));
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(const SnackBar(
-                                                          content: Text(
-                                                              "Deleted holiday day")));
+                                                  // Close the dialog
                                                   Navigator.of(context).pop();
-                                                  setState(() {});
-                                                }),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  icon: Icon(Icons.delete),
-                                  label: Text("Delete"),
-                                ),
-                              ],
-                            )),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      }),
-                );
-              }
-            }),
-      ],
+                                                },
+                                              ),
+                                              TextButton.icon(
+                                                  icon: Icon(Icons.delete),
+                                                  label: Text("Delete"),
+                                                  onPressed: () {
+                                                    firebaseDatabase.deleteHol(
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(hols[index]
+                                                                .date));
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                            const SnackBar(
+                                                                content: Text(
+                                                                    "Deleted holiday day")));
+                                                    Navigator.of(context).pop();
+                                                    setState(() {});
+                                                  }),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: Icon(Icons.delete),
+                                    label: Text("Delete"),
+                                  ),
+                                ],
+                              )),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                  );
+                }
+              }),
+        ],
+      ),
     );
   }
 
