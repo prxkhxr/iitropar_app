@@ -210,14 +210,32 @@ class _findSlotsState extends State<findSlots> {
     return Center(
       child: Column(
         children: [
-          const Text('Select Course',style: TextStyle(fontWeight: FontWeight.w500),),
+          const SizedBox(height: 10,),
+          const Text(
+            'Select Course',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Colors.blueGrey,
+            ),
+          ),
           selectCourses(),
-          const Text('OR'),
+          Divider(
+            thickness: 0.25,
+            color: Color(primaryLight).withOpacity(0.5),
+          ),
+          const Text('Add Student'),
           addSingleStudent(),
-          const SizedBox(height: 10),
-          const Text('OR'),
-          const SizedBox(height: 10),
+          // const SizedBox(height: 10),
+          Divider(
+            thickness: 0.25,
+            color: Color(primaryLight).withOpacity(0.5),
+          ),
+          // const SizedBox(height: 10),
           getCSVscreen(),
+          Divider(
+            thickness: 2,
+            color: Color(primaryLight).withOpacity(0.5),
+          ),
         ],
       ),
     );
@@ -226,9 +244,12 @@ class _findSlotsState extends State<findSlots> {
   Widget showSelectedStudents() {
     return Column(
       children: [
-        const Text('Selected Students'),
+        const Text(
+          'Selected Students',
+          style: TextStyle(color: Colors.blueGrey,fontWeight: FontWeight.w500),
+        ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.2,
+          height: MediaQuery.of(context).size.height * 0.15,
           child: Expanded(
             child: ListView.builder(
                 itemCount: students.length,
@@ -254,7 +275,7 @@ class _findSlotsState extends State<findSlots> {
     return Center(
       child: Column(
         children: [
-          const Text('Select Slot Lenght (in hours)'),
+          const Text('Select Slot Lenght (in hours)',style: TextStyle(color: Colors.blueGrey,fontWeight: FontWeight.w500),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -313,7 +334,7 @@ class _findSlotsState extends State<findSlots> {
         ),
         const SizedBox(width: 20),
         Text("${date.day}/${date.month}/${date.year}",
-            style: const TextStyle(fontSize: 32)),
+            style: const TextStyle(fontSize: 24,fontWeight: FontWeight.normal)),
       ],
     );
   }
