@@ -9,6 +9,10 @@ import 'package:iitropar/views/admin/change_time_table.dart';
 import 'package:iitropar/views/admin/registerFaculty.dart';
 import 'home_page.dart';
 
+// This class is deprecated and not for use
+// For admin home page -> use admin_page.dart file under homePage directory
+// \homePage\admin_page.dart
+
 class AdminHome extends AbstractHome {
   const AdminHome({super.key});
 

@@ -9,7 +9,6 @@ import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 
-import '../frequently_used.dart';
 
 class EventCalendarScreen extends StatefulWidget {
   const EventCalendarScreen({super.key});
@@ -558,22 +557,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   loadEvents(focusedDay);
                 },
                 eventLoader: (datetime) {
-                  if (CDLoaded) {
-                    if (mapofCD[DateFormat("yyyy-MM-dd").format(datetime)] !=
-                        null) {
-                      int wkday = datetime.weekday - 1;
-                      int dtf =
-                          mapofCD[DateFormat("yyyy-MM-dd").format(datetime)]!;
-                      if (dtf > wkday) {
-                        return _listOfDayEvents(
-                            datetime.add(Duration(days: dtf - wkday)));
-                      } else {
-                        return _listOfDayEvents(
-                            datetime.subtract(Duration(days: wkday - dtf)));
-                      }
-                    }
-                  }
-                  return _listOfDayEvents(datetime);
+                  return _listOfDayEvents(whatDatetocall(datetime));
                 },
                 holidayPredicate: (day) {
                   return isHoliday(day);
