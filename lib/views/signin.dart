@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:iitropar/database/loader.dart';
 import 'package:iitropar/frequently_used.dart';
@@ -158,8 +160,14 @@ class _SignInScreenState extends State<SignInScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                LoadingScreen.build(context),
+                            builder: (BuildContext context) {
+                              return const RootPage();
+                              // LoadingScreen.setTask(() async {
+
+                              //   return true;
+                              // });
+                              // return LoadingScreen.build(context);
+                            },
                             settings: const RouteSettings(name: '/'),
                           ),
                         );

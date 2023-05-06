@@ -6,12 +6,24 @@ import 'package:iitropar/views/homePage/admin_home.dart';
 import 'package:iitropar/views/homePage/club_home.dart';
 import 'package:iitropar/views/homePage/faculty_home.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
 
 abstract class AbstractHome extends StatefulWidget {
   const AbstractHome({super.key});
 }
 
 abstract class AbstractHomeState extends State<AbstractHome> {
+  faculty f = faculty("name", "dep", "email", Set());
+  void getDetails() async {
+    f = await firebaseDatabase
+        .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+    setState(() {});
+  }
+
+  AbstractHomeState() {
+    getDetails();
+  }
+
   CircleAvatar getUserImage(double radius) {
     ImageProvider image;
     if (FirebaseAuth.instance.currentUser != null &&
@@ -29,7 +41,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
 
   String getUserName() {
     if (Ids.role.compareTo("faculty") == 0) {
-      return Ids.name;
+      return f.name;
     }
     if (FirebaseAuth.instance.currentUser == null) return "Guest User";
     return FirebaseAuth.instance.currentUser!.displayName.toString();
@@ -39,7 +51,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
 
   Widget getText() {
     if (Ids.role.compareTo("faculty") == 0) {
-      return Text(Ids.dep,
+      return Text(f.department,
           textAlign: TextAlign.right,
           style: TextStyle(
             color: Color(primaryLight), // Set text color to blue

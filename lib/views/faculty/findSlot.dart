@@ -15,13 +15,17 @@ import 'package:iitropar/views/faculty/seeSlots.dart';
 
 //to do build a function to access all the events
 class findSlots extends StatefulWidget {
-  const findSlots({super.key});
+  late Set<dynamic> courses;
+  findSlots(this.courses);
 
   @override
-  State<findSlots> createState() => _findSlotsState();
+  State<findSlots> createState() => _findSlotsState(courses);
 }
 
 class _findSlotsState extends State<findSlots> {
+  late Set<dynamic> courses;
+  String? current_course = null;
+  _findSlotsState(this.courses);
   Set<String> students = {};
   int slotLength = 1;
   bool inputFormat = true;
@@ -120,25 +124,98 @@ class _findSlotsState extends State<findSlots> {
     ]);
   }
 
+  Widget getCSVscreen() {
+    return Center(
+        child: ElevatedButton(
+      onPressed: () {
+        // Show an alert dialog with a confirmation prompt
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Given CSV format'),
+              content: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.2,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Image.asset('assets/faculty_entryNumber.png'),
+                    ),
+                    Text('1. Entry number should be valid.')
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                Center(
+                  child: ElevatedButton(
+                    child: Text('Upload File'),
+                    onPressed: () {
+                      // Close the dialog and call the onPressed function
+                      _pickFile(ScaffoldMessenger.of(context));
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  child: TextButton(
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      // Close the dialog and do nothing
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+      ),
+      child: Text('Upload via CSV'),
+    ));
+  }
+
+  Widget selectCourses() {
+    // print(courses);
+
+    return Center(
+      child: DropdownButton<String>(
+        value: current_course, // Initial value
+        hint: Text('Select an option'), // Hint text
+        items: courses.toList().map((dynamic value) {
+          return DropdownMenuItem<String>(
+            value: value.toString(),
+            child: Text(value.toString()),
+          );
+        }).toList(),
+        onChanged: (dynamic newValue) async {
+          // Handle value changes
+          current_course = newValue;
+          List<dynamic> studentList =
+              await firebaseDatabase.getStudents(current_course!);
+          setState(() {
+            students = Set.from(studentList);
+          });
+        },
+      ),
+    );
+  }
+
   Widget getStudents() {
     return Center(
         child: Column(children: [
       addSingleStudent(),
+      SizedBox(height: 10),
       const Text('OR'),
       const SizedBox(height: 10),
-      ElevatedButton(
-        child: const Text("Upload FIle"),
-        onPressed: () {
-          _pickFile(ScaffoldMessenger.of(context));
-        },
-      ),
-      const Text('1 . Accepted CSV format is given below'),
-      const SizedBox(height: 5),
-      Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Image.asset('assets/admin_course_format.png'),
-      ),
-      const SizedBox(height: 5),
+      getCSVscreen(),
+      const Text('OR'),
+      selectCourses()
     ]));
   }
 
