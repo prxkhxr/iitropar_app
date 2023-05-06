@@ -133,7 +133,7 @@ class _findSlotsState extends State<findSlots> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Given CSV format'),
+              title: const Text('Given CSV format'),
               content: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,
                 child: Column(
@@ -143,14 +143,14 @@ class _findSlotsState extends State<findSlots> {
                       padding: const EdgeInsets.all(15.0),
                       child: Image.asset('assets/faculty_entryNumber.png'),
                     ),
-                    Text('1. Entry number should be valid.')
+                    const Text('1. Entry number should be valid.')
                   ],
                 ),
               ),
               actions: <Widget>[
                 Center(
                   child: ElevatedButton(
-                    child: Text('Upload File'),
+                    child: const Text('Upload File'),
                     onPressed: () {
                       // Close the dialog and call the onPressed function
                       _pickFile(ScaffoldMessenger.of(context));
@@ -161,7 +161,7 @@ class _findSlotsState extends State<findSlots> {
                 Container(
                   alignment: Alignment.center,
                   child: TextButton(
-                    child: Text('Cancel'),
+                    child: const Text('Cancel'),
                     onPressed: () {
                       // Close the dialog and do nothing
                       Navigator.of(context).pop();
@@ -176,7 +176,7 @@ class _findSlotsState extends State<findSlots> {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.red,
       ),
-      child: Text('Upload via CSV'),
+      child: const Text('Upload via CSV'),
     ));
   }
 
@@ -186,7 +186,7 @@ class _findSlotsState extends State<findSlots> {
     return Center(
       child: DropdownButton<String>(
         value: current_course, // Initial value
-        hint: Text('Select an option'), // Hint text
+        hint: const Text('Select an option'), // Hint text
         items: courses.toList().map((dynamic value) {
           return DropdownMenuItem<String>(
             value: value.toString(),
@@ -208,23 +208,48 @@ class _findSlotsState extends State<findSlots> {
 
   Widget getStudents() {
     return Center(
-        child: Column(children: [
-      addSingleStudent(),
-      SizedBox(height: 10),
-      const Text('OR'),
-      const SizedBox(height: 10),
-      getCSVscreen(),
-      const Text('OR'),
-      selectCourses()
-    ]));
+      child: Column(
+        children: [
+          const SizedBox(height: 10,),
+          const Text(
+            'Select Course',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Colors.blueGrey,
+            ),
+          ),
+          selectCourses(),
+          Divider(
+            thickness: 0.25,
+            color: Color(primaryLight).withOpacity(0.5),
+          ),
+          const Text('Add Student'),
+          addSingleStudent(),
+          // const SizedBox(height: 10),
+          Divider(
+            thickness: 0.25,
+            color: Color(primaryLight).withOpacity(0.5),
+          ),
+          // const SizedBox(height: 10),
+          getCSVscreen(),
+          Divider(
+            thickness: 2,
+            color: Color(primaryLight).withOpacity(0.5),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget showSelectedStudents() {
     return Column(
       children: [
-        const Text('Selected Students'),
+        const Text(
+          'Selected Students',
+          style: TextStyle(color: Colors.blueGrey,fontWeight: FontWeight.w500),
+        ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.2,
+          height: MediaQuery.of(context).size.height * 0.15,
           child: Expanded(
             child: ListView.builder(
                 itemCount: students.length,
@@ -250,7 +275,7 @@ class _findSlotsState extends State<findSlots> {
     return Center(
       child: Column(
         children: [
-          const Text('Select Slot Lenght (in hours)'),
+          const Text('Select Slot Lenght (in hours)',style: TextStyle(color: Colors.blueGrey,fontWeight: FontWeight.w500),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -309,7 +334,7 @@ class _findSlotsState extends State<findSlots> {
         ),
         const SizedBox(width: 20),
         Text("${date.day}/${date.month}/${date.year}",
-            style: const TextStyle(fontSize: 32)),
+            style: const TextStyle(fontSize: 24,fontWeight: FontWeight.normal)),
       ],
     );
   }
@@ -388,19 +413,31 @@ class _findSlotsState extends State<findSlots> {
 
             TimeOfDay s = str2tod(l[1]);
             TimeOfDay e = str2tod(l[2]);
+            int from = s.hour;
+            int to = (e.minute == 0) ? e.hour : e.hour + 1;
 
-            int from = s.hour - slotLength + 1;
-            int to = (e.minute == 0) ? (e.hour) : (e.hour + 1);
-
-            for (int starthour = from; starthour < to; starthour++) {
-              int idx = 0;
-              if (starthour > 14) {
-                idx = starthour - 9;
+            int slotStart = 8;
+            int slotEnd = slotStart + slotLength;
+            int idx = 0;
+            for (; idx < (conflicts.length) / 2; idx++) {
+              if (from >= slotStart && from < slotEnd) {
+                conflicts[idx]++;
+              } else if (to > slotStart && to <= slotEnd) {
+                conflicts[idx]++;
               }
-              if (starthour < 13) {
-                idx = starthour - 8;
+              slotStart++;
+              slotEnd++;
+            }
+            slotStart = 14;
+            slotEnd = slotStart + slotLength;
+            for (; idx < conflicts.length; idx++) {
+              if (from >= slotStart && from < slotEnd) {
+                conflicts[idx]++;
+              } else if (to > slotStart && to <= slotEnd) {
+                conflicts[idx]++;
               }
-              conflicts[idx]++;
+              slotStart++;
+              slotEnd++;
             }
           }
         }
@@ -412,21 +449,23 @@ class _findSlotsState extends State<findSlots> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 50,
-          title: buildTitleBar("Find Slots", context),
-          elevation: 0,
-          backgroundColor: Color(secondaryLight),
+      appBar: AppBar(
+        title: const Text("Find Slots"),
+      ),
+      // drawer: const NavDrawer(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            getStudents(),
+            showSelectedStudents(),
+            divider(),
+            getSlot(),
+            getDate(),
+            divider(),
+            submitButton(),
+          ],
         ),
-        // drawer: const NavDrawer(),
-        body: Column(children: [
-          getStudents(),
-          divider(),
-          getSlot(),
-          getDate(),
-          divider(),
-          submitButton(),
-          showSelectedStudents()
-        ]));
+      ),
+    );
   }
 }

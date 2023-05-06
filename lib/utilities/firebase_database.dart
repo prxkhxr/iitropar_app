@@ -318,7 +318,7 @@ class firebaseDatabase {
     return true;
   }
 
-  static Future<List<ExtraClass>> getExtraCass(String courseID) async {
+  static Future<List<ExtraClass>> getExtraClass(String courseID) async {
     List<ExtraClass> ec = [];
 
     var snapshots = await FirebaseFirestore.instance.collection(courseID).get();
