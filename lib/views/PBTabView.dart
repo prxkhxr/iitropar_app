@@ -33,7 +33,6 @@ class MainLandingPage extends StatelessWidget {
 
   List<Widget> _buildScreens() {
     if (Ids.role == "admin") {
-      print("lol bhai \n\n\n\n");
       return [
         const AdminHomePage(),
         const EventCalendarScreen(),

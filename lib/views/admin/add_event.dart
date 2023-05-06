@@ -127,9 +127,10 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildEventDate() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         ElevatedButton(
-          child: const Text('Pick Event Date'),
+          child: const SizedBox(width: 120,child: Text('Pick Event Date')),
           onPressed: () {
             showDatePicker(
                     context: context,
@@ -145,18 +146,18 @@ class AddEventFormState extends State<AddEventForm> {
             });
           },
         ),
-        const SizedBox(width: 20),
         Text("${eventDate.day}/${eventDate.month}/${eventDate.year}",
-            style: const TextStyle(fontSize: 32)),
+            style: const TextStyle(fontSize: 24)),
       ],
     );
   }
 
   Widget _buildStartTime() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         ElevatedButton(
-          child: const Text('Set Start time'),
+          child: const SizedBox( width: 120, child: Text('Set Start time')),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -171,16 +172,17 @@ class AddEventFormState extends State<AddEventForm> {
           },
         ),
         const SizedBox(width: 20),
-        Text(formatTimeOfDay(startTime), style: const TextStyle(fontSize: 32)),
+        Text(formatTimeOfDay(startTime), style: const TextStyle(fontSize: 24)),
       ],
     );
   }
 
   Widget _buildEndTime() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         ElevatedButton(
-          child: const Text('Set End time'),
+          child: const SizedBox(width: 120 ,child: Text('Set End time')),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -195,7 +197,7 @@ class AddEventFormState extends State<AddEventForm> {
           },
         ),
         const SizedBox(width: 20),
-        Text(formatTimeOfDay(endTime), style: const TextStyle(fontSize: 32)),
+        Text(formatTimeOfDay(endTime), style: const TextStyle(fontSize: 24)),
       ],
     );
   }
@@ -203,95 +205,100 @@ class AddEventFormState extends State<AddEventForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
-      key: _formKey,
-      child: Container(
-        margin: const EdgeInsets.all(40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildEventTitle(),
-            _buildEventType(),
-            _buildEventDesc(),
-            _buildEventVenue(),
-            const SizedBox(height: 20),
-            _buildEventDate(),
-            _buildStartTime(),
-            _buildEndTime(),
-            Row(
-              children: [
-                const Text('Add Event Image'),
-                IconButton(
-                    onPressed: () async {
-                      ImagePicker imagepicker = ImagePicker(); // pick an image
-                      file = await imagepicker.pickImage(
-                          source: ImageSource.gallery);
-                    },
-                    icon: const Icon(Icons.camera_alt)),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Validating form inputs
-                  if (eventDate.compareTo(getTodayDateTime()) <= 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Previous date event are not allowed")),
-                    );
-                    return;
-                  }
-                  if (toDouble(startTime) > toDouble(endTime)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text(
-                              "Invalid Time. End time is before start time.")),
-                    );
-                    return;
-                  }
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    if (file == null) {
-                      print("No file selected!");
-                    } else {
-                      print("${file?.path} added!");
-                      String filename =
-                          DateTime.now().millisecondsSinceEpoch.toString();
-                      Reference refDir =
-                          FirebaseStorage.instance.ref().child('images');
-                      Reference imgToUpload = refDir.child(filename);
-                      String filePath = (file?.path)!;
-                      try {
-                        f() async {
-                          await imgToUpload.putFile(File(filePath));
-                          imageURL = await imgToUpload.getDownloadURL();
-                        }
-
-                        f();
-                      } catch (error) {
-                        print(error);
-                      }
-                    }
-                  }
-                  firebaseDatabase.addEventFB(
-                      eventTitle,
-                      eventType,
-                      eventDesc,
-                      eventVenue,
-                      "${eventDate.day}/${eventDate.month}/${eventDate.year}",
-                      "${startTime.hour}:${startTime.minute}",
-                      "${endTime.hour}:${endTime.minute}",
-                      imageURL,
-                      "admin");
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Event Added Sucessfully")),
-                  );
-                },
-                child: const Text('Submit'),
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Container(
+          margin: const EdgeInsets.all(40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildEventTitle(),
+              _buildEventType(),
+              _buildEventDesc(),
+              _buildEventVenue(),
+              const SizedBox(height: 20),
+              _buildEventDate(),
+              _buildStartTime(),
+              _buildEndTime(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Add Event Image', style: TextStyle(fontSize: 20),),
+                  IconButton(
+                      onPressed: () async {
+                        ImagePicker imagepicker = ImagePicker(); // pick an image
+                        file = await imagepicker.pickImage(
+                            source: ImageSource.gallery);
+                      },
+                      icon: const Icon(Icons.camera_alt)),
+                ],
               ),
-            ),
-          ],
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Validating form inputs
+                      if (eventDate.compareTo(getTodayDateTime()) <= 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Previous date event are not allowed")),
+                        );
+                        return;
+                      }
+                      if (toDouble(startTime) > toDouble(endTime)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  "Invalid Time. End time is before start time.")),
+                        );
+                        return;
+                      }
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        if (file == null) {
+                          print("No file selected!");
+                        } else {
+                          print("${file?.path} added!");
+                          String filename =
+                              DateTime.now().millisecondsSinceEpoch.toString();
+                          Reference refDir =
+                              FirebaseStorage.instance.ref().child('images');
+                          Reference imgToUpload = refDir.child(filename);
+                          String filePath = (file?.path)!;
+                          try {
+                            f() async {
+                              await imgToUpload.putFile(File(filePath));
+                              imageURL = await imgToUpload.getDownloadURL();
+                            }
+                  
+                            f();
+                          } catch (error) {
+                            print(error);
+                          }
+                        }
+                      }
+                      firebaseDatabase.addEventFB(
+                          eventTitle,
+                          eventType,
+                          eventDesc,
+                          eventVenue,
+                          "${eventDate.day}/${eventDate.month}/${eventDate.year}",
+                          "${startTime.hour}:${startTime.minute}",
+                          "${endTime.hour}:${endTime.minute}",
+                          imageURL,
+                          "admin");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Event Added Sucessfully")),
+                      );
+                    },
+                    child: const Text('Submit'),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

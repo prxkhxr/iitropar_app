@@ -12,6 +12,7 @@ import '../admin/change_time_table.dart';
 import '../admin/faculty_courses.dart';
 import '../admin/registerClub.dart';
 import '../admin/registerFaculty.dart';
+import '../admin/start_sem.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -31,40 +32,69 @@ class _AdminHomePageState extends State<AdminHomePage> {
         title: buildTitleBar("HOME", context),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AdminCard(context, const AddEvent(), "Add Event"),
-                AdminCard(context, const addEventcsv(), "Add Event Using CSV"),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AdminCard(
-                    context, const addCoursecsv(), "Add Course Using CSV"),
-                AdminCard(context, const registerClub(), "Register Club"),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AdminCard(context, const addHoliday(), "Declare Holiday"),
-                AdminCard(
-                    context, const changeTimetable(), "Change time table"),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AdminCard(context, const registerFaculty(), "Register Faculty"),
-                AdminCard(
-                    context, const FacultyList(), "Manage Faculty & Courses"),
-              ],
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 5, 5, 5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Register",
+                style: TextStyle(
+                    color: Color(primaryLight),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    AdminCard(context, const NewSemester(), "Start New Semester"),
+                    AdminCard(context, const registerFaculty(), "Register Faculty"),
+                    AdminCard(context, const FacultyList(), "Manage Faculty & Courses"),
+                    AdminCard(context, const addCoursecsv(), "Add Student Record (CSV)"),
+                    AdminCard(context, const registerClub(), "Register Club"),
+                  ],
+                ),
+              ),
+              Text(
+                "Alter Time-Table",
+                style: TextStyle(
+                    color: Color(primaryLight),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    AdminCard(context, const addHoliday(), "Declare Holiday"),
+                    AdminCard(
+                        context, const changeTimetable(), "Change time table"),
+                  ],
+                ),
+              ),
+              Text(
+                "Add Events",
+                style: TextStyle(
+                    color: Color(primaryLight),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    AdminCard(context, const AddEvent(), "Add Event"),
+                    AdminCard(
+                        context, const addEventcsv(), "Add Event Using CSV"),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
