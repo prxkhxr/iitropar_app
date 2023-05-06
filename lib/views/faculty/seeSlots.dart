@@ -112,13 +112,13 @@ class _seeSlotsState extends State<seeSlots> {
       slotStart = TimeOfDay(hour: slotStart.hour + 1, minute: 0);
       slotEnd = TimeOfDay(hour: slotEnd.hour + 1, minute: 0);
 
-      if (slotStart.hour == 13) {
+      if (slotStart.hour <= 13 && slotEnd.hour > 13) {
         wids.add(Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [Text("Lunch Break")],
         ));
-        slotStart = TimeOfDay(hour: slotStart.hour + 1, minute: 0);
-        slotEnd = TimeOfDay(hour: slotEnd.hour + 1, minute: 0);
+        slotStart = const TimeOfDay(hour: 14, minute: 0);
+        slotEnd = TimeOfDay(hour: 14 + slotLength, minute: 0);
       }
     }
     return Container(
