@@ -127,86 +127,90 @@ class AddFormState extends State<AddForm> {
   }
 
   Widget previous() {
-    return Column(
-      children: [
-        const Text('Upcoming Time table Changes'),
-        FutureBuilder<bool>(
-            future: getchgs(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Container();
-              } else {
-                return SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                      padding: const EdgeInsets.all(8),
-                      itemCount: chgs.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        DateTime currentDate = DateTime(DateTime.now().year,
-                            DateTime.now().month, DateTime.now().day);
-                        DateTime d = DateTime(chgs[index].date.year,
-                            chgs[index].date.month, chgs[index].date.day);
-                        print(d.toString());
-                        if (d.compareTo(currentDate) >= 0) {
-                          return Container(
-                            height: 100,
-                            child: Center(
-                                child: Column(
-                              children: [
-                                Text(
-                                    'Date: ${chgs[index].date.day}/${chgs[index].date.month}/${chgs[index].date.year},  Day followed : ${chgs[index].day_to_followed}'),
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    // Show the confirmation dialog
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text("Confirm"),
-                                          content: Text(
-                                              "Do you really want to delete this changed day?"),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: Text("Cancel"),
-                                              onPressed: () {
-                                                // Close the dialog
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton.icon(
-                                                icon: Icon(Icons.delete),
-                                                label: Text("Delete"),
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Upcoming Time table Changes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          FutureBuilder<bool>(
+              future: getchgs(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container();
+                } else {
+                  return SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        itemCount: chgs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          DateTime currentDate = DateTime(DateTime.now().year,
+                              DateTime.now().month, DateTime.now().day);
+                          DateTime d = DateTime(chgs[index].date.year,
+                              chgs[index].date.month, chgs[index].date.day);
+                          print(d.toString());
+                          if (d.compareTo(currentDate) >= 0) {
+                            return Container(
+                              height: 100,
+                              child: Center(
+                                  child: Column(
+                                children: [
+                                  Text(
+                                      'Date: ${chgs[index].date.day}/${chgs[index].date.month}/${chgs[index].date.year},  Day followed : ${chgs[index].day_to_followed}'),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      // Show the confirmation dialog
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("Confirm"),
+                                            content: Text(
+                                                "Do you really want to delete this changed day?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: Text("Cancel"),
                                                 onPressed: () {
-                                                  firebaseDatabase.deleteChDay(
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(chgs[index]
-                                                              .date));
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(const SnackBar(
-                                                          content: Text(
-                                                              "Deleted switched day")));
+                                                  // Close the dialog
                                                   Navigator.of(context).pop();
-                                                  setState(() {});
-                                                }),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  icon: Icon(Icons.delete),
-                                  label: Text("Delete"),
-                                ),
-                              ],
-                            )),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      }),
-                );
-              }
-            }),
-      ],
+                                                },
+                                              ),
+                                              TextButton.icon(
+                                                  icon: Icon(Icons.delete),
+                                                  label: Text("Delete"),
+                                                  onPressed: () {
+                                                    firebaseDatabase.deleteChDay(
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(chgs[index]
+                                                                .date));
+                                                    ScaffoldMessenger.of(context)
+                                                        .showSnackBar(const SnackBar(
+                                                            content: Text(
+                                                                "Deleted switched day")));
+                                                    Navigator.of(context).pop();
+                                                    setState(() {});
+                                                  }),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: Icon(Icons.delete),
+                                    label: Text("Delete"),
+                                  ),
+                                ],
+                              )),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                  );
+                }
+              }),
+        ],
+      ),
     );
   }
 

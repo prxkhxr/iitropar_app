@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
-import 'package:iitropar/views/homePage/admin_home.dart';
+// import 'package:iitropar/views/homePage/admin_home.dart';
 import 'package:iitropar/views/homePage/club_home.dart';
 import 'package:iitropar/views/homePage/faculty_home.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
@@ -151,9 +151,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget userScreen(BuildContext context) {
-    if (user.compareTo('admin') == 0) {
-      return const AdminHome();
-    } else if (user.compareTo('club') == 0) {
+    if (user.compareTo('club') == 0) {
       return const ClubHome();
     } else if (user.compareTo('faculty') == 0) {
       return const FacultyHome();

@@ -347,7 +347,7 @@ class Ids {
     "taklubalm@gmail.com",
     "2020csb1086@iitrpr.ac.in",
     "2020csb1073@iitrpr.ac.in",
-    "2020csb1111@iitrpr.ac.in"
+    "2020csb1111@iitrpr.ac.in",
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
   static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
@@ -372,13 +372,18 @@ class Ids {
   static Future<String> _emailCheck(String email) async {
     String check1 = await firebaseDatabase.emailCheck(email);
     if (check1 != "") {
+      role = check1;
+      assigned = true;
       return check1;
     }
 
     if (email.endsWith("iitrpr.ac.in")) {
+      role = "student";
+      assigned = true;
       return "student";
     }
 
+    assigned = true;
     return "guest";
   }
 }

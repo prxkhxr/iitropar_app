@@ -273,8 +273,8 @@ class firebaseDatabase {
         Event e = Event(
             title: doc['eventTitle'],
             desc: doc['eventDesc'],
-            stime: doc['startTime'],
-            etime: doc['endTime'],
+            stime: str2tod(doc['startTime']),
+            etime: str2tod(doc['endTime']),
             // displayDate: doc['eventDate'],
             creator: doc['creator']); //TODO : add image as well to Event
         events.add(e);
