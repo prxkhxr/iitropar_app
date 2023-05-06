@@ -93,7 +93,7 @@ class AddFormState extends State<AddForm> {
       const DropdownMenuItem(child: Text("Monday"), value: "Monday"),
       const DropdownMenuItem(child: Text("Tuesday"), value: "Tuesday"),
       const DropdownMenuItem(child: Text("Wednesday"), value: "Wednesday"),
-      const DropdownMenuItem(child: Text("Thrusday"), value: "Thrusday"),
+      const DropdownMenuItem(child: Text("Thursday"), value: "Thursday"),
       const DropdownMenuItem(child: Text("Friday"), value: "Friday"),
     ];
     return Center(
@@ -125,7 +125,7 @@ class AddFormState extends State<AddForm> {
   Widget previous() {
     return Column(
       children: [
-        const Text('Previously Time table Changes'),
+        const Text('Upcoming Time table Changes'),
         FutureBuilder<bool>(
             future: getchgs(),
             builder: (context, snapshot) {
@@ -138,12 +138,66 @@ class AddFormState extends State<AddForm> {
                       padding: const EdgeInsets.all(8),
                       itemCount: chgs.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          height: 50,
-                          child: Center(
-                              child: Text(
-                                  'Date: ${chgs[index].date.toString()},  Desc : ${chgs[index].day_to_followed}')),
-                        );
+                        DateTime currentDate = DateTime(DateTime.now().year,
+                            DateTime.now().month, DateTime.now().day);
+                        DateTime d = DateTime(chgs[index].date.year,
+                            chgs[index].date.month, chgs[index].date.day);
+                        print(d.toString());
+                        if (d.compareTo(currentDate) >= 0) {
+                          return Container(
+                            height: 100,
+                            child: Center(
+                                child: Column(
+                              children: [
+                                Text(
+                                    'Date: ${chgs[index].date.day}/${chgs[index].date.month}/${chgs[index].date.year},  Day followed : ${chgs[index].day_to_followed}'),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    // Show the confirmation dialog
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("Confirm"),
+                                          content: Text(
+                                              "Do you really want to delete this changed day?"),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text("Cancel"),
+                                              onPressed: () {
+                                                // Close the dialog
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton.icon(
+                                                icon: Icon(Icons.delete),
+                                                label: Text("Delete"),
+                                                onPressed: () {
+                                                  firebaseDatabase.deleteChDay(
+                                                      DateFormat('yyyy-MM-dd')
+                                                          .format(chgs[index]
+                                                              .date));
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(const SnackBar(
+                                                          content: Text(
+                                                              "Deleted switched day")));
+                                                  Navigator.of(context).pop();
+                                                  setState(() {});
+                                                }),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: Icon(Icons.delete),
+                                  label: Text("Delete"),
+                                ),
+                              ],
+                            )),
+                          );
+                        } else {
+                          return Container();
+                        }
                       }),
                 );
               }
@@ -157,19 +211,47 @@ class AddFormState extends State<AddForm> {
       padding: const EdgeInsets.all(8.0),
       child: Center(
         child: ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                //TODO: add alert dialog.
-                firebaseDatabase.switchTimetableFB(
-                    dateinput.text, selected_day);
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(const SnackBar(content: Text("Added data")));
-                setState(() {
-                  hasUpdated = true;
-                });
-              }
-            },
-            child: const Text("Submit")),
+          onPressed: () {
+            // Show the confirmation dialog
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Confirm"),
+                  content: Text(
+                      "Do you really want to change timetable of ${dateinput.text}?"),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text("Cancel"),
+                      onPressed: () {
+                        // Close the dialog
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: Text("Add"),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          //TODO: add alert dialog.
+                          firebaseDatabase.switchTimetableFB(
+                              dateinput.text, selected_day);
+                          setState(() {
+                            hasUpdated = true;
+                          });
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Added switched day")));
+                        }
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          child: Text("Submit"),
+        ),
       ),
     );
   }
