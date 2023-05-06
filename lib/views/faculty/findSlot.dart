@@ -463,7 +463,7 @@ class _findSlotsState extends State<findSlots> {
           }
         }
 
-        List<ExtraClass> lec = await firebaseDatabase.getExtraCass(courses[i]);
+        List<ExtraClass> lec = await firebaseDatabase.getExtraClass(courses[i]);
 
         for (ExtraClass ec in lec) {
           if (ec.date.year == date.year &&

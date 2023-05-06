@@ -236,12 +236,12 @@ class Loader {
   }
 
   static Future<List<ExtraClass>> loadExtraClasses(String course) async {
-    return firebaseDatabase.getExtraCass(course);
+    return firebaseDatabase.getExtraClass(course);
   }
 
   static Future<void> saveExtraClasses(String course_id) async {
     List<ExtraClass> extraclasses =
-        await firebaseDatabase.getExtraCass(course_id);
+        await firebaseDatabase.getExtraClass(course_id);
 
     for (ExtraClass c in extraclasses) {
       Event e = Event(
