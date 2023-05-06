@@ -7,6 +7,7 @@ import 'package:iitropar/views/faculty/showClasses.dart';
 import '../../utilities/colors.dart';
 import 'home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitropar/views/faculty/studentsEnrolled.dart';
 
 class FacultyHome extends AbstractHome {
   const FacultyHome({super.key});
@@ -66,18 +67,28 @@ class _FacultyHomeState extends AbstractHomeState {
               itemCount: coursesList.length,
               itemBuilder: (BuildContext context, int index) {
                 final colorIndex = index % colors.length;
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    //color: Colors.black,
-                    color: colors[colorIndex],
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      coursesList[index],
-                      style: TextStyle(color: Color(secondaryLight)),
-                      //style: TextStyle(color: Colors.black),
+                return GestureDetector(
+                  onTap: () {
+                     Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => studentsEnrolled(course: coursesList[index]),
+                    ),
+                  );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      //color: Colors.black,
+                      color: colors[colorIndex],
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        coursesList[index],
+                        style: TextStyle(color: Color(secondaryLight)),
+                        //style: TextStyle(color: Colors.black),
+                      ),
                     ),
                   ),
                 );
@@ -93,9 +104,11 @@ class _FacultyHomeState extends AbstractHomeState {
   List<Widget> buttons() {
     List<Widget> l = List.empty(growable: true);
     l.add(allCourses());
-    l.add( const SizedBox(
-      height: 10,
-    ),);
+    l.add(
+      const SizedBox(
+        height: 10,
+      ),
+    );
     l.add(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -158,9 +171,11 @@ class _FacultyHomeState extends AbstractHomeState {
         ],
       ),
     );
-     l.add(const SizedBox(
-      height: 5,
-    ),);
+    l.add(
+      const SizedBox(
+        height: 5,
+      ),
+    );
     l.add(
       Center(
         child: Card(

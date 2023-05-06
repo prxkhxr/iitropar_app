@@ -18,7 +18,9 @@ class _MyClassState extends State<MyClass> {
     allClasses = await firebaseDatabase.getExtraCass(selectedCourse);
     filteredEc =
         allClasses.where((ec) => ec.courseID == selectedCourse).toList();
-    setState(() {});
+    if(mounted) {
+      setState(() {});
+    }
   }
 
   @override
