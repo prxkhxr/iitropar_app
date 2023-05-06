@@ -311,19 +311,31 @@ class _findSlotsState extends State<findSlots> {
 
             TimeOfDay s = str2tod(l[1]);
             TimeOfDay e = str2tod(l[2]);
+            int from = s.hour;
+            int to = (e.minute == 0) ? e.hour : e.hour + 1;
 
-            int from = s.hour - slotLength + 1;
-            int to = (e.minute == 0) ? (e.hour) : (e.hour + 1);
-
-            for (int starthour = from; starthour < to; starthour++) {
-              int idx = 0;
-              if (starthour > 14) {
-                idx = starthour - 9;
+            int slotStart = 8;
+            int slotEnd = slotStart + slotLength;
+            int idx = 0;
+            for (; idx < (conflicts.length) / 2; idx++) {
+              if (from >= slotStart && from < slotEnd) {
+                conflicts[idx]++;
+              } else if (to > slotStart && to <= slotEnd) {
+                conflicts[idx]++;
               }
-              if (starthour < 13) {
-                idx = starthour - 8;
+              slotStart++;
+              slotEnd++;
+            }
+            slotStart = 14;
+            slotEnd = slotStart + slotLength;
+            for (; idx < conflicts.length; idx++) {
+              if (from >= slotStart && from < slotEnd) {
+                conflicts[idx]++;
+              } else if (to > slotStart && to <= slotEnd) {
+                conflicts[idx]++;
               }
-              conflicts[idx]++;
+              slotStart++;
+              slotEnd++;
             }
           }
         }
