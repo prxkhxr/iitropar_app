@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
+import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:iitropar/utilities/firebase_database.dart';
@@ -80,7 +82,11 @@ class _addCoursecsvState extends State<addCoursecsv> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Add Courses using csv"),
+          toolbarHeight: 50,
+          elevation: 0,
+          backgroundColor: Color(secondaryLight),
+          automaticallyImplyLeading: false,
+          title: buildTitleBar("ADD COURSES USING CSV", context),
         ),
         body: Center(
           child: Column(children: [
