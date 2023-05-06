@@ -2,6 +2,14 @@
 
 import 'package:flutter/material.dart';
 
+class ConflictSlot {
+  TimeOfDay start;
+  TimeOfDay end;
+  int conflicts;
+
+  ConflictSlot(this.start, this.end, this.conflicts);
+}
+
 class seeSlots extends StatefulWidget {
   const seeSlots(
       {super.key, required this.slotLength, required this.conflicts});
@@ -104,22 +112,33 @@ class _seeSlotsState extends State<seeSlots> {
     TimeOfDay slotEnd = TimeOfDay(hour: 8 + slotLength, minute: 0);
     int totalSlots = 12 - 2 * slotLength;
     List<Widget> wids = [];
+
+    List<ConflictSlot> conflictSlots = List.empty(growable: true);
     for (int i = 0; i < totalSlots; i++) {
-      wids.add(createWid(
-          "${slotStart.hour.toString().padLeft(2, "0")}:${slotEnd.minute.toString().padLeft(2, "0")}",
-          "${slotEnd.hour.toString().padLeft(2, "0")}:${slotEnd.minute.toString().padLeft(2, "0")}",
-          conflicts[i]));
+      conflictSlots.add(ConflictSlot(slotStart, slotEnd, conflicts[i]));
       slotStart = TimeOfDay(hour: slotStart.hour + 1, minute: 0);
       slotEnd = TimeOfDay(hour: slotEnd.hour + 1, minute: 0);
 
       if (slotStart.hour <= 13 && slotEnd.hour > 13) {
-        wids.add(Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [Text("Lunch Break")],
-        ));
         slotStart = const TimeOfDay(hour: 14, minute: 0);
         slotEnd = TimeOfDay(hour: 14 + slotLength, minute: 0);
       }
+    }
+    conflictSlots.sort((a, b) {
+      if (a.conflicts < b.conflicts) {
+        return -1;
+      } else if (a.conflicts == b.conflicts) {
+        return 0;
+      } else {
+        return 1;
+      }
+    });
+
+    for (int i = 0; i < totalSlots; i++) {
+      wids.add(createWid(
+          "${conflictSlots[i].start.hour.toString().padLeft(2, "0")}:${conflictSlots[i].start.minute.toString().padLeft(2, "0")}",
+          "${conflictSlots[i].end.hour.toString().padLeft(2, "0")}:${conflictSlots[i].end.minute.toString().padLeft(2, "0")}",
+          conflictSlots[i].conflicts));
     }
     return Container(
         child: SingleChildScrollView(child: Column(children: wids)));

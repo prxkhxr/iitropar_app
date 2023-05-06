@@ -340,7 +340,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      creator: FirebaseAuth.instance.currentUser!.email!,
+                      creator: FirebaseAuth.instance.currentUser != null
+                          ? FirebaseAuth.instance.currentUser!.email!
+                          : "guest",
                     );
                     _insertSingularEvent(s, _selectedDate);
 
