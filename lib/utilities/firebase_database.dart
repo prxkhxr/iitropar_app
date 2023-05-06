@@ -113,6 +113,17 @@ class firebaseDatabase {
     });
   }
 
+  static void deleteHol(String date) {
+    String docName = date.replaceAll('/', '-');
+    DocumentReference doc_ref =
+        FirebaseFirestore.instance.collection('holidays').doc(docName);
+    doc_ref.delete().then((value) {
+      print('Document deleted successfully.');
+    }).catchError((error) {
+      print('Error deleting document: $error');
+    });
+  }
+
   static Future<List<changedDay>> getChangedDays() async {
     CollectionReference collectionRef =
         FirebaseFirestore.instance.collection('switchTimetable');
