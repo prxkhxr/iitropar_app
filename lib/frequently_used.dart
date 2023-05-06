@@ -344,7 +344,7 @@ class faculty {
 class Ids {
   static List<String> admins = [
     "2020csb1086@iitrpr.ac.in",
-    // "jugalchap123@gmail.com",
+    "guptajatin918@gmail.com",
     "2020csb1073@iitrpr.ac.in",
     "2020csb1111@iitrpr.ac.in"
   ];

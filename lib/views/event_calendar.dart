@@ -9,7 +9,6 @@ import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 
-
 class EventCalendarScreen extends StatefulWidget {
   const EventCalendarScreen({super.key});
 
@@ -186,24 +185,24 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   }
 
   DateTime whatDatetocall(DateTime datetime) {
-  if (CDLoaded) {
-    if (mapofCD[DateFormat("yyyy-MM-dd").format(datetime)] != null) {
-      int wkday = datetime.weekday - 1;
-      int dtf = mapofCD[DateFormat("yyyy-MM-dd").format(datetime)]!;
-      if (dtf > wkday) {
-        return datetime.add(Duration(days: dtf - wkday));
-      } else {
-        return datetime.subtract(Duration(days: wkday - dtf));
+    if (CDLoaded) {
+      if (mapofCD[DateFormat("yyyy-MM-dd").format(datetime)] != null) {
+        int wkday = datetime.weekday - 1;
+        int dtf = mapofCD[DateFormat("yyyy-MM-dd").format(datetime)]!;
+        if (dtf > wkday) {
+          return datetime.add(Duration(days: dtf - wkday));
+        } else {
+          return datetime.subtract(Duration(days: wkday - dtf));
+        }
       }
     }
-  }
-  if(holidaysLoaded){
-    if(mapofHolidays[DateFormat("yyyy-MM-dd").format(datetime)] != null){
-      return datetime.add(Duration(days: 1000));
+    if (holidaysLoaded) {
+      if (mapofHolidays[DateFormat("yyyy-MM-dd").format(datetime)] != null) {
+        return datetime.add(Duration(days: 1000));
+      }
     }
+    return datetime;
   }
-  return datetime;
-}
 
   _showSingleAddEventDialog() async {
     await showDialog(
@@ -328,7 +327,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      creator: FirebaseAuth.instance.currentUser!.email!,
+                      creator: FirebaseAuth.instance.currentUser != null
+                          ? FirebaseAuth.instance.currentUser!.email!
+                          : "guest",
                     );
                     _insertSingularEvent(s, _selectedDate);
 
