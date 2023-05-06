@@ -16,7 +16,8 @@ class firebaseDatabase {
       String endTime,
       String? imgURL,
       String creator) {
-    String docName = eventTitle + date.replaceAll('/', '-');
+    String docName =
+        eventTitle + date.replaceAll('/', '-') + startTime + endTime;
     DocumentReference ref_event_nr = FirebaseFirestore.instance
         .collection("Event.nonrecurring")
         .doc(docName);
@@ -99,6 +100,17 @@ class firebaseDatabase {
         .set(switchTimetable)
         .then((value) => print("added successfully"))
         .catchError((error) => print("failed to add data.\n ERROR = $error "));
+  }
+
+  static void deleteChDay(String date) {
+    String docName = date.replaceAll('/', '-');
+    DocumentReference doc_ref =
+        FirebaseFirestore.instance.collection('switchTimetable').doc(docName);
+    doc_ref.delete().then((value) {
+      print('Document deleted successfully.');
+    }).catchError((error) {
+      print('Error deleting document: $error');
+    });
   }
 
   static Future<List<changedDay>> getChangedDays() async {
