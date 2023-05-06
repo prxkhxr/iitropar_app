@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,7 +21,11 @@ class _addHolidayState extends State<addHoliday> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text("Add holidays"),
+          toolbarHeight: 50,
+          elevation: 0,
+          backgroundColor: Color(secondaryLight),
+          automaticallyImplyLeading: false,
+          title: buildTitleBar("ADD HOLIDAY", context),
         ),
         body: const AddClassForm());
   }
@@ -64,7 +69,7 @@ class AddClassFormState extends State<AddClassForm> {
           }
         },
         controller: dateinput, //editing controller of this TextField
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             icon: Icon(Icons.calendar_today), //icon of text field
             labelText: "Enter Date" //label text of field
             ),
@@ -125,40 +130,54 @@ class AddClassFormState extends State<AddClassForm> {
     return Form(
       key: _formKey,
       child: Container(
-          margin: const EdgeInsets.all(40),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [dateWidget(), descWidget(), submitWidget()])),
+          margin: const EdgeInsets.all(10),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            dateWidget(),
+            const SizedBox(height: 10),
+            descWidget(),
+            const SizedBox(height: 20),
+            submitWidget()
+          ])),
     );
   }
 
   Widget alldeclaredHolidays() {
-    return Column(
-      children: [
-        Text('Previously Declared Holidays '),
-        FutureBuilder<bool>(
-            future: getHols(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Container();
-              } else {
-                return SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                      padding: const EdgeInsets.all(8),
-                      itemCount: hols.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          height: 50,
-                          child: Center(
-                              child: Text(
-                                  'Date: ${hols[index].date.toString()},  Desc : ${hols[index].desc}')),
-                        );
-                      }),
-                );
-              }
-            }),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Previously Declared Holidays',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          FutureBuilder<bool>(
+              future: getHols(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container();
+                } else {
+                  return SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        itemCount: hols.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            title:
+                                Text(dateString(hols[index].date), style: const TextStyle(fontSize: 20),),
+                            subtitle: Text(hols[index].desc, style: const TextStyle(fontSize: 18),),
+                          );
+                        }),
+                  );
+                }
+              }),
+        ],
+      ),
     );
   }
 

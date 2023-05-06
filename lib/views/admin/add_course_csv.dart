@@ -88,26 +88,24 @@ class _addCoursecsvState extends State<addCoursecsv> {
           automaticallyImplyLeading: false,
           title: buildTitleBar("ADD COURSES USING CSV", context),
         ),
-        body: Center(
-          child: Column(children: [
-            const SizedBox(height: 50),
-            ElevatedButton(
-              child: const Text("Upload FIle"),
-              onPressed: () {
-                _pickFile(ScaffoldMessenger.of(context));
-              },
-            ),
-            const SizedBox(height: 50),
-            const Text('1 . Accepted CSV format is given below'),
-            const SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Image.asset('assets/admin_course_format.png'),
-            ),
-            const SizedBox(height: 5),
-            const Text(
-                '2 . Ensure that you enter valid entryNumber and courseCode'),
-          ]),
-        ));
+        body: Column(
+          children: [
+          const SizedBox(height: 50),
+          ElevatedButton(
+            child: const Text("Upload File"),
+            onPressed: () {
+              _pickFile(ScaffoldMessenger.of(context));
+            },
+          ),
+          const SizedBox(height: 50),
+          const Text('Accepted CSV format is given below', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Image.asset('assets/admin_course_format.png'),
+          ),
+          const SizedBox(height: 5),
+          const Text('Ensure that you enter valid entryNumber and courseCode', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.center,),
+        ]));
   }
 }
