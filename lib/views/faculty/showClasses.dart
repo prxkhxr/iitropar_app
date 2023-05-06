@@ -33,19 +33,21 @@ class _MyClassState extends State<MyClass> {
     getAllClasses();
     return Scaffold(
       appBar: AppBar(
-        title: Text('See Extra Classes'),
+        title: const Text('See Extra Classes'),
       ),
       body: Column(
         children: [
           DropdownButton(
             value: selectedCourse,
             onChanged: (value) {
-              setState(() {
-                selectedCourse = value.toString();
-                filteredEc = allClasses
-                    .where((ec) => ec.courseID == selectedCourse)
-                    .toList();
-              });
+              setState(
+                () {
+                  selectedCourse = value.toString();
+                  filteredEc = allClasses
+                      .where((ec) => ec.courseID == selectedCourse)
+                      .toList();
+                },
+              );
             },
             items: widget.courses
                 .map((course) => DropdownMenuItem(
@@ -59,24 +61,67 @@ class _MyClassState extends State<MyClass> {
               itemCount: filteredEc.length,
               itemBuilder: (context, index) {
                 final ec = filteredEc[index];
-                return ListTile(
-                  title: Text(ec.description),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Venue: ${ec.venue}'),
-                      Text('Date: ${dateString(ec.date)}'),
-                      Text('Start Time: ${TimeString(ec.startTime)}'),
-                      Text('End Time: ${TimeString(ec.endTime)}'),
-                    ],
+                return Container(
+                  margin: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey.shade300,
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      // TODO: Implement delete functionality here
-                      firebaseDatabase.deleteClass(ec);
-                      setState(() {});
-                    },
+                  child: ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0.0, 8.0),
+                      child: Center(
+                        child: Text(
+                          ec.description,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    subtitle: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: Text('Venue: ${ec.venue}')),
+                            Expanded(
+                                child: Text('Date: ${dateString(ec.date)}')),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                                child: Text(
+                                    'Start Time: ${TimeString(ec.startTime)}')),
+                            Expanded(
+                                child: Text(
+                                    'End Time: ${TimeString(ec.endTime)}')),
+                          ],
+                        ),
+                        SizedBox(height: 10,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                // TODO: Implement delete functionality here
+                                firebaseDatabase.deleteClass(ec);
+                                setState(() {});
+                              },
+                              icon: Icon(Icons.delete),
+                              label: Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

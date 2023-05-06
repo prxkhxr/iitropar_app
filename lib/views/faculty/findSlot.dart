@@ -133,7 +133,7 @@ class _findSlotsState extends State<findSlots> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Given CSV format'),
+              title: const Text('Given CSV format'),
               content: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,
                 child: Column(
@@ -143,14 +143,14 @@ class _findSlotsState extends State<findSlots> {
                       padding: const EdgeInsets.all(15.0),
                       child: Image.asset('assets/faculty_entryNumber.png'),
                     ),
-                    Text('1. Entry number should be valid.')
+                    const Text('1. Entry number should be valid.')
                   ],
                 ),
               ),
               actions: <Widget>[
                 Center(
                   child: ElevatedButton(
-                    child: Text('Upload File'),
+                    child: const Text('Upload File'),
                     onPressed: () {
                       // Close the dialog and call the onPressed function
                       _pickFile(ScaffoldMessenger.of(context));
@@ -161,7 +161,7 @@ class _findSlotsState extends State<findSlots> {
                 Container(
                   alignment: Alignment.center,
                   child: TextButton(
-                    child: Text('Cancel'),
+                    child: const Text('Cancel'),
                     onPressed: () {
                       // Close the dialog and do nothing
                       Navigator.of(context).pop();
@@ -176,7 +176,7 @@ class _findSlotsState extends State<findSlots> {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.red,
       ),
-      child: Text('Upload via CSV'),
+      child: const Text('Upload via CSV'),
     ));
   }
 
@@ -186,7 +186,7 @@ class _findSlotsState extends State<findSlots> {
     return Center(
       child: DropdownButton<String>(
         value: current_course, // Initial value
-        hint: Text('Select an option'), // Hint text
+        hint: const Text('Select an option'), // Hint text
         items: courses.toList().map((dynamic value) {
           return DropdownMenuItem<String>(
             value: value.toString(),
@@ -208,15 +208,19 @@ class _findSlotsState extends State<findSlots> {
 
   Widget getStudents() {
     return Center(
-        child: Column(children: [
-      addSingleStudent(),
-      SizedBox(height: 10),
-      const Text('OR'),
-      const SizedBox(height: 10),
-      getCSVscreen(),
-      const Text('OR'),
-      selectCourses()
-    ]));
+      child: Column(
+        children: [
+          const Text('Select Course',style: TextStyle(fontWeight: FontWeight.w500),),
+          selectCourses(),
+          const Text('OR'),
+          addSingleStudent(),
+          const SizedBox(height: 10),
+          const Text('OR'),
+          const SizedBox(height: 10),
+          getCSVscreen(),
+        ],
+      ),
+    );
   }
 
   Widget showSelectedStudents() {
@@ -412,21 +416,23 @@ class _findSlotsState extends State<findSlots> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 50,
-          title: buildTitleBar("Find Slots", context),
-          elevation: 0,
-          backgroundColor: Color(secondaryLight),
+      appBar: AppBar(
+        title: const Text("Find Slots"),
+      ),
+      // drawer: const NavDrawer(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            getStudents(),
+            showSelectedStudents(),
+            divider(),
+            getSlot(),
+            getDate(),
+            divider(),
+            submitButton(),
+          ],
         ),
-        // drawer: const NavDrawer(),
-        body: Column(children: [
-          getStudents(),
-          divider(),
-          getSlot(),
-          getDate(),
-          divider(),
-          submitButton(),
-          showSelectedStudents()
-        ]));
+      ),
+    );
   }
 }
