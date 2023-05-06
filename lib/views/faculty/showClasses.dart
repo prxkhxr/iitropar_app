@@ -1,13 +1,14 @@
-import 'package:firebase_core/firebase_core.dart';
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 
 class MyClass extends StatefulWidget {
   final Set<dynamic> courses;
-  MyClass({required this.courses});
+  const MyClass({super.key, required this.courses});
   @override
-  _MyClassState createState() => _MyClassState();
+  State<MyClass> createState() => _MyClassState();
 }
 
 class _MyClassState extends State<MyClass> {
@@ -107,9 +108,7 @@ class _MyClassState extends State<MyClass> {
                                     'End Time: ${TimeString(ec.endTime)}')),
                           ],
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -119,8 +118,8 @@ class _MyClassState extends State<MyClass> {
                                 firebaseDatabase.deleteClass(ec);
                                 setState(() {});
                               },
-                              icon: Icon(Icons.delete),
-                              label: Text('Delete'),
+                              icon: const Icon(Icons.delete),
+                              label: const Text('Delete'),
                             ),
                           ],
                         ),

@@ -110,7 +110,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       mySelectedEvents[DateFormat('yyyy-MM-dd').format(d1)] = l;
       d1 = d1.add(const Duration(days: 1));
     }
-    edb.printAll();
     setState(() {
       mySelectedEvents;
     });

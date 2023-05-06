@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/database/local_db.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
 
 import 'event.dart';
 
@@ -23,7 +24,7 @@ class Loader {
   static Map<String, String>? courseToSlot;
   static Map<String, List<String>>? slotToTime;
 
-  static Future<void> loadCourseSlot() async {
+  static Future<void> loadSlots() async {
     //  Load Slots of each Course
     var courseSlots = const CsvToListConverter()
         .convert(await rootBundle.loadString('assets/CourseSlots.csv'));
@@ -37,7 +38,7 @@ class Loader {
     }
   }
 
-  static Future<void> loadSlotTime() async {
+  static Future<void> loadTimes() async {
     var slotTimes = const CsvToListConverter()
         .convert(await rootBundle.loadString('assets/TimeTable.csv'));
     var len = slotTimes.length;
@@ -70,18 +71,21 @@ class Loader {
     }
   }
 
-  static Future<bool> loadCourses(List<String> course_id) async {
+  static Future<bool> saveCourses(List<String> course_id) async {
     //  Preprocess
     for (int i = 0; i < course_id.length; i++) {
       course_id[i] = course_id[i].replaceAll(' ', '');
     }
 
-    var t1 = loadCourseSlot();
-    var t2 = loadSlotTime();
-    await t1;
-    await t2;
+    if (courseToSlot == null) {
+      await loadSlots();
+    }
+    if (slotToTime == null) {
+      await loadTimes();
+    }
 
     for (int i = 0; i < course_id.length; i++) {
+      await saveExtraClasses(course_id[i]);
       for (int j = 0; j < 2; j++) {
         String? slot = courseToSlot![course_id[i]];
         //  Processes as Tutorial or Class
@@ -115,11 +119,12 @@ class Loader {
           String stime = l[1];
           String etime = l[2];
           Event e = Event(
-              title: title,
-              desc: title,
-              stime: str2tod(stime),
-              etime: str2tod(etime),
-              creator: 'course');
+            title: title,
+            desc: '',
+            stime: str2tod(stime),
+            etime: str2tod(etime),
+            creator: 'course',
+          );
           await EventDB().addRecurringEvent(
             e,
             DateTime(2023),
@@ -227,6 +232,26 @@ class Loader {
           etime: str2tod(l[3]),
           creator: 'exam');
       EventDB().addSingularEvent(e, stringDate(l[1]));
+    }
+  }
+
+  static Future<List<ExtraClass>> loadExtraClasses(String course) async {
+    return firebaseDatabase.getExtraClass(course);
+  }
+
+  static Future<void> saveExtraClasses(String course_id) async {
+    List<ExtraClass> extraclasses =
+        await firebaseDatabase.getExtraClass(course_id);
+
+    for (ExtraClass c in extraclasses) {
+      Event e = Event(
+        title: c.courseID,
+        desc: c.description,
+        stime: c.startTime,
+        etime: c.endTime,
+        creator: 'course',
+      );
+      await EventDB().addSingularEvent(e, c.date);
     }
   }
 }

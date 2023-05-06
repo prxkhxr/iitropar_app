@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types, file_names
+// ignore_for_file: non_constant_identifier_names, camel_case_types, file_names, no_logic_in_create_state
 
 import 'package:flutter/material.dart';
 import 'package:iitropar/database/event.dart';
@@ -210,7 +210,9 @@ class _findSlotsState extends State<findSlots> {
     return Center(
       child: Column(
         children: [
-          const SizedBox(height: 10,),
+          const SizedBox(
+            height: 10,
+          ),
           const Text(
             'Select Course',
             style: TextStyle(
@@ -246,7 +248,7 @@ class _findSlotsState extends State<findSlots> {
       children: [
         const Text(
           'Selected Students',
-          style: TextStyle(color: Colors.blueGrey,fontWeight: FontWeight.w500),
+          style: TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.w500),
         ),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.15,
@@ -275,7 +277,11 @@ class _findSlotsState extends State<findSlots> {
     return Center(
       child: Column(
         children: [
-          const Text('Select Slot Lenght (in hours)',style: TextStyle(color: Colors.blueGrey,fontWeight: FontWeight.w500),),
+          const Text(
+            'Select Slot Lenght (in hours)',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.w500),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -334,7 +340,8 @@ class _findSlotsState extends State<findSlots> {
         ),
         const SizedBox(width: 20),
         Text("${date.day}/${date.month}/${date.year}",
-            style: const TextStyle(fontSize: 24,fontWeight: FontWeight.normal)),
+            style:
+                const TextStyle(fontSize: 24, fontWeight: FontWeight.normal)),
       ],
     );
   }
@@ -377,12 +384,35 @@ class _findSlotsState extends State<findSlots> {
       int slotLength, DateTime date, List<String> students) async {
     List<int> conflicts = List.filled(12 - 2 * slotLength, 0);
 
+    const weekdays = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday'
+    ];
+
+    changedDay? cd = await firebaseDatabase.getChangedDay(date);
+    if (cd != null) {
+      for (int i = 0; i < 7; i++) {
+        if (cd.day_to_followed == weekdays[i]) {
+          int diff = date.weekday - (i + 1);
+          date = diff > 0
+              ? date.add(Duration(days: diff))
+              : date.subtract(Duration(days: -diff));
+        }
+      }
+    }
+
     if (Loader.courseToSlot == null) {
-      await Loader.loadCourseSlot();
+      await Loader.loadSlots();
     }
     if (Loader.slotToTime == null) {
-      await Loader.loadSlotTime();
+      await Loader.loadTimes();
     }
+
     for (int m = 0; m < students.length; m++) {
       var courses = await firebaseDatabase.getCourses(students[m]);
       for (int i = 0; i < courses.length; i++) {
@@ -400,15 +430,6 @@ class _findSlotsState extends State<findSlots> {
           for (int k = 0; k < times.length; k++) {
             var l = times[k].split('|');
             String day = l[0];
-            const weekdays = [
-              'monday',
-              'tuesday',
-              'wednesday',
-              'thursday',
-              'friday',
-              'saturday',
-              'sunday'
-            ];
             if (day.compareTo(weekdays[date.weekday - 1]) != 0) continue;
 
             TimeOfDay s = str2tod(l[1]);
@@ -441,8 +462,46 @@ class _findSlotsState extends State<findSlots> {
             }
           }
         }
+
+        List<ExtraClass> lec = await firebaseDatabase.getExtraClass(courses[i]);
+
+        for (ExtraClass ec in lec) {
+          if (ec.date.year == date.year &&
+              ec.date.month == date.month &&
+              ec.date.day == date.day) {
+            TimeOfDay s = ec.startTime;
+            TimeOfDay e = ec.endTime;
+            int from = s.hour;
+            int to = (e.minute == 0) ? e.hour : e.hour + 1;
+
+            int slotStart = 8;
+            int slotEnd = slotStart + slotLength;
+            int idx = 0;
+            for (; idx < (conflicts.length) / 2; idx++) {
+              if (from >= slotStart && from < slotEnd) {
+                conflicts[idx]++;
+              } else if (to > slotStart && to <= slotEnd) {
+                conflicts[idx]++;
+              }
+              slotStart++;
+              slotEnd++;
+            }
+            slotStart = 14;
+            slotEnd = slotStart + slotLength;
+            for (; idx < conflicts.length; idx++) {
+              if (from >= slotStart && from < slotEnd) {
+                conflicts[idx]++;
+              } else if (to > slotStart && to <= slotEnd) {
+                conflicts[idx]++;
+              }
+              slotStart++;
+              slotEnd++;
+            }
+          }
+        }
       }
     }
+
     return conflicts;
   }
 

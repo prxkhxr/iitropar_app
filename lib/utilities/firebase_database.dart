@@ -16,7 +16,8 @@ class firebaseDatabase {
       String endTime,
       String? imgURL,
       String creator) {
-    String docName = eventTitle + date.replaceAll('/', '-');
+    String docName =
+        eventTitle + date.replaceAll('/', '-') + startTime + endTime;
     DocumentReference ref_event_nr = FirebaseFirestore.instance
         .collection("Event.nonrecurring")
         .doc(docName);
@@ -99,6 +100,28 @@ class firebaseDatabase {
         .set(switchTimetable)
         .then((value) => print("added successfully"))
         .catchError((error) => print("failed to add data.\n ERROR = $error "));
+  }
+
+  static void deleteChDay(String date) {
+    String docName = date.replaceAll('/', '-');
+    DocumentReference doc_ref =
+        FirebaseFirestore.instance.collection('switchTimetable').doc(docName);
+    doc_ref.delete().then((value) {
+      print('Document deleted successfully.');
+    }).catchError((error) {
+      print('Error deleting document: $error');
+    });
+  }
+
+  static void deleteHol(String date) {
+    String docName = date.replaceAll('/', '-');
+    DocumentReference doc_ref =
+        FirebaseFirestore.instance.collection('holidays').doc(docName);
+    doc_ref.delete().then((value) {
+      print('Document deleted successfully.');
+    }).catchError((error) {
+      print('Error deleting document: $error');
+    });
   }
 
   static Future<List<changedDay>> getChangedDays() async {
@@ -283,7 +306,23 @@ class firebaseDatabase {
       var doc = csnapshots.docs[i];
       if (doc['email'] == email) return "club";
     }
+    if (Ids.admins.contains(email)) {
+      return "admin";
+    }
     return "";
+  }
+
+  static Future<changedDay?> getChangedDay(DateTime dt) async {
+    String docName =
+        "${dt.year.toString()}-${dt.month.toString()}-${dt.day.toString()}";
+    DocumentReference documentRef =
+        FirebaseFirestore.instance.collection('switchTimetable').doc(docName);
+    DocumentSnapshot ds = await documentRef.get();
+    if (ds.exists) {
+      return changedDay(ds['date'], ds['day_to_be_followed']);
+    } else {
+      return null;
+    }
   }
 
   static Future<bool> checkIfDocExists(

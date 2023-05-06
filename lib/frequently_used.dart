@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -343,10 +344,11 @@ class faculty {
 
 class Ids {
   static List<String> admins = [
+    "taklubalm@gmail.com",
     "2020csb1086@iitrpr.ac.in",
     "guptajatin918@gmail.com",
     "2020csb1073@iitrpr.ac.in",
-    "2020csb1111@iitrpr.ac.in"
+    "2020csb1111@iitrpr.ac.in",
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
   static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
@@ -365,22 +367,25 @@ class Ids {
       assigned = true;
       return role;
     }
-    String email_check = await firebaseDatabase
-        .emailCheck(FirebaseAuth.instance.currentUser!.email!);
-    if (admins.contains(FirebaseAuth.instance.currentUser!.email)) {
-      user = "admin";
-    } else if (email_check == "club") {
-      user = "club";
-    } else if (email_check == "faculty") {
-      user = "faculty";
-    } else if (FirebaseAuth.instance.currentUser != null) {
-      user = "student";
-    } else {
-      user = "guest";
+    return _emailCheck(FirebaseAuth.instance.currentUser!.email!);
+  }
+
+  static Future<String> _emailCheck(String email) async {
+    String check1 = await firebaseDatabase.emailCheck(email);
+    if (check1 != "") {
+      role = check1;
+      assigned = true;
+      return check1;
     }
-    role = user;
+
+    if (email.endsWith("iitrpr.ac.in")) {
+      role = "student";
+      assigned = true;
+      return "student";
+    }
+
     assigned = true;
-    return role;
+    return "guest";
   }
 }
 
