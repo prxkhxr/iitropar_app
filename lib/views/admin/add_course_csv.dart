@@ -8,6 +8,8 @@ import 'package:iitropar/utilities/colors.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:iitropar/utilities/firebase_database.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class addCoursecsv extends StatefulWidget {
   const addCoursecsv({super.key});
@@ -88,24 +90,32 @@ class _addCoursecsvState extends State<addCoursecsv> {
           automaticallyImplyLeading: false,
           title: buildTitleBar("ADD COURSES USING CSV", context),
         ),
-        body: Column(
-          children: [
+        body: Column(children: [
           const SizedBox(height: 50),
-          ElevatedButton(
-            child: const Text("Upload File"),
-            onPressed: () {
-              _pickFile(ScaffoldMessenger.of(context));
-            },
-          ),
-          const SizedBox(height: 50),
-          const Text('Accepted CSV format is given below', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const Text('Accepted CSV format is given below',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           const SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: Image.asset('assets/admin_course_format.png'),
           ),
           const SizedBox(height: 5),
-          const Text('Ensure that you enter valid entryNumber and courseCode', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.center,),
+          const Text(
+            'Ensure that you enter valid entryNumber and courseCode',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 50),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateColor.resolveWith(
+                  (states) => Color(primaryLight)),
+            ),
+            child: const Text("Upload File"),
+            onPressed: () {
+              _pickFile(ScaffoldMessenger.of(context));
+            },
+          ),
         ]));
   }
 }

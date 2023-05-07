@@ -107,7 +107,9 @@ class _FacultyListState extends State<FacultyList> {
         ),
         body: Column(
           children: [
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -125,15 +127,21 @@ class _FacultyListState extends State<FacultyList> {
                     )),
                 const SizedBox(width: 10),
                 ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateColor.resolveWith(
+                        (states) => Color(primaryLight)),
+                  ),
                   onPressed: () {
                     // Perform search
                     setState(() {});
                   },
-                  child: Icon(Icons.search),
+                  child: const Icon(Icons.search),
                 ),
               ],
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: faculties.length,
@@ -151,14 +159,22 @@ class _FacultyListState extends State<FacultyList> {
                         border: Border.all(width: 1),
                       ),
                       child: ListTile(
-                        title: Text(faculties[index].name, style: const TextStyle(fontWeight: FontWeight.bold),),
+                        title: Text(
+                          faculties[index].name,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(faculties[index].department, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            Text(faculties[index].email, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Text(faculties[index].department,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            Text(faculties[index].email,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
-                            const Text('Courses:', style: TextStyle(fontWeight: FontWeight.bold)),
+                            const Text('Courses:',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
                             Wrap(
                               spacing: 8,
@@ -201,7 +217,9 @@ class _FacultyListState extends State<FacultyList> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10,),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             submitButton(index)
                           ],
                         ),

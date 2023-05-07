@@ -105,8 +105,13 @@ class AddFormState extends State<AddForm> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          const Text('Schedule to be followed of ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-          const SizedBox(height: 10,),
+          const Text(
+            'Schedule to be followed of ',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
           DropdownButton(
             items: items,
             value: selected_day,
@@ -132,7 +137,8 @@ class AddFormState extends State<AddForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Upcoming Time table Changes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('Upcoming Time table Changes',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           FutureBuilder<bool>(
               future: getchgs(),
               builder: (context, snapshot) {
@@ -180,14 +186,17 @@ class AddFormState extends State<AddForm> {
                                                   icon: Icon(Icons.delete),
                                                   label: Text("Delete"),
                                                   onPressed: () {
-                                                    firebaseDatabase.deleteChDay(
-                                                        DateFormat('yyyy-MM-dd')
+                                                    firebaseDatabase
+                                                        .deleteChDay(DateFormat(
+                                                                'yyyy-MM-dd')
                                                             .format(chgs[index]
                                                                 .date));
-                                                    ScaffoldMessenger.of(context)
-                                                        .showSnackBar(const SnackBar(
-                                                            content: Text(
-                                                                "Deleted switched day")));
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                            const SnackBar(
+                                                                content: Text(
+                                                                    "Deleted switched day")));
                                                     Navigator.of(context).pop();
                                                     setState(() {});
                                                   }),
@@ -219,6 +228,10 @@ class AddFormState extends State<AddForm> {
       padding: const EdgeInsets.all(8.0),
       child: Center(
         child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateColor.resolveWith(
+                  (states) => Color(primaryLight)),
+            ),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 //TODO: add alert dialog.
@@ -241,9 +254,18 @@ class AddFormState extends State<AddForm> {
       key: _formKey,
       child: Container(
           margin: const EdgeInsets.all(10),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [dateWidget(), const SizedBox(height: 10,), dayWidget(), const SizedBox(height: 10,), submitWidget()])),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            dateWidget(),
+            const SizedBox(
+              height: 10,
+            ),
+            dayWidget(),
+            const SizedBox(
+              height: 10,
+            ),
+            submitWidget()
+          ])),
     );
   }
 
@@ -252,7 +274,13 @@ class AddFormState extends State<AddForm> {
     // Build a Form widget using the _formKey created above.
 
     return Column(
-      children: [createForm(), const SizedBox(height: 20,), previous()],
+      children: [
+        createForm(),
+        const SizedBox(
+          height: 20,
+        ),
+        previous()
+      ],
     );
   }
 }

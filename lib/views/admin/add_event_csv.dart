@@ -3,9 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
+import 'package:iitropar/frequently_used.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:iitropar/utilities/firebase_database.dart';
+
+import '../../utilities/colors.dart';
 
 class addEventcsv extends StatefulWidget {
   const addEventcsv({super.key});
@@ -109,29 +112,40 @@ class _addEventcsvState extends State<addEventcsv> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Add Events using csv"),
+          toolbarHeight: 50,
+          elevation: 0,
+          backgroundColor: Color(secondaryLight),
+          automaticallyImplyLeading: false,
+          title: buildTitleBar("ADD EVENT - CSV", context),
         ),
-        body: Center(
-          child: Column(children: [
-            const SizedBox(height: 50),
-            ElevatedButton(
-              child: const Text("Upload FIle"),
-              onPressed: () {
-                _pickFile(ScaffoldMessenger.of(context));
-              },
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+          const SizedBox(height: 50),
+          const Text('Accepted CSV format is given below',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Image.asset('assets/admin_csv_format.png'),
+          ),
+          const SizedBox(height: 5),
+          const Text('Time should be of the form HH:MM',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const SizedBox(height: 20),
+          const Text('Date should be of the format DD/MM/YYYY',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const SizedBox(height: 50),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateColor.resolveWith(
+                  (states) => Color(primaryLight)),
             ),
-            const SizedBox(height: 50),
-            const Text('1 . Accepted CSV format is given below'),
-            const SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Image.asset('assets/admin_csv_format.png'),
-            ),
-            const SizedBox(height: 5),
-            const Text('2 . Time should be of the form HH:MM'),
-            const SizedBox(height: 20),
-            const Text('3. Date should be of the format DD/MM/YYYY')
-          ]),
-        ));
+            child: const Text("Upload FIle"),
+            onPressed: () {
+              _pickFile(ScaffoldMessenger.of(context));
+            },
+          ),
+        ]));
   }
 }

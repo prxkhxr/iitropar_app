@@ -29,7 +29,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
         toolbarHeight: 50,
         elevation: 0,
         backgroundColor: Color(secondaryLight),
-        title: buildTitleBar("HOME", context),
+        title: buildTitleBar("ADMIN-HOME", context),
       ),
       body: SingleChildScrollView(
         child: Padding(

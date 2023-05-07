@@ -98,7 +98,7 @@ class AddClassFormState extends State<AddClassForm> {
         width: MediaQuery.of(context).size.width * 0.7,
         child: TextFormField(
           controller: descinput,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
               icon: Icon(Icons.description), labelText: "Enter reason "),
         ));
   }
@@ -113,6 +113,10 @@ class AddClassFormState extends State<AddClassForm> {
       padding: const EdgeInsets.all(8.0),
       child: Center(
         child: ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateColor.resolveWith((states) => Color(primaryLight)),
+          ),
           onPressed: () {
             if (descinput.text == "") {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -124,19 +128,19 @@ class AddClassFormState extends State<AddClassForm> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: Text("Confirm"),
+                  title: const Text("Confirm"),
                   content: Text(
                       "Do you really want to add holiday on ${dateinput.text}?"),
                   actions: <Widget>[
                     TextButton(
-                      child: Text("Cancel"),
+                      child: const Text("Cancel"),
                       onPressed: () {
                         // Close the dialog
                         Navigator.of(context).pop();
                       },
                     ),
                     TextButton(
-                      child: Text("Add"),
+                      child: const Text("Add"),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           //TODO: add alert dialog.
@@ -155,7 +159,7 @@ class AddClassFormState extends State<AddClassForm> {
               },
             );
           },
-          child: Text("Submit"),
+          child: const Text("Submit"),
         ),
       ),
     );
@@ -182,7 +186,7 @@ class AddClassFormState extends State<AddClassForm> {
       padding: const EdgeInsets.all(15.0),
       child: Column(
         children: [
-          Text('Upcoming Holidays',
+          const Text('Upcoming Holidays',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           const SizedBox(
             height: 10,
@@ -218,20 +222,21 @@ class AddClassFormState extends State<AddClassForm> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: Text("Confirm"),
-                                            content: Text(
+                                            title: const Text("Confirm"),
+                                            content: const Text(
                                                 "Do you really want to delete this holiday?"),
                                             actions: <Widget>[
                                               TextButton(
-                                                child: Text("Cancel"),
+                                                child: const Text("Cancel"),
                                                 onPressed: () {
                                                   // Close the dialog
                                                   Navigator.of(context).pop();
                                                 },
                                               ),
                                               TextButton.icon(
-                                                  icon: Icon(Icons.delete),
-                                                  label: Text("Delete"),
+                                                  icon:
+                                                      const Icon(Icons.delete),
+                                                  label: const Text("Delete"),
                                                   onPressed: () {
                                                     firebaseDatabase.deleteHol(
                                                         DateFormat('yyyy-MM-dd')
@@ -251,8 +256,8 @@ class AddClassFormState extends State<AddClassForm> {
                                         },
                                       );
                                     },
-                                    icon: Icon(Icons.delete),
-                                    label: Text("Delete"),
+                                    icon: const Icon(Icons.delete),
+                                    label: const Text("Delete"),
                                   ),
                                 ],
                               )),

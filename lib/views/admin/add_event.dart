@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
+import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -19,7 +20,11 @@ class _AddEventState extends State<AddEvent> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text("Add Event"),
+          toolbarHeight: 50,
+          elevation: 0,
+          backgroundColor: Color(secondaryLight),
+          automaticallyImplyLeading: false,
+          title: buildTitleBar("ADD EVENT", context),
         ),
         body: const AddEventForm());
   }
@@ -130,7 +135,11 @@ class AddEventFormState extends State<AddEventForm> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         ElevatedButton(
-          child: const SizedBox(width: 120,child: Text('Pick Event Date')),
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateColor.resolveWith((states) => Color(primaryLight)),
+          ),
+          child: const SizedBox(width: 120, child: Text('Pick Event Date')),
           onPressed: () {
             showDatePicker(
                     context: context,
@@ -157,7 +166,11 @@ class AddEventFormState extends State<AddEventForm> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         ElevatedButton(
-          child: const SizedBox( width: 120, child: Text('Set Start time')),
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateColor.resolveWith((states) => Color(primaryLight)),
+          ),
+          child: const SizedBox(width: 120, child: Text('Set Start time')),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -182,7 +195,11 @@ class AddEventFormState extends State<AddEventForm> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         ElevatedButton(
-          child: const SizedBox(width: 120 ,child: Text('Set End time')),
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateColor.resolveWith((states) => Color(primaryLight)),
+          ),
+          child: const SizedBox(width: 120, child: Text('Set End time')),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -224,10 +241,14 @@ class AddEventFormState extends State<AddEventForm> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Add Event Image', style: TextStyle(fontSize: 20),),
+                  const Text(
+                    'Add Event Image',
+                    style: TextStyle(fontSize: 20),
+                  ),
                   IconButton(
                       onPressed: () async {
-                        ImagePicker imagepicker = ImagePicker(); // pick an image
+                        ImagePicker imagepicker =
+                            ImagePicker(); // pick an image
                         file = await imagepicker.pickImage(
                             source: ImageSource.gallery);
                       },
@@ -236,14 +257,19 @@ class AddEventFormState extends State<AddEventForm> {
               ),
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateColor.resolveWith(
+                          (states) => Color(primaryLight)),
+                    ),
                     onPressed: () {
                       // Validating form inputs
                       if (eventDate.compareTo(getTodayDateTime()) <= 0) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text("Previous date event are not allowed")),
+                              content:
+                                  Text("Previous date event are not allowed")),
                         );
                         return;
                       }
@@ -272,7 +298,7 @@ class AddEventFormState extends State<AddEventForm> {
                               await imgToUpload.putFile(File(filePath));
                               imageURL = await imgToUpload.getDownloadURL();
                             }
-                  
+
                             f();
                           } catch (error) {
                             print(error);
@@ -290,7 +316,8 @@ class AddEventFormState extends State<AddEventForm> {
                           imageURL,
                           "admin");
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Event Added Sucessfully")),
+                        const SnackBar(
+                            content: Text("Event Added Sucessfully")),
                       );
                     },
                     child: const Text('Submit'),
