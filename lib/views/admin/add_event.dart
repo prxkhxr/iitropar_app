@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iitropar/database/event.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
@@ -185,7 +186,7 @@ class AddEventFormState extends State<AddEventForm> {
           },
         ),
         const SizedBox(width: 20),
-        Text(formatTimeOfDay(startTime), style: const TextStyle(fontSize: 24)),
+        Text(tod2str(startTime), style: const TextStyle(fontSize: 24)),
       ],
     );
   }
@@ -214,7 +215,7 @@ class AddEventFormState extends State<AddEventForm> {
           },
         ),
         const SizedBox(width: 20),
-        Text(formatTimeOfDay(endTime), style: const TextStyle(fontSize: 24)),
+        Text(tod2str(endTime), style: const TextStyle(fontSize: 24)),
       ],
     );
   }
@@ -311,8 +312,8 @@ class AddEventFormState extends State<AddEventForm> {
                           eventDesc,
                           eventVenue,
                           "${eventDate.day}/${eventDate.month}/${eventDate.year}",
-                          "${startTime.hour}:${startTime.minute}",
-                          "${endTime.hour}:${endTime.minute}",
+                          tod2str(startTime),
+                          tod2str(endTime),
                           imageURL,
                           "admin");
                       ScaffoldMessenger.of(context).showSnackBar(
