@@ -90,8 +90,8 @@ class Loader {
         String? slot = courseToSlot![course_id[i]];
         //  Processes as Tutorial or Class
         slot = (j == 0) ? (slot) : ('T-$slot');
-        String title =
-            (j == 0) ? ('${course_id[i]} Class') : '${course_id[i]} Tutorial';
+        String title = course_id[i];
+        String desc = (j == 0) ? 'Class' : 'Tutorial';
 
         List<String>? times = slotToTime![slot];
         if (times == null) continue;
@@ -120,7 +120,7 @@ class Loader {
           String etime = l[2];
           Event e = Event(
             title: title,
-            desc: '',
+            desc: desc,
             stime: str2tod(stime),
             etime: str2tod(etime),
             creator: 'course',

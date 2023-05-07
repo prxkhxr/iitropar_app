@@ -340,9 +340,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      creator: FirebaseAuth.instance.currentUser != null
-                          ? FirebaseAuth.instance.currentUser!.email!
-                          : "guest",
+                      creator: FirebaseAuth.instance.currentUser!.email!,
                     );
                     _insertSingularEvent(s, _selectedDate);
 
@@ -711,7 +709,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                                       color: Color(primaryLight), fontSize: 16),
                                 ),
                                 Text(
-                                  "LHC M5",
+                                  myEvents.desc,
                                   style: TextStyle(
                                       color:
                                           Color(primaryLight).withOpacity(0.6)),
