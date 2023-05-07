@@ -23,22 +23,28 @@ String getDay() {
 Widget buildItems(String item) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-    child: Column(
-      children: [
-        CircleAvatar(
-          radius: 40,
-          child: Image.asset(
-            'assets/food_logo.png',
-            fit: BoxFit.cover,
+    child: Container(
+      width: 100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 40,
+            child: Image.asset(
+              'assets/food_logo.png',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          item,
-          style: TextStyle(fontSize: 14, color: Color(primaryLight)),
-          textAlign: TextAlign.center,
-        ),
-      ],
+          const SizedBox(height: 10),
+          Flexible(
+            child: Text(
+              item,
+              style: TextStyle(fontSize: 14, color: Color(primaryLight)),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
