@@ -36,7 +36,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   final titleController = TextEditingController();
   final descpController = TextEditingController();
   final typeController = TextEditingController();
-  final venueController = TextEditingController();
 
   @override
   void initState() {
@@ -271,13 +270,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   labelText: 'Description',
                 ),
               ),
-              TextField(
-                controller: venueController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Venue',
-                ),
-              ),
               StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
                 return TextButton(
@@ -347,7 +339,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     titleController.clear();
                     descpController.clear();
                     typeController.clear();
-                    venueController.clear();
                     Navigator.pop(context);
                     return;
                   }
@@ -414,13 +405,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   labelText: 'Description',
                 ),
               ),
-              TextField(
-                controller: venueController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Venue',
-                ),
-              ),
               StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
                 return TextButton(
@@ -433,9 +417,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                         });
                       }
                     },
-                    child: Text(
-                      "Start Time : ${formatTimeOfDay(startTime)}",
-                      style: const TextStyle(fontSize: 18),
+                    child: SizedBox(
+                      height: 30,
+                      child: FittedBox(
+                        child: Text(
+                          "Start Time : ${formatTimeOfDay(startTime)}",
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
                     ));
               }),
               StatefulBuilder(
@@ -450,9 +439,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                         });
                       }
                     },
-                    child: Text(
-                      "End Time : ${formatTimeOfDay(endTime)}",
-                      style: const TextStyle(fontSize: 18),
+                    child: SizedBox(
+                      height: 30,
+                      child: FittedBox(
+                        child: Text(
+                          "End Time : ${formatTimeOfDay(endTime)}",
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
                     ));
               }),
               StatefulBuilder(
@@ -471,9 +465,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                         });
                       }
                     },
-                    child: Text(
-                      "End Date : ${DateFormat('dd-MM-yyyy').format(endDate)}",
-                      style: const TextStyle(fontSize: 18),
+                    child: SizedBox(
+                      height: 30,
+                      child: FittedBox(
+                        child: Text(
+                          "End Date : ${DateFormat('dd-MM-yyyy').format(endDate)}",
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
                     ));
               }),
             ],
@@ -514,7 +513,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                     titleController.clear();
                     descpController.clear();
                     typeController.clear();
-                    venueController.clear();
                     Navigator.pop(context);
                     return;
                   }
