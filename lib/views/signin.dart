@@ -49,6 +49,11 @@ class _SignInScreenState extends State<SignInScreen> {
           const TimeOfDay(hour: 16, minute: 30),
           cl,
         );
+      } else if ((await Ids.resolveUser()).compareTo('faculty') == 0) {
+        var fd = await firebaseDatabase
+            .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+        List<String> cl = List.from(fd.courses);
+        await Loader.saveCourses(cl);
       }
       return true;
     });
