@@ -62,6 +62,20 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     return true;
   }
 
+  Widget getDeleteButton(Event m) {
+    print(m.creator);
+    if (FirebaseAuth.instance.currentUser != null) {
+      if (FirebaseAuth.instance.currentUser!.email == m.creator) {
+        return IconButton(
+          onPressed: () => _deleteEntireEvent(m),
+          icon: const Icon(Icons.delete),
+          color: Color(primaryLight).withOpacity(0.8),
+        );
+      }
+    }
+    return Container();
+  }
+
   Future<bool> getCD() async {
     listofCD = await firebaseDatabase.getChangedDays();
     print(listofCD[0].day_to_followed);
@@ -76,7 +90,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         case "Wednesday":
           mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 2;
           break;
-        case "Thrusday":
+        case "Thursday":
           mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 3;
           break;
         case "Friday":
@@ -326,9 +340,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      creator: FirebaseAuth.instance.currentUser != null
-                          ? FirebaseAuth.instance.currentUser!.email!
-                          : "guest",
+                      creator: FirebaseAuth.instance.currentUser!.email!,
                     );
                     _insertSingularEvent(s, _selectedDate);
 
@@ -697,7 +709,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                                       color: Color(primaryLight), fontSize: 16),
                                 ),
                                 Text(
-                                  "LHC M5",
+                                  myEvents.desc,
                                   style: TextStyle(
                                       color:
                                           Color(primaryLight).withOpacity(0.6)),
@@ -707,11 +719,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                             Expanded(
                               child: Container(),
                             ),
-                            IconButton(
-                              onPressed: () => _deleteEntireEvent(myEvents),
-                              icon: const Icon(Icons.delete),
-                              color: Color(primaryLight).withOpacity(0.8),
-                            ),
+                            getDeleteButton(myEvents),
                           ],
                         ),
                       ),

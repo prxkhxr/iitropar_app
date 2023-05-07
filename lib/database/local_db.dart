@@ -163,9 +163,14 @@ class EventDB {
   }
 
   Future<int> deleteOf(String creator) async {
-    var cnt =
-        await _db!.rawDelete('DELETE FROM events WHERE creator = "$creator"');
-    return cnt;
+    List<Map<String, Object?>> q =
+        await _db!.rawQuery('SELECT * FROM events WHERE creator = "$creator"');
+    for (Map<String, Object?> row in q) {
+      await _db!
+          .rawDelete('DELETE FROM event_meta WHERE event_id = ${row["id"]}');
+    }
+    await _db!.rawDelete('DELETE FROM events WHERE creator = "$creator"');
+    return 1;
   }
 
   Future<List<Event>> fetchEvents(DateTime d, [String? of]) async {
