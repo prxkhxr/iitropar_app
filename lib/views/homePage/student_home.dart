@@ -28,7 +28,7 @@ Widget buildItems(String item) {
         CircleAvatar(
           radius: 40,
           child: Image.asset(
-            'assets/foodItem.jfif',
+            'assets/food_logo.png',
             fit: BoxFit.cover,
           ),
         ),

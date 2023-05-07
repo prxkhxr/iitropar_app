@@ -346,9 +346,10 @@ class Ids {
   static List<String> admins = [
     "taklubalm@gmail.com",
     "2020csb1086@iitrpr.ac.in",
-    "guptajatin918@gmail.com",
+    // "jugalchap123@gmail.com",
     "2020csb1073@iitrpr.ac.in",
     "2020csb1111@iitrpr.ac.in",
+    "guptajatin918@gmail.com"
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
   static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
@@ -461,7 +462,7 @@ Widget AdminCard(BuildContext context, Widget route, String text) {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: <Color> [
+          colors: <Color>[
             Color(primaryLight),
             // Colors.amber,
             Colors.black.withOpacity(0.69)
@@ -515,14 +516,24 @@ class LoadingScreen {
             child: Scaffold(
               body: Center(
                 child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CircularProgressIndicator(),
-                      const SizedBox(
-                        height: 15,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //const CircularProgressIndicator(),
+                    Image.asset('assets/iitropar_logo.png',
+                    height: 200,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                      width: 100,
+                      child: LinearProgressIndicator(
+                        minHeight: 2,
+                        backgroundColor: Colors.grey,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blueGrey),
                       ),
-                      Text((_msg != null) ? _msg! : 'Loading...'),
-                    ]),
+                    ),
+                    Text((_msg != null) ? _msg! : 'Loading...'),
+                  ],
+                ),
               ),
             ),
           );
