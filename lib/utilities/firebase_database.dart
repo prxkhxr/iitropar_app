@@ -286,8 +286,7 @@ class firebaseDatabase {
             desc: doc['eventDesc'],
             stime: str2tod(doc['startTime']),
             etime: str2tod(doc['endTime']),
-            // displayDate: doc['eventDate'],
-            creator: doc['creator']); //TODO : add image as well to Event
+            creator: doc['creator']);
         events.add(e);
       }
     }
