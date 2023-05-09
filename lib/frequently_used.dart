@@ -29,6 +29,7 @@ TimeOfDay StringTime(String t) {
 }
 
 List<String> allCourses = [
+  'HS301',
   'CE403',
   'CE302',
   'CE405',
@@ -519,8 +520,9 @@ class LoadingScreen {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     //const CircularProgressIndicator(),
-                    Image.asset('assets/iitropar_logo.png',
-                    height: 200,
+                    Image.asset(
+                      'assets/iitropar_logo.png',
+                      height: 200,
                     ),
                     const SizedBox(
                       height: 5,
@@ -528,7 +530,8 @@ class LoadingScreen {
                       child: LinearProgressIndicator(
                         minHeight: 2,
                         backgroundColor: Colors.grey,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.blueGrey),
                       ),
                     ),
                     Text((_msg != null) ? _msg! : 'Loading...'),

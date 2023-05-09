@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:iitropar/database/local_db.dart';
@@ -11,6 +12,9 @@ void main() async {
   bool signin = false;
   if (EventDB.firstRun() || FirebaseAuth.instance.currentUser == null) {
     signin = true;
+  } else if (FirebaseAuth.instance.currentUser != null) {
+    signin = true;
+    await Ids.resolveUser();
   }
   RootPage.signin(signin);
   runApp(const App());
