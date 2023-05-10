@@ -40,7 +40,7 @@ class firebaseDatabase {
 
   static Future<List<dynamic>> getStudents(String courseID) async {
     CollectionReference collectionRef =
-        FirebaseFirestore.instance.collection('courses');
+        FirebaseFirestore.instance.collection('student_courses');
     QuerySnapshot querySnapshot = await collectionRef.get();
     int len = querySnapshot.docs.length;
     List<dynamic> students = [];
@@ -48,6 +48,22 @@ class firebaseDatabase {
       List<dynamic> courses = querySnapshot.docs[i]['courses'];
       if (courses.contains(courseID)) {
         students.add(querySnapshot.docs[i].id);
+      }
+    }
+    return students;
+  }
+
+  static Future<List<List<dynamic>>> getStudentsWithName(
+      String courseID) async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('student_courses');
+    QuerySnapshot querySnapshot = await collectionRef.get();
+    int len = querySnapshot.docs.length;
+    List<List<dynamic>> students = [];
+    for (int i = 0; i < len; i++) {
+      List<dynamic> courses = querySnapshot.docs[i]['courses'];
+      if (courses.contains(courseID)) {
+        students.add([querySnapshot.docs[i].id, querySnapshot.docs[i]['name']]);
       }
     }
     return students;
@@ -139,10 +155,12 @@ class firebaseDatabase {
     return changedDays;
   }
 
-  static void addCourseFB(String entryNumber, List<dynamic> courses) {
-    DocumentReference ref_event_nr =
-        FirebaseFirestore.instance.collection("courses").doc(entryNumber);
-    Map<String, dynamic> crs = {"courses": courses};
+  static void addCourseFB(
+      String entryNumber, String name, List<dynamic> courses) {
+    DocumentReference ref_event_nr = FirebaseFirestore.instance
+        .collection("student_courses")
+        .doc(entryNumber);
+    Map<String, dynamic> crs = {"name": name, "courses": courses};
     ref_event_nr
         .set(crs)
         .then((value) => print("courses added"))
@@ -254,9 +272,10 @@ class firebaseDatabase {
   }
 
   static Future<List<String>> getCourses(String entryNumber) async {
-    DocumentReference ref_event_nr =
-        FirebaseFirestore.instance.collection("courses").doc(entryNumber);
-    bool hasCourses = await checkIfDocExists("courses", entryNumber);
+    DocumentReference ref_event_nr = FirebaseFirestore.instance
+        .collection("student_courses")
+        .doc(entryNumber);
+    bool hasCourses = await checkIfDocExists("student_courses", entryNumber);
     if (!hasCourses) {
       return [];
     }
@@ -391,4 +410,35 @@ class firebaseDatabase {
       print('Error deleting document: $error');
     });
   }
+
+  static void clearSemester() {
+    // CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
+    // usersRef.get().then((querySnapshot) {
+    // querySnapshot.docs.forEach((doc) {
+    //   doc.reference.delete();
+    // });});
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    // firestore.
+  }
+
+  static void addSemDur(DateTime st, DateTime et) {
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection("semester").doc("duration");
+    Map<String, dynamic> dur = {
+      "startDate": dateString(st),
+      "endDate": dateString(et),
+    };
+    docRef.set(dur);
+  }
+
+  static Future<semesterDur> getSemDur() async {
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection("semester").doc("duration");
+    DocumentSnapshot ds = await docRef.get();
+    List<DateTime> dts = [];
+    semesterDur sd = semesterDur();
+    sd.startDate = stringDate(ds['startDate']);
+    sd.endDate = stringDate(ds['endDate']);
+    return sd;
+  } // list 0 index : startDate ,1 index: endDate
 }

@@ -21,7 +21,7 @@ class studentsEnrolled extends StatefulWidget {
 }
 
 class _studentsEnrolledState extends State<studentsEnrolled> {
-  late List<dynamic> studentList = [];
+  late List<List<dynamic>> studentList = [];
   @override
   void initState() {
     super.initState();
@@ -29,7 +29,8 @@ class _studentsEnrolledState extends State<studentsEnrolled> {
   }
 
   void _getStudents() async {
-    List<dynamic> students = await firebaseDatabase.getStudents(widget.course);
+    List<List<dynamic>> students =
+        await firebaseDatabase.getStudentsWithName(widget.course);
     setState(() {
       studentList = students;
     });
@@ -41,13 +42,12 @@ class _studentsEnrolledState extends State<studentsEnrolled> {
       appBar: AppBar(
         title: const Text("Students Enrolled"),
       ),
-      // drawer: const NavDrawer(),
       body: ListView.builder(
         itemCount: studentList.length,
         itemBuilder: (context, index) {
           final student = studentList[index];
           return ListTile(
-            title: Text(student),
+            title: Text('${student[0]} (${student[1]})'),
           );
         },
       ),
