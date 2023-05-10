@@ -116,9 +116,15 @@ class _findSlotsState extends State<findSlots> {
           icon: const Icon(Icons.add),
           onPressed: () async {
             if (await checkEntryNumber(entryInput.text.toLowerCase())) {
-              setState(() {
-                students.add(entryInput.text.toLowerCase());
-              });
+              setState(
+                () {
+                  students.add(entryInput.text.toLowerCase());
+                },
+              );
+              // FocusScopeNode currentFocus = FocusScope.of(context);
+              // if (!currentFocus.hasPrimaryFocus) {
+              //   currentFocus.unfocus();
+              // }
             } else {}
           }),
     ]);
@@ -184,7 +190,6 @@ class _findSlotsState extends State<findSlots> {
     // print(courses);
     List options = courses.toList();
     options.add('None');
-    
 
     return Center(
       child: DropdownButton<String>(
@@ -199,13 +204,12 @@ class _findSlotsState extends State<findSlots> {
         onChanged: (dynamic newValue) async {
           // Handle value changes
           setState(() {
-  current_course = newValue;
-});
+            current_course = newValue;
+          });
           if (current_course != 'None') {
             List<dynamic> studentList =
                 await firebaseDatabase.getStudents(current_course!);
             setState(() {
-              
               students = Set.from(studentList);
             });
           }
