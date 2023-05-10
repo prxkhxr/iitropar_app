@@ -50,10 +50,12 @@ class _NewSemesterState extends State<NewSemester> {
 
   void initDate() async {
     semesterDur sD = await firebaseDatabase.getSemDur();
-    setState(() {
-      cur_start_date = sD.startDate!;
-      cur_end_date = sD.endDate!;
-    });
+    if (mounted) {
+      setState(() {
+        cur_start_date = sD.startDate!;
+        cur_end_date = sD.endDate!;
+      });
+    }
   }
 
   @override
