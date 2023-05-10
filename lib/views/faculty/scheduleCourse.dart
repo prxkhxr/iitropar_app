@@ -72,7 +72,9 @@ class _CourseScheduleState extends State<CourseSchedule> {
   Widget selectCourse() {
     return Column(
       children: [
-        const Text('Select Course',style: TextStyle(color: Colors.blueGrey,fontWeight: FontWeight.bold)),
+        const Text('Select Course',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold)),
         DropdownButton<String>(
           value: selectedCourse,
           items: widget.courses.toList().map((dynamic course) {
@@ -155,7 +157,8 @@ class _CourseScheduleState extends State<CourseSchedule> {
         ),
         const SizedBox(width: 20),
         Text("${date.day}/${date.month}/${date.year}",
-            style: const TextStyle(fontSize: 24,fontWeight: FontWeight.normal)),
+            style:
+                const TextStyle(fontSize: 24, fontWeight: FontWeight.normal)),
       ],
     );
   }
@@ -189,18 +192,18 @@ class _CourseScheduleState extends State<CourseSchedule> {
               // Submit Button
               ElevatedButton(
                 onPressed: () async {
-                if (description == "") {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Add description.")),
-                  );
-                  return;
-                }
-                if (venue == "") {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Add venue")),
-                  );
-                  return;
-                }
+                  if (description == "") {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Add description.")),
+                    );
+                    return;
+                  }
+                  if (venue == "") {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Add venue")),
+                    );
+                    return;
+                  }
                   if (date.compareTo(getTodayDateTime()) <= 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

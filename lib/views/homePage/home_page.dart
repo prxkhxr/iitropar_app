@@ -19,8 +19,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
       f = await firebaseDatabase
           .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
     }
-    if(mounted)
-      setState(() {});
+    if (mounted) setState(() {});
   }
 
   AbstractHomeState() {
@@ -44,10 +43,10 @@ abstract class AbstractHomeState extends State<AbstractHome> {
 
   String getUserName() {
     if (Ids.role.compareTo("faculty") == 0) {
-      return f.name;
+      return "Welcome! ${f.name}";
     }
-    if (FirebaseAuth.instance.currentUser == null) return "Guest User";
-    return FirebaseAuth.instance.currentUser!.displayName.toString();
+    if (FirebaseAuth.instance.currentUser == null) return "Hey! Guest User";
+    return "Hey! ${FirebaseAuth.instance.currentUser!.displayName.toString()}";
   }
 
   List<Widget> buttons();
@@ -95,7 +94,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
                   children: [
                     SizedBox(
                         width: textSize,
-                        child: Text('Hey! ${getUserName()}',
+                        child: Text('${getUserName()}',
                             textAlign: TextAlign.right,
                             style: TextStyle(
                               color:

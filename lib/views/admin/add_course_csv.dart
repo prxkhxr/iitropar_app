@@ -38,10 +38,12 @@ class _addCoursecsvState extends State<addCoursecsv> {
     for (int i = 1; i < len; i++) {
       List<dynamic> courses = [];
       int num_of_courses = events[i].length;
-      for (int j = 1; j < num_of_courses; j++) {
-        if (events[i][j] != "") courses.add(events[i][j]);
+      for (int j = 2; j < num_of_courses; j++) {
+        events[i][j] = events[i][j].toString().replaceAll(' ', '');
+        if (events[i][j] != "")
+          courses.add(events[i][j].toString().toUpperCase());
       }
-      firebaseDatabase.addCourseFB(events[i][0], courses);
+      firebaseDatabase.addCourseFB(events[i][0], events[i][1], courses);
     }
     ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Uploaded data sucessfully")));
@@ -77,7 +79,9 @@ class _addCoursecsvState extends State<addCoursecsv> {
   }
 
   bool verifyHeader(List<dynamic> header) {
-    return header[0] == "entryNumber";
+    return (header[0].toString().toLowerCase() ==
+            "entryNumber".toLowerCase()) &&
+        (header[1].toString().toLowerCase() == "name");
   }
 
   @override
