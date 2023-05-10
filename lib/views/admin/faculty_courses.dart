@@ -32,16 +32,81 @@ class _FacultyListState extends State<FacultyList> {
   }
 
   void _addCourse(int index) {
-    setState(() {
-      faculties[index].courses.add(_newCourseController[index].text);
-      _newCourseController[index].clear();
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: Text(
+              "Are you sure you want to add course ${_newCourseController[index].text} ?"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                // Close the dialog and do nothing
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Submit'),
+              onPressed: () {
+                // Close the dialog and call the onPressed function
+                setState(() {
+                  faculties[index]
+                      .courses
+                      .add(_newCourseController[index].text);
+                  _newCourseController[index].clear();
+                });
+                Navigator.of(context).pop();
+                sendDataToFB(index);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(
+                          "Faculty ${faculties[index].name} 's courses has been updated.")),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _deleteCourse(String course, int index) {
-    setState(() {
-      faculties[index].courses.remove(course);
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: Text('Are you sure you want to delete course $course ?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                // Close the dialog and do nothing
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Submit'),
+              onPressed: () {
+                // Close the dialog and call the onPressed function
+                setState(() {
+                  faculties[index].courses.remove(course);
+                });
+                Navigator.of(context).pop();
+                sendDataToFB(index);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(
+                          "Faculty ${faculties[index].name} 's courses has been updated.")),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void sendDataToFB(int index) {
@@ -58,18 +123,18 @@ class _FacultyListState extends State<FacultyList> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Confirmation'),
-                content: Text('Are you sure you want to submit?'),
+                title: const Text('Confirmation'),
+                content: const Text('Are you sure you want to submit?'),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Cancel'),
+                    child: const Text('Cancel'),
                     onPressed: () {
                       // Close the dialog and do nothing
                       Navigator.of(context).pop();
                     },
                   ),
                   ElevatedButton(
-                    child: Text('Submit'),
+                    child: const Text('Submit'),
                     onPressed: () {
                       // Close the dialog and call the onPressed function
                       Navigator.of(context).pop();
@@ -89,7 +154,7 @@ class _FacultyListState extends State<FacultyList> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
         ),
-        child: Text('Update Courses'),
+        child: const Text('Update Courses'),
       ),
     );
   }
@@ -155,6 +220,12 @@ class _FacultyListState extends State<FacultyList> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
+                        boxShadow: const [
+                          BoxShadow(
+                            blurStyle: BlurStyle.outer,
+                            blurRadius: 5,
+                          ),
+                        ],
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(width: 1),
                       ),
@@ -197,8 +268,8 @@ class _FacultyListState extends State<FacultyList> {
                                 Expanded(
                                   child: TextField(
                                     controller: _newCourseController[index],
-                                    decoration:
-                                        InputDecoration(hintText: 'Add course'),
+                                    decoration: const InputDecoration(
+                                        hintText: 'Add course'),
                                   ),
                                 ),
                                 IconButton(
@@ -209,7 +280,7 @@ class _FacultyListState extends State<FacultyList> {
                                       _addCourse(index);
                                     } else {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
+                                          .showSnackBar(const SnackBar(
                                               content: Text(
                                                   "Enter valid course code")));
                                     }
@@ -217,10 +288,10 @@ class _FacultyListState extends State<FacultyList> {
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            submitButton(index)
+                            // const SizedBox(
+                            //   height: 10,
+                            // ),
+                            // submitButton(index)
                           ],
                         ),
                       ),

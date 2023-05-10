@@ -122,9 +122,9 @@ class _findSlotsState extends State<findSlots> {
       IconButton(
           icon: const Icon(Icons.add),
           onPressed: () async {
-            if (await checkEntryNumber(entryInput.text)) {
+            if (await checkEntryNumber(entryInput.text.toLowerCase())) {
               setState(() {
-                students.add(entryInput.text);
+                students.add(entryInput.text.toLowerCase());
               });
             } else {}
           }),
@@ -189,12 +189,14 @@ class _findSlotsState extends State<findSlots> {
 
   Widget selectCourses() {
     // print(courses);
+    List options = courses.toList();
+    options.add('None');
 
     return Center(
       child: DropdownButton<String>(
         value: current_course, // Initial value
         hint: const Text('Select an option'), // Hint text
-        items: courses.toList().map((dynamic value) {
+        items: options.map((dynamic value) {
           return DropdownMenuItem<String>(
             value: value.toString(),
             child: Text(value.toString()),
@@ -202,12 +204,16 @@ class _findSlotsState extends State<findSlots> {
         }).toList(),
         onChanged: (dynamic newValue) async {
           // Handle value changes
-          current_course = newValue;
-          List<dynamic> studentList =
-              await firebaseDatabase.getStudents(current_course!);
           setState(() {
-            students = Set.from(studentList);
+            current_course = newValue;
           });
+          if (current_course != 'None') {
+            List<dynamic> studentList =
+                await firebaseDatabase.getStudents(current_course!);
+            setState(() {
+              students = Set.from(studentList);
+            });
+          }
         },
       ),
     );

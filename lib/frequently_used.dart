@@ -354,7 +354,7 @@ class Ids {
     "gautamsethia7702@gmail.com",
     "2020csb1073@iitrpr.ac.in",
     "2020csb1111@iitrpr.ac.in",
-    "guptajatin918@gmail.com"
+    "guptachand918@gmail.com"
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
   static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
@@ -517,32 +517,36 @@ class LoadingScreen {
       future: _task!(),
       builder: (context, snapshot) {
         if (snapshot.data == null) {
-          return Expanded(
-            child: Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    //const CircularProgressIndicator(),
-                    Image.asset(
-                      'assets/iitropar_logo.png',
-                      height: 200,
+          return Column(
+            children: [
+              Expanded(
+                child: Scaffold(
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //const CircularProgressIndicator(),
+                        Image.asset(
+                          'assets/iitropar_logo.png',
+                          height: 200,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                          width: 100,
+                          child: LinearProgressIndicator(
+                            minHeight: 2,
+                            backgroundColor: Colors.grey,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+                          ),
+                        ),
+                        Text((_msg != null) ? _msg! : 'Loading...'),
+                      ],
                     ),
-                    const SizedBox(
-                      height: 5,
-                      width: 100,
-                      child: LinearProgressIndicator(
-                        minHeight: 2,
-                        backgroundColor: Colors.grey,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.blueGrey),
-                      ),
-                    ),
-                    Text((_msg != null) ? _msg! : 'Loading...'),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           );
         } else {
           return _builder(context);
