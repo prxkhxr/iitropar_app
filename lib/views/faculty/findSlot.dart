@@ -25,12 +25,19 @@ class findSlots extends StatefulWidget {
 class _findSlotsState extends State<findSlots> {
   late Set<dynamic> courses;
   String? current_course = null;
-  _findSlotsState(this.courses);
+  _findSlotsState(this.courses) {
+    getMapping();
+  }
   Set<String> students = {};
   int slotLength = 1;
   bool inputFormat = true;
   DateTime date = DateTime.now();
   TextEditingController entryInput = TextEditingController();
+  Map<String, String> entryToName = {};
+  getMapping() async {
+    entryToName = await firebaseDatabase.getNameMapping();
+    setState(() {});
+  }
 
   bool verifyHeader(List<dynamic> csv_head) {
     if (csv_head.isEmpty) {
@@ -265,7 +272,10 @@ class _findSlotsState extends State<findSlots> {
                           });
                         },
                       ),
-                      title: Text(students.elementAt(index)));
+                      title: entryToName[students.elementAt(index)] == null
+                          ? Text('${students.elementAt(index)})')
+                          : Text(
+                              '${students.elementAt(index)} (${entryToName[students.elementAt(index)]})')); // todo: do via map loaded in frequency used.
                 }),
           ),
         ),

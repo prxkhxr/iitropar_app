@@ -440,5 +440,17 @@ class firebaseDatabase {
     sd.startDate = stringDate(ds['startDate']);
     sd.endDate = stringDate(ds['endDate']);
     return sd;
-  } // list 0 index : startDate ,1 index: endDate
+  }
+
+  static Future<Map<String, String>> getNameMapping() async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('student_courses').get();
+    Map<String, String> mp = {};
+    for (QueryDocumentSnapshot docSnapshot in querySnapshot.docs) {
+      // Access the data of each document
+      mp[docSnapshot.id] = docSnapshot['name'];
+      // Perform operations with the data
+    }
+    return mp;
+  }
 }
