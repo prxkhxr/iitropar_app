@@ -24,7 +24,7 @@ class findSlots extends StatefulWidget {
 
 class _findSlotsState extends State<findSlots> {
   late Set<dynamic> courses;
-  String? current_course = null;
+  String? current_course = "None";
   _findSlotsState(this.courses);
   Set<String> students = {};
   int slotLength = 1;
@@ -115,9 +115,9 @@ class _findSlotsState extends State<findSlots> {
       IconButton(
           icon: const Icon(Icons.add),
           onPressed: () async {
-            if (await checkEntryNumber(entryInput.text)) {
+            if (await checkEntryNumber(entryInput.text.toLowerCase())) {
               setState(() {
-                students.add(entryInput.text);
+                students.add(entryInput.text.toLowerCase());
               });
             } else {}
           }),
@@ -182,12 +182,15 @@ class _findSlotsState extends State<findSlots> {
 
   Widget selectCourses() {
     // print(courses);
+    List options = courses.toList();
+    options.add('None');
+    
 
     return Center(
       child: DropdownButton<String>(
         value: current_course, // Initial value
         hint: const Text('Select an option'), // Hint text
-        items: courses.toList().map((dynamic value) {
+        items: options.map((dynamic value) {
           return DropdownMenuItem<String>(
             value: value.toString(),
             child: Text(value.toString()),
@@ -195,12 +198,17 @@ class _findSlotsState extends State<findSlots> {
         }).toList(),
         onChanged: (dynamic newValue) async {
           // Handle value changes
-          current_course = newValue;
-          List<dynamic> studentList =
-              await firebaseDatabase.getStudents(current_course!);
           setState(() {
-            students = Set.from(studentList);
-          });
+  current_course = newValue;
+});
+          if (current_course != 'None') {
+            List<dynamic> studentList =
+                await firebaseDatabase.getStudents(current_course!);
+            setState(() {
+              
+              students = Set.from(studentList);
+            });
+          }
         },
       ),
     );
@@ -252,22 +260,21 @@ class _findSlotsState extends State<findSlots> {
         ),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.15,
-          child: Expanded(
-            child: ListView.builder(
-                itemCount: students.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                      leading: IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          setState(() {
-                            students.remove(students.elementAt(index));
-                          });
-                        },
-                      ),
-                      title: Text(students.elementAt(index)));
-                }),
-          ),
+          // Expanded
+          child: ListView.builder(
+              itemCount: students.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                    leading: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          students.remove(students.elementAt(index));
+                        });
+                      },
+                    ),
+                    title: Text(students.elementAt(index)));
+              }),
         ),
       ],
     );
