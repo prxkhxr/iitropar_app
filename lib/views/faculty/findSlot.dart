@@ -47,8 +47,8 @@ class _findSlotsState extends State<findSlots> {
   Future<bool> checkEntryNumber(String entryNumber) async {
     RegExp regex = RegExp(r"^[0-9]{4}[a-z]{3}[0-9]{4}$");
     if (regex.hasMatch(entryNumber)) {
-      bool check =
-          await firebaseDatabase.checkIfDocExists("courses", entryNumber);
+      bool check = await firebaseDatabase.checkIfDocExists(
+          "student_courses", entryNumber);
       if (!check) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(

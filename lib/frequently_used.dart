@@ -322,6 +322,11 @@ class holidays {
   }
 }
 
+class semesterDur {
+  DateTime? startDate;
+  DateTime? endDate;
+}
+
 class changedDay {
   late DateTime date;
   late String day_to_followed;
@@ -346,8 +351,7 @@ class faculty {
 class Ids {
   static List<String> admins = [
     "taklubalm@gmail.com",
-    "2020csb1086@iitrpr.ac.in",
-    // "jugalchap123@gmail.com",
+    "gautamsethia7702@gmail.com",
     "2020csb1073@iitrpr.ac.in",
     "2020csb1111@iitrpr.ac.in",
     "guptachand918@gmail.com"
@@ -634,4 +638,24 @@ class ExtraClass {
       required this.endTime,
       required this.description,
       required this.venue});
+}
+
+class formChecks {
+  static bool isbeforeDate(DateTime d1, DateTime d2) {
+    DateTime _d1 = DateTime(d1.year, d1.month, d1.day);
+    DateTime _d2 = DateTime(d2.year, d2.month, d2.day);
+    return _d1.isBefore(d2); // returns true if d1 before d2
+  }
+
+  static bool beforeCurDate(DateTime d) {
+    DateTime _d = DateTime(d.year, d.month, d.day);
+    DateTime cur_day =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    return _d.isBefore(cur_day);
+  }
+}
+
+String formatDateWord(DateTime date) {
+  final formatter = DateFormat('dd MMM yyyy', 'en_US');
+  return formatter.format(date);
 }

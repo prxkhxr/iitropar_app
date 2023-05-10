@@ -49,10 +49,14 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    // AdminCard(context, const NewSemester(), "Start New Semester"),
-                    AdminCard(context, const registerFaculty(), "Register Faculty"),
-                    AdminCard(context, const FacultyList(), "Manage Faculty & Courses"),
-                    AdminCard(context, const addCoursecsv(), "Add Student Record (CSV)"),
+                    AdminCard(
+                        context, const NewSemester(), "Start New Semester"),
+                    AdminCard(
+                        context, const registerFaculty(), "Register Faculty"),
+                    AdminCard(context, const FacultyList(),
+                        "Manage Faculty & Courses"),
+                    AdminCard(context, const addCoursecsv(),
+                        "Add Student Record (CSV)"),
                     AdminCard(context, const registerClub(), "Register Club"),
                   ],
                 ),

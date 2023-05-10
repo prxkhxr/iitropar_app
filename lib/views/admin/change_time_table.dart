@@ -173,7 +173,7 @@ class AddFormState extends State<AddForm> {
                                           return AlertDialog(
                                             title: Text("Confirm"),
                                             content: Text(
-                                                "Do you really want to delete this changed day?"),
+                                                "Do you really want to not follow ${chgs[index].day_to_followed}'s time table on ${chgs[index].date.day}/${chgs[index].date.month}/${chgs[index].date.year}"),
                                             actions: <Widget>[
                                               TextButton(
                                                 child: Text("Cancel"),
