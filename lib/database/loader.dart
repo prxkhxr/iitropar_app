@@ -149,14 +149,8 @@ class Loader {
     var exams = const CsvToListConverter()
         .convert(await rootBundle.loadString('assets/MidSemTimeTable.csv'));
 
-    var courseSlots = const CsvToListConverter()
-        .convert(await rootBundle.loadString('assets/CourseSlots.csv'));
-    int len = courseSlots.length;
-    Map<String, String> courseToSlot = {};
-    for (int i = 0; i < len; i++) {
-      if (courseSlots[i][0].runtimeType == int) {
-        courseToSlot[courseSlots[i][1].replaceAll(' ', '')] = courseSlots[i][3];
-      }
+    if (courseToSlot == null) {
+      await loadSlots();
     }
 
     Map<String, String> slotToDay = {};
@@ -175,7 +169,11 @@ class Loader {
     }
 
     for (int i = 0; i < courses.length; i++) {
-      var l = slotToDay[courseToSlot[courses[i]]]!.split('|');
+      var day = slotToDay[courseToSlot![courses[i]]];
+      if (day == null) {
+        continue;
+      }
+      var l = day.split('|');
       var e = Event(
         title: 'Mid-Semester Examinations',
         desc: courses[i],

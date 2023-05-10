@@ -346,6 +346,8 @@ class _findSlotsState extends State<findSlots> {
     );
   }
 
+  List<int> conflicts = List.empty();
+
   Widget submitButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -367,22 +369,25 @@ class _findSlotsState extends State<findSlots> {
             );
             return;
           }
-          List<int> conflicts =
-              await getConflicts(slotLength, date, students.toList());
+          // List<int> conflicts =
+          // await getConflicts(slotLength, date, students.toList());
+
+          LoadingScreen.setPrompt('Compiling conflicts ...');
+          LoadingScreen.setBuilder((context) =>
+              seeSlots(slotLength: slotLength, conflicts: conflicts));
+          LoadingScreen.setTask(
+              () => getConflicts(slotLength, date, students.toList()));
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      seeSlots(slotLength: slotLength, conflicts: conflicts)));
+              context, MaterialPageRoute(builder: LoadingScreen.build));
         },
         child: const Text('Submit'),
       ),
     );
   }
 
-  Future<List<int>> getConflicts(
+  Future<bool> getConflicts(
       int slotLength, DateTime date, List<String> students) async {
-    List<int> conflicts = List.filled(12 - 2 * slotLength, 0);
+    conflicts = List.filled(12 - 2 * slotLength, 0);
 
     const weekdays = [
       'monday',
@@ -501,8 +506,7 @@ class _findSlotsState extends State<findSlots> {
         }
       }
     }
-
-    return conflicts;
+    return true;
   }
 
   @override

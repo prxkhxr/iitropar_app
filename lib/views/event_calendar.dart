@@ -689,10 +689,20 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                                 ],
                               ),
                             ),
-                            const VerticalDivider(
+                            VerticalDivider(
                               thickness: 3.5,
                               width: 0,
-                              color: Colors.green,
+                              color: (DateTime.now().isAfter(_selectedDate))
+                                  ? Colors.red
+                                  : (myEvents.compareTo(Event(
+                                              title: '',
+                                              desc: '',
+                                              stime: TimeOfDay.now(),
+                                              etime: TimeOfDay.now(),
+                                              creator: '')) >
+                                          0)
+                                      ? (Colors.green)
+                                      : (Colors.red) /* Colors.green*/,
                             ),
                             SizedBox(
                               width: 0.5 / 5.5 * width,
