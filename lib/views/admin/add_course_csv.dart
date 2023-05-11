@@ -3,13 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
+import 'package:flutter/services.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:iitropar/utilities/firebase_database.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:path/path.dart' as p;
 
 class addCoursecsv extends StatefulWidget {
   const addCoursecsv({super.key});
@@ -118,6 +118,24 @@ class _addCoursecsvState extends State<addCoursecsv> {
             child: const Text("Upload File"),
             onPressed: () {
               _pickFile(ScaffoldMessenger.of(context));
+            },
+          ),
+          const SizedBox(height: 50),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateColor.resolveWith(
+                  (states) => Color(primaryLight)),
+            ),
+            child: const Text("Download Sample"),
+            onPressed: () async {
+              final result = await FilePicker.platform.getDirectoryPath();
+              if (result == null) {
+                return;
+              }
+              File nfile = File(
+                  p.join(result, '${dateString(DateTime.now())}_sample.csv'));
+              nfile.writeAsString(
+                  await rootBundle.loadString('assets/TimeTable.csv'));
             },
           ),
         ]));

@@ -252,4 +252,5 @@ class Loader {
       await EventDB().addSingularEvent(e, c.date);
     }
   }
+
 }

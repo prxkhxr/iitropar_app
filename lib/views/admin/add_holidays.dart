@@ -4,12 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'package:intl/intl.dart';
 
 class addHoliday extends StatefulWidget {
@@ -212,59 +214,91 @@ class AddClassFormState extends State<AddClassForm> {
                           DateTime d = DateTime(hols[index].date.year,
                               hols[index].date.month, hols[index].date.day);
                           if (currentDate.compareTo(d) <= 0) {
-                            return Container(
-                              height: 80,
-                              child: Center(
-                                  child: Column(
-                                children: [
-                                  Text(
-                                      'Date: ${formatDateWord(hols[index].date)},  Reason : ${hols[index].desc}'),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      // Show the confirmation dialog
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text("Confirm"),
-                                            content: Text(
-                                                "Do you really want to delete holiday on ${formatDateWord(hols[index].date)} ?"),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                child: const Text("Cancel"),
-                                                onPressed: () {
-                                                  // Close the dialog
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                              TextButton.icon(
-                                                  icon:
-                                                      const Icon(Icons.delete),
-                                                  label: const Text("Delete"),
-                                                  onPressed: () {
-                                                    firebaseDatabase.deleteHol(
-                                                        DateFormat('yyyy-MM-dd')
-                                                            .format(hols[index]
-                                                                .date));
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                            const SnackBar(
-                                                                content: Text(
-                                                                    "Deleted holiday day")));
-                                                    Navigator.of(context).pop();
-                                                    setState(() {});
-                                                  }),
-                                            ],
+                            double width = MediaQuery.of(context).size.width;
+                            return Column(
+                              children: [
+                                SizedBox(
+                                  height: 80,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 4 / 5.5 * width,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Date: ${formatDateWord(hols[index].date)}',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Text(
+                                              'Reason : ${hols[index].desc}',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          // Show the confirmation dialog
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text("Confirm"),
+                                                content: Text(
+                                                    "Do you really want to delete holiday on ${formatDateWord(hols[index].date)} ?"),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: const Text("Cancel"),
+                                                    onPressed: () {
+                                                      // Close the dialog
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  TextButton.icon(
+                                                      icon: const Icon(
+                                                          Icons.delete),
+                                                      label:
+                                                          const Text("Delete"),
+                                                      onPressed: () {
+                                                        firebaseDatabase
+                                                            .deleteHol(DateFormat(
+                                                                    'yyyy-MM-dd')
+                                                                .format(
+                                                                    hols[index]
+                                                                        .date));
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                const SnackBar(
+                                                                    content: Text(
+                                                                        "Deleted holiday day")));
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        setState(() {});
+                                                      }),
+                                                ],
+                                              );
+                                            },
                                           );
                                         },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.delete),
-                                    label: const Text("Delete"),
+                                        icon: const Icon(Icons.delete),
+                                        color: Color(primaryLight)
+                                            .withOpacity(0.8),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              )),
+                                ),
+                                Divider(
+                                  height: 2,
+                                  thickness: 1,
+                                  color: Color(primaryLight).withOpacity(0.05),
+                                ),
+                              ],
                             );
                           } else {
                             return Container();
@@ -349,61 +383,66 @@ class AddClassFormState extends State<AddClassForm> {
 
   Widget csvOption(BuildContext context) {
     return Center(
-        child: ElevatedButton(
-      onPressed: () {
-        // Show an alert dialog with a confirmation prompt
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Given CSV format'),
-              content: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.3,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 5),
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Image.asset('assets/holidays.png'),
+      child: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              // Show an alert dialog with a confirmation prompt
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Given CSV format'),
+                    content: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Image.asset('assets/holidays.png'),
+                          ),
+                          const Text(
+                              '1.Date should be of the format -  yyyy/mm/dd. Ex: 2020/12/12'),
+                          const Text('2.Reason should not be empty'),
+                          const Text(
+                              '3. Holidays of previous date are not allowed')
+                        ],
+                      ),
                     ),
-                    const Text(
-                        '1.Date should be of the format -  yyyy/mm/dd. Ex: 2020/12/12'),
-                    const Text('2.Reason should not be empty'),
-                    const Text('3. Holidays of previous date are not allowed')
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                Center(
-                  child: ElevatedButton(
-                    child: const Text('Upload File'),
-                    onPressed: () {
-                      // Close the dialog and call the onPressed function
-                      _pickFile(ScaffoldMessenger.of(context));
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  child: TextButton(
-                    child: const Text('Cancel'),
-                    onPressed: () {
-                      // Close the dialog and do nothing
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
+                    actions: <Widget>[
+                      Center(
+                        child: ElevatedButton(
+                          child: const Text('Upload File'),
+                          onPressed: () {
+                            // Close the dialog and call the onPressed function
+                            _pickFile(ScaffoldMessenger.of(context));
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        child: TextButton(
+                          child: const Text('Cancel'),
+                          onPressed: () {
+                            // Close the dialog and do nothing
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('Upload via CSV'),
+          ),
+        ],
       ),
-      child: const Text('Upload via CSV'),
-    ));
+    );
   }
 
   @override
@@ -414,6 +453,24 @@ class AddClassFormState extends State<AddClassForm> {
       children: [
         createForm(),
         csvOption(context),
+        const SizedBox(height: 5),
+        ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateColor.resolveWith((states) => Color(primaryLight)),
+          ),
+          child: const Text("Download Sample"),
+          onPressed: () async {
+            final result = await FilePicker.platform.getDirectoryPath();
+            if (result == null) {
+              return;
+            }
+            File nfile = File(
+                p.join(result, '${dateString(DateTime.now())}_sample.csv'));
+            nfile.writeAsString(
+                await rootBundle.loadString('assets/TimeTable.csv'));
+          },
+        ),
         alldeclaredHolidays(),
       ],
     );
