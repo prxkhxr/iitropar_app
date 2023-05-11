@@ -7,6 +7,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:605010269946:android:482f1467cc6c9ef1dedb43",
+        "android_client_info": {
+          "package_name": "com.calee.iitropar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "605010269946-3hiivsntdgjhk7e7a7cl9gftil85mui2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.calee.iitropar",
+            "certificate_hash": "e0f6933d26be9dbb15ca3ab341a99cf9f4ab1061"
+          }
+        },
+        {
+          "client_id": "605010269946-d7ofkj5voatmvjkr47irr1rbcacbde7i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9SJojYGMmwkC1PlyXNlLSJX9bVRi9IiM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "605010269946-d7ofkj5voatmvjkr47irr1rbcacbde7i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:605010269946:android:0c9be93e691377b5dedb43",
         "android_client_info": {
           "package_name": "com.example.iitropar"
@@ -43,6 +80,14 @@
           "android_info": {
             "package_name": "com.example.iitropar",
             "certificate_hash": "bba8011f74a1b9911cd5ff860218ee6ab4d97ae4"
+          }
+        },
+        {
+          "client_id": "605010269946-o3h4bucgbvub6ev1aqi441np6jua5ufs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.iitropar",
+            "certificate_hash": "e0f6933d26be9dbb15ca3ab341a99cf9f4ab1061"
           }
         },
         {

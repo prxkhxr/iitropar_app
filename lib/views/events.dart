@@ -15,8 +15,6 @@ class Events extends StatefulWidget {
   State<Events> createState() => _EventsState();
 }
 
-
-
 Widget EventCard(
     BuildContext context,
     String eventTitle,
@@ -37,32 +35,51 @@ Widget EventCard(
     decoration: BoxDecoration(
         color: Colors.blueGrey[100], borderRadius: BorderRadius.circular(10)),
     child: InkWell(
-      onTap: (){
-        showDialog(context: context, builder: (BuildContext context){
-          return SimpleDialog(
-            title: Column(
-              children: [
-                img_url == null
-                  ? const SizedBox(height: 5)
-                  : Image.network(img_url,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const SizedBox(height: 20)),
-                Text(eventTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 26),),
-                Text("Event Type : $eventType", style: const TextStyle(fontSize: 16),),
-              ],
-            ),
-            contentPadding: const EdgeInsets.all(20),
-            children: [
-              const Text("Description", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              const SizedBox(height: 5,),
-              Text(eventDesc),
-              const SizedBox(height: 15,),
-              const Text("Venue", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              const SizedBox(height: 5,),
-              Text(eventVenue),
-            ],
-          );
-        });
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return SimpleDialog(
+                title: Column(
+                  children: [
+                    img_url == null
+                        ? const SizedBox(height: 5)
+                        : Image.network(img_url,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const SizedBox(height: 20)),
+                    Text(
+                      eventTitle,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 26),
+                    ),
+                    Text(
+                      "Event Type : $eventType",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+                contentPadding: const EdgeInsets.all(20),
+                children: [
+                  const Text("Description",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(eventDesc),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  const Text("Venue",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(eventVenue),
+                ],
+              );
+            });
       },
       child: Row(children: [
         Container(
@@ -122,7 +139,12 @@ Widget EventCard(
               const SizedBox(
                 height: 3.69,
               ),
-              Flexible(child: Text(eventDesc, overflow: TextOverflow.ellipsis, maxLines: 2,)),
+              Flexible(
+                  child: Text(
+                eventDesc,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              )),
             ],
           ),
         ),
@@ -187,31 +209,43 @@ Card eventWidget(
           Container(
             padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
-            child: Text('Venue : $eventVenue'),
+            child: Text(
+              'Venue : $eventVenue',
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           Container(
             padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
-            child: Text('Desc : $eventDesc'),
+            child: Text(
+              'Desc : $eventDesc',
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           Container(
             padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
-            child: Text('Date : $date'),
+            child: Text(
+              'Date : $date',
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           Container(
             padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerLeft,
-            child: Text('Timing : $startTime - $endTime'),
+            child: Text(
+              'Timing : $startTime - $endTime',
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          ButtonBar(
-            children: [
-              TextButton(
-                child: const Text('SET Alert'),
-                onPressed: () {/* ... */},
-              ),
-            ],
-          )
+          // ButtonBar(
+          //   children: [
+          //     TextButton(
+          //       child: const Text('SET Alert'),
+          //       onPressed: () {/* ... */},
+          //     ),
+          //   ],
+          // )
         ],
       ));
 }
@@ -283,9 +317,9 @@ class _EventsState extends State<Events> {
           children: [
             ElevatedButton(
               style: ButtonStyle(
-                      backgroundColor: MaterialStateColor.resolveWith(
-                          (states) => Color(primaryLight)),
-                    ),
+                backgroundColor: MaterialStateColor.resolveWith(
+                    (states) => Color(primaryLight)),
+              ),
               onPressed: () async {
                 showDatePicker(
                         context: context,
