@@ -12,6 +12,7 @@ import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:intl/intl.dart';
 
+import 'database/loader.dart';
 import 'database/local_db.dart';
 
 DateTime getTodayDateTime() {
@@ -589,9 +590,28 @@ Widget signoutButtonWidget(BuildContext context) {
 
 Widget themeButtonWidget() {
   return IconButton(
-    onPressed: () {},
+    onPressed: () async {
+        if ((await Ids.resolveUser()).compareTo('student') == 0) {
+          var cl = await firebaseDatabase.getCourses(
+              FirebaseAuth.instance.currentUser!.email!.split('@')[0]);
+          await Loader.saveCourses(cl);
+          await Loader.loadMidSem(
+            DateTime(2023, 2, 27),
+            const TimeOfDay(hour: 9, minute: 30),
+            const TimeOfDay(hour: 12, minute: 30),
+            const TimeOfDay(hour: 14, minute: 30),
+            const TimeOfDay(hour: 16, minute: 30),
+            cl,
+          );
+        } else if ((await Ids.resolveUser()).compareTo('faculty') == 0) {
+          var fd = await firebaseDatabase
+              .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+          List<String> cl = List.from(fd.courses);
+          await Loader.saveCourses(cl);
+        }
+    },
     icon: const Icon(
-      Icons.wb_sunny_rounded,
+      Icons.sync_rounded,
     ),
     color: Color(primaryLight),
     iconSize: 28,

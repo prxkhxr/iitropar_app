@@ -24,10 +24,11 @@ class _FacultyHomeState extends AbstractHomeState {
     const Color(0xFF3367d5),
     const Color(0xFFf9a61a)
   ];
+
   Widget allCourses() {
     List<dynamic> coursesList = f.courses.toList();
     if (coursesList.isEmpty) {
-      return const Text('No Courses Registered');
+      return const Text('Contact Admin for addition of courses');
     }
     return Container(
       padding: const EdgeInsets.all(10),
@@ -93,6 +94,16 @@ class _FacultyHomeState extends AbstractHomeState {
                   ),
                 );
               },
+            ),
+          ),
+          const SizedBox(height: 10,),
+          Center(
+            child: Text(
+              "Contact Admin for addition of courses",
+              style: TextStyle(
+                  color: Color(primaryLight),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ],
