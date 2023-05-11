@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
@@ -10,6 +11,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:path/path.dart' as p;
 
 class registerFaculty extends StatefulWidget {
   const registerFaculty({super.key});
@@ -227,13 +229,6 @@ class AddEventFormState extends State<AddEventForm> {
       if (!validDep(f[i][2])) {
         dep = getDep(dep);
       }
-      String av = await firebaseDatabase.emailCheck(f[i][2]);
-      if (av != "") {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Email not free")),
-        );
-        continue;
-      }
       Set<String> courses = {};
       int attrs = f[i].length;
       for (int j = 3; j < attrs; j++) {
@@ -406,6 +401,28 @@ class AddEventFormState extends State<AddEventForm> {
                               ),
                             ),
                             actions: <Widget>[
+                              Center(
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateColor.resolveWith(
+                                            (states) => Color(primaryLight)),
+                                  ),
+                                  child: const Text("Download Sample"),
+                                  onPressed: () async {
+                                    final result = await FilePicker.platform
+                                        .getDirectoryPath();
+                                    if (result == null) {
+                                      return;
+                                    }
+                                    File nfile = File(
+                                        p.join(result, 'faculty_sample.csv'));
+                                    nfile.writeAsString(
+                                        await rootBundle.loadString(
+                                            'assets/facultySample.csv'));
+                                  },
+                                ),
+                              ),
                               Center(
                                 child: ElevatedButton(
                                   child: const Text('Upload File'),

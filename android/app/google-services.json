@@ -46,6 +46,14 @@
           }
         },
         {
+          "client_id": "605010269946-o3h4bucgbvub6ev1aqi441np6jua5ufs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.iitropar",
+            "certificate_hash": "e0f6933d26be9dbb15ca3ab341a99cf9f4ab1061"
+          }
+        },
+        {
           "client_id": "605010269946-o4ttq71jlupe6d207dithh4iuahr1pn0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
