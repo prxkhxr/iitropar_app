@@ -279,7 +279,7 @@ class _findSlotsState extends State<findSlots> {
                         },
                       ),
                       title: entryToName[students.elementAt(index)] == null
-                          ? Text('${students.elementAt(index)})')
+                          ? Text('${students.elementAt(index)}')
                           : Text(
                               '${students.elementAt(index)} (${entryToName[students.elementAt(index)]})')); // todo: do via map loaded in frequency used.
                 }),
@@ -355,7 +355,7 @@ class _findSlotsState extends State<findSlots> {
           },
         ),
         const SizedBox(width: 20),
-        Text("${date.day}/${date.month}/${date.year}",
+        Text("${formatDateWord(date)}",
             style:
                 const TextStyle(fontSize: 24, fontWeight: FontWeight.normal)),
       ],

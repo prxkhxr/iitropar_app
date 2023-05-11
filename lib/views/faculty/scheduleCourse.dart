@@ -155,8 +155,8 @@ class _CourseScheduleState extends State<CourseSchedule> {
             });
           },
         ),
-        const SizedBox(width: 20),
-        Text("${date.day}/${date.month}/${date.year}",
+        SizedBox(width: 20),
+        Text("${formatDateWord(date)}",
             style:
                 const TextStyle(fontSize: 24, fontWeight: FontWeight.normal)),
       ],

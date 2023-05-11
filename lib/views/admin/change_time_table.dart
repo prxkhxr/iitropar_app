@@ -163,7 +163,7 @@ class AddFormState extends State<AddForm> {
                                   child: Column(
                                 children: [
                                   Text(
-                                      'Date: ${chgs[index].date.day}/${chgs[index].date.month}/${chgs[index].date.year},  Day followed : ${chgs[index].day_to_followed}'),
+                                      'Date: ${formatDateWord(chgs[index].date)},  Day followed : ${chgs[index].day_to_followed}'),
                                   ElevatedButton.icon(
                                     onPressed: () {
                                       // Show the confirmation dialog
@@ -173,7 +173,7 @@ class AddFormState extends State<AddForm> {
                                           return AlertDialog(
                                             title: Text("Confirm"),
                                             content: Text(
-                                                "Do you really want to not follow ${chgs[index].day_to_followed}'s time table on ${chgs[index].date.day}/${chgs[index].date.month}/${chgs[index].date.year}"),
+                                                "Do you really want to not follow ${chgs[index].day_to_followed}'s time table on ${formatDateWord(chgs[index].date)}"),
                                             actions: <Widget>[
                                               TextButton(
                                                 child: Text("Cancel"),
