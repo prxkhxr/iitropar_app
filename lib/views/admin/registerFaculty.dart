@@ -332,8 +332,8 @@ class AddEventFormState extends State<AddEventForm> {
                             );
                             return;
                           }
-                          faculty f = faculty(facultyName, facultyDep,
-                              facultyEmail, facultyCourses);
+                          faculty f = faculty(facultyEmail, facultyName,
+                              facultyDep, facultyCourses);
                           firebaseDatabase.registerFacultyFB(f);
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(

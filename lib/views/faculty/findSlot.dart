@@ -197,7 +197,7 @@ class _findSlotsState extends State<findSlots> {
   Widget selectCourses() {
     // print(courses);
     List options = courses.toList();
-    options.add('None');
+    if (!options.contains("None")) options.add('None');
 
     return Center(
       child: DropdownButton<String>(

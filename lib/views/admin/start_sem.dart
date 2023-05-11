@@ -127,8 +127,13 @@ class _NewSemesterState extends State<NewSemester> {
                             color: Colors.red,
                           ),
                         ),
-                        onPressed: () {
-                          // firebaseDatabase.clearSemesterFB(),
+                        onPressed: () async {
+                          firebaseDatabase.clearSemester();
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      "all courses and classes are removed")));
                         }),
                   ],
                 );

@@ -15,6 +15,7 @@ class _MyClassState extends State<MyClass> {
   late List<ExtraClass> filteredEc = [];
   late String selectedCourse;
   late List<ExtraClass> allClasses;
+  late Set<dynamic> allcourses = Set();
   getAllClasses() async {
     allClasses = await firebaseDatabase.getExtraClass(selectedCourse);
     filteredEc =
@@ -27,13 +28,15 @@ class _MyClassState extends State<MyClass> {
   @override
   void initState() {
     super.initState();
-    selectedCourse = widget.courses
-        .first; // initialize selectedCourse to the first coursegetAllClasses();
+    allcourses = widget.courses;
+    allcourses.add("None");
+    selectedCourse = allcourses.first;
   }
 
   @override
   Widget build(BuildContext context) {
     getAllClasses();
+    allcourses.add("None");
     return Scaffold(
       appBar: AppBar(
         title: const Text('See Extra Classes'),
@@ -52,7 +55,7 @@ class _MyClassState extends State<MyClass> {
                 },
               );
             },
-            items: widget.courses
+            items: allcourses
                 .map((course) => DropdownMenuItem(
                       value: course,
                       child: Text(course),

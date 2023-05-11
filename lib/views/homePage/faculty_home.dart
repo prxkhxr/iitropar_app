@@ -66,15 +66,17 @@ class _FacultyHomeState extends AbstractHomeState {
               // physics: NeverScrollableScrollPhysics(),
               itemCount: coursesList.length,
               itemBuilder: (BuildContext context, int index) {
+                if (coursesList[index] == "None") return Container();
                 final colorIndex = index % colors.length;
                 return GestureDetector(
                   onTap: () {
-                     Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => studentsEnrolled(course: coursesList[index]),
-                    ),
-                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            studentsEnrolled(course: coursesList[index]),
+                      ),
+                    );
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 4),
