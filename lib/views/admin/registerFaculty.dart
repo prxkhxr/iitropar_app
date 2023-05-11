@@ -264,12 +264,18 @@ class AddEventFormState extends State<AddEventForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildFacultyName(),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 _buildFacultyDep(),
                 _buildFacultyEmail(),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 _buildFacultyCourses(),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 _buildRemoveCourses(),
                 const SizedBox(height: 10),
                 Padding(
@@ -286,24 +292,59 @@ class AddEventFormState extends State<AddEventForm> {
                           if (espcl == "faculty" || espcl == "club") {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                  content: Text("Email already taken by $espcl")),
+                                  content:
+                                      Text("Email already taken by $espcl")),
                             );
                             return;
                           }
-                          faculty f = faculty(facultyName, facultyDep,
-                              facultyEmail, facultyCourses);
-                          firebaseDatabase.registerFacultyFB(f);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("Faculty has been registered!")),
-                          );
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Confirmation'),
+                                  content: Text(
+                                      "Are you sure you want to add faculty $facultyName ?"),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('Cancel'),
+                                      onPressed: () {
+                                        // Close the dialog and do nothing
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    ElevatedButton(
+                                      child: const Text('Submit'),
+                                      onPressed: () {
+                                        faculty f = faculty(
+                                            facultyName,
+                                            facultyDep,
+                                            facultyEmail,
+                                            facultyCourses);
+
+                                        firebaseDatabase.registerFacultyFB(f);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  "Faculty has been registered!")),
+                                        );
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
                         }
                       },
                       child: const Text('Submit'),
                     ),
                   ),
                 ),
-                const Center(child: Text('OR', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+                const Center(
+                    child: Text(
+                  'OR',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                )),
                 const SizedBox(height: 10),
                 Center(
                   child: ElevatedButton(
@@ -336,7 +377,7 @@ class AddEventFormState extends State<AddEventForm> {
                                   onPressed: () {
                                     // Close the dialog and call the onPressed function
                                     _pickFile(ScaffoldMessenger.of(context));
-    
+
                                     Navigator.of(context).pop();
                                   },
                                 ),

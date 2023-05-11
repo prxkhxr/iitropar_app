@@ -124,12 +124,39 @@ class AddEventFormState extends State<AddEventForm> {
                     if (_formKey.currentState!.validate()) {
                       // If the form is valid, display a snackbar. In the real world,
                       // you'd often call a server or save the information in a database.
+
                       _formKey.currentState!.save();
-                      firebaseDatabase.registerClubFB(
-                          clubTitle, clubDesc, clubEmail);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Club has been registered!")),
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Confirmation'),
+                            content: Text(
+                                "Are you sure you want to add club $clubTitle ?"),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Cancel'),
+                                onPressed: () {
+                                  // Close the dialog and do nothing
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              ElevatedButton(
+                                child: const Text('Submit'),
+                                onPressed: () {
+                                  firebaseDatabase.registerClubFB(
+                                      clubTitle, clubDesc, clubEmail);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text("Club has been registered!")),
+                                  );
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
                     }
                   },
