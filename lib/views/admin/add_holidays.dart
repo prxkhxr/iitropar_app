@@ -462,10 +462,9 @@ class AddClassFormState extends State<AddClassForm> {
             if (result == null) {
               return;
             }
-            File nfile = File(
-                p.join(result, '${dateString(DateTime.now())}_sample.csv'));
+            File nfile = File(p.join(result, 'holidaySample.csv'));
             nfile.writeAsString(
-                await rootBundle.loadString('assets/TimeTable.csv'));
+                await rootBundle.loadString('assets/holidaySample.csv'));
           },
         ),
         alldeclaredHolidays(),

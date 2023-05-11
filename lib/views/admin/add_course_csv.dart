@@ -133,14 +133,9 @@ class _addCoursecsvState extends State<addCoursecsv> {
               if (result == null) {
                 return;
               }
-              File nfile = File(
-                  p.join(result, '${dateString(DateTime.now())}_sample.csv'));
-              try {
-                nfile.writeAsString(
-                    await rootBundle.loadString('assets/TimeTable.csv'));
-              } catch (e) {
-                print(e);
-              }
+              File nfile = File(p.join(result, 'courseSample.csv'));
+              nfile.writeAsString(
+                  await rootBundle.loadString('assets/courseSample.csv'));
             },
           ),
         ]));

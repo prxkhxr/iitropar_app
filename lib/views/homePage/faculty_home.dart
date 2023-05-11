@@ -17,6 +17,7 @@ class FacultyHome extends AbstractHome {
 }
 
 class _FacultyHomeState extends AbstractHomeState {
+  semesterDur? sm;
   List<Color> colors = [
     const Color(0xFF566e7a),
     const Color(0xFF161a26),
@@ -24,7 +25,13 @@ class _FacultyHomeState extends AbstractHomeState {
     const Color(0xFF3367d5),
     const Color(0xFFf9a61a)
   ];
+  void getSemesterDur() async {
+    sm = await firebaseDatabase.getSemDur();
+    if (mounted) setState(() {});
+  }
+
   Widget allCourses() {
+    getSemesterDur();
     List<dynamic> coursesList = f.courses.toList();
     if (coursesList.isEmpty) {
       return const Text('No Courses Registered');
@@ -58,6 +65,48 @@ class _FacultyHomeState extends AbstractHomeState {
           ),
           const SizedBox(
             height: 10,
+          ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Semester Start Date',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 10.0,
+                  ),
+                ),
+                SizedBox(height: 4.0),
+                Text(
+                  '${sm == null ? '' : formatDateWord(sm!.startDate!)}',
+                  style: TextStyle(
+                    fontSize: 10.0,
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  'Semester End Date',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 10.0,
+                  ),
+                ),
+                SizedBox(height: 4.0),
+                Text(
+                  '${sm == null ? '' : formatDateWord(sm!.endDate!)}',
+                  style: TextStyle(
+                    fontSize: 10.0,
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(
             height: 150,
