@@ -364,7 +364,7 @@ class _findSlotsState extends State<findSlots> {
           },
         ),
         const SizedBox(width: 20),
-        Text("${date.day}/${date.month}/${date.year}",
+        Text("${formatDateWord(date)}",
             style:
                 const TextStyle(fontSize: 24, fontWeight: FontWeight.normal)),
       ],
