@@ -332,13 +332,43 @@ class AddEventFormState extends State<AddEventForm> {
                             );
                             return;
                           }
-                          faculty f = faculty(facultyEmail, facultyName,
-                              facultyDep, facultyCourses);
-                          firebaseDatabase.registerFacultyFB(f);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("Faculty has been registered!")),
-                          );
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Confirmation'),
+                                  content: Text(
+                                      "Are you sure you want to add faculty $facultyName ?"),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('Cancel'),
+                                      onPressed: () {
+                                        // Close the dialog and do nothing
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    ElevatedButton(
+                                      child: const Text('Submit'),
+                                      onPressed: () {
+                                        faculty f = faculty(
+                                            facultyName,
+                                            facultyDep,
+                                            facultyEmail,
+                                            facultyCourses);
+
+                                        firebaseDatabase.registerFacultyFB(f);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  "Faculty has been registered!")),
+                                        );
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
                         }
                       },
                       child: const Text('Submit'),

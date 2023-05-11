@@ -3,11 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
+import 'package:flutter/services.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:iitropar/utilities/firebase_database.dart';
-
+import 'package:path/path.dart' as p;
 import '../../utilities/colors.dart';
 
 class addEventcsv extends StatefulWidget {
@@ -118,12 +119,10 @@ class _addEventcsvState extends State<addEventcsv> {
           automaticallyImplyLeading: false,
           title: buildTitleBar("ADD EVENT - CSV", context),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+        body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           const SizedBox(height: 50),
           const Text('Accepted CSV format is given below',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           const SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.all(15.0),
@@ -131,10 +130,10 @@ class _addEventcsvState extends State<addEventcsv> {
           ),
           const SizedBox(height: 5),
           const Text('Time should be of the form HH:MM',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           const SizedBox(height: 20),
           const Text('Date should be of the format DD/MM/YYYY',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           const SizedBox(height: 50),
           ElevatedButton(
             style: ButtonStyle(
@@ -144,6 +143,24 @@ class _addEventcsvState extends State<addEventcsv> {
             child: const Text("Upload FIle"),
             onPressed: () {
               _pickFile(ScaffoldMessenger.of(context));
+            },
+          ),
+          const SizedBox(height: 50),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateColor.resolveWith(
+                  (states) => Color(primaryLight)),
+            ),
+            child: const Text("Download Sample"),
+            onPressed: () async {
+              final result = await FilePicker.platform.getDirectoryPath();
+              if (result == null) {
+                return;
+              }
+              File nfile = File(
+                  p.join(result, '${dateString(DateTime.now())}_sample.csv'));
+              nfile.writeAsString(
+                  await rootBundle.loadString('assets/TimeTable.csv'));
             },
           ),
         ]));

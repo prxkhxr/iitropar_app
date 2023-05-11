@@ -18,7 +18,8 @@ class EventCalendarScreen extends StatefulWidget {
 
 class _EventCalendarScreenState extends State<EventCalendarScreen> {
   DateTime _focused = DateTime.now();
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   TimeOfDay startTime = TimeOfDay.now();
   TimeOfDay endTime = TimeOfDay.now();
   DateTime startDate = DateTime.now();
@@ -615,52 +616,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 ..._listOfDayEvents(whatDatetocall(_selectedDate))
                     .map((myEvents) {
                   final width = MediaQuery.of(context).size.width;
-                  final textsize = (8 / 10) * width;
-                  final buttonsize = (1 / 10) * width;
-                  final iconsize = (1 / 10) * width;
-                  // return Column(
-                  //   children: [
-                  //     ListTile(
-                  //       horizontalTitleGap: 25,
-                  //       leading: Text(myEvents.startTime()),
-                  //       title: SizedBox(
-                  //         width: textsize,
-                  //         child: Text(
-                  //           myEvents.title,
-                  //           overflow: TextOverflow.ellipsis,
-                  //           style: TextStyle(color: Color(primaryLight)),
-                  //         ),
-                  //       ),
-                  //       trailing: SizedBox(
-                  //         width: buttonsize,
-                  //         child: IconButton(
-                  //           onPressed: () => _deleteEntireEvent(myEvents),
-                  //           icon: const Icon(Icons.delete),
-                  //         ),
-                  //       ),
-                  //       subtitle: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Text(
-                  //             "Description: ${myEvents.desc}",
-                  //             style: TextStyle(color: Color(primaryLight)),
-                  //           ),
-                  //           const SizedBox(
-                  //             width: 5,
-                  //           ),
-                  //           Text(
-                  //             'Time: ${myEvents.displayTime()}',
-                  //             style: TextStyle(color: Color(primaryLight)),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     const SizedBox(
-                  //       height: 10,
-                  //     ),
-                  //   ],
-                  // );
-
                   return Column(
                     children: [
                       SizedBox(
@@ -689,40 +644,34 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                                 ],
                               ),
                             ),
-                            VerticalDivider(
+                            const VerticalDivider(
                               thickness: 3.5,
                               width: 0,
-                              color: (DateTime.now().isAfter(_selectedDate))
-                                  ? Colors.red
-                                  : (myEvents.compareTo(Event(
-                                              title: '',
-                                              desc: '',
-                                              stime: TimeOfDay.now(),
-                                              etime: TimeOfDay.now(),
-                                              creator: '')) >
-                                          0)
-                                      ? (Colors.green)
-                                      : (Colors.red) /* Colors.green*/,
+                              color: Colors.green /* Colors.green*/,
                             ),
                             SizedBox(
                               width: 0.5 / 5.5 * width,
                             ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  myEvents.title,
-                                  style: TextStyle(
-                                      color: Color(primaryLight), fontSize: 16),
-                                ),
-                                Text(
-                                  myEvents.desc,
-                                  style: TextStyle(
-                                      color:
-                                          Color(primaryLight).withOpacity(0.6)),
-                                ),
-                              ],
+                            SizedBox(
+                              width: 3 / 5.5 * width,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    myEvents.title,
+                                    style: TextStyle(
+                                        color: Color(primaryLight),
+                                        fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(myEvents.desc,
+                                      style: TextStyle(
+                                          color: Color(primaryLight)
+                                              .withOpacity(0.6)),
+                                      overflow: TextOverflow.ellipsis),
+                                ],
+                              ),
                             ),
                             Expanded(
                               child: Container(),

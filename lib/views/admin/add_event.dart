@@ -306,19 +306,46 @@ class AddEventFormState extends State<AddEventForm> {
                           }
                         }
                       }
-                      firebaseDatabase.addEventFB(
-                          eventTitle,
-                          eventType,
-                          eventDesc,
-                          eventVenue,
-                          "${eventDate.day}/${eventDate.month}/${eventDate.year}",
-                          tod2str(startTime),
-                          tod2str(endTime),
-                          imageURL,
-                          "admin");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Event Added Sucessfully")),
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Confirmation'),
+                            content: Text(
+                                "Are you sure you want to add event $eventTitle ?"),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Cancel'),
+                                onPressed: () {
+                                  // Close the dialog and do nothing
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              ElevatedButton(
+                                child: const Text('Submit'),
+                                onPressed: () {
+                                  firebaseDatabase.addEventFB(
+                                      eventTitle,
+                                      eventType,
+                                      eventDesc,
+                                      eventVenue,
+                                      "${eventDate.day}/${eventDate.month}/${eventDate.year}",
+                                      tod2str(startTime),
+                                      tod2str(endTime),
+                                      imageURL,
+                                      "admin");
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text("Event Added Sucessfully")),
+                                  );
+
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
                     child: const Text('Submit'),
