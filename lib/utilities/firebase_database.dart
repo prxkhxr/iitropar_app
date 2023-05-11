@@ -71,9 +71,9 @@ class firebaseDatabase {
 
   static void updateFaculty(faculty f) {
     DocumentReference ref_f =
-        FirebaseFirestore.instance.collection("faculty").doc(f.name);
+        FirebaseFirestore.instance.collection("faculty").doc(f.email);
     ref_f.update({'courses': f.courses}).then((value) {
-      print("faculty courses of ${f.name} updated");
+      print("faculty courses of ${f.email} updated");
     });
   }
 
@@ -169,7 +169,7 @@ class firebaseDatabase {
 
   static void registerFacultyFB(faculty f) {
     DocumentReference ref_event_nr =
-        FirebaseFirestore.instance.collection("faculty").doc(f.name);
+        FirebaseFirestore.instance.collection("faculty").doc(f.email);
     Map<String, dynamic> faculty = {
       "name": f.name,
       "dep": f.department,
@@ -243,9 +243,9 @@ class firebaseDatabase {
     for (int i = 0; i < len; i++) {
       if (querySnapshot.docs[i]['email'] == email) {
         faculty f = faculty(
+            querySnapshot.docs[i]['email'],
             querySnapshot.docs[i]['name'],
             querySnapshot.docs[i]['dep'],
-            querySnapshot.docs[i]['email'],
             Set.from(querySnapshot.docs[i]['courses']));
         return f;
       }
@@ -262,9 +262,9 @@ class firebaseDatabase {
     var len = querySnapshot.docs.length;
     for (int i = 0; i < len; i++) {
       faculty fc_member = faculty(
+          querySnapshot.docs[i]['email'],
           querySnapshot.docs[i]['name'],
           querySnapshot.docs[i]['dep'],
-          querySnapshot.docs[i]['email'],
           Set.from(querySnapshot.docs[i]['courses']));
       fc.add(fc_member);
     }

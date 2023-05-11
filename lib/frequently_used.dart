@@ -302,6 +302,9 @@ List<DropdownMenuItem<String>> departments = [
   const DropdownMenuItem(
       value: "Humanities and Social Sciences",
       child: Text("Humanities and Social Sciences")),
+  const DropdownMenuItem(
+      value: "Mechanical Engineering", child: Text("Mechanical Engineering")),
+  const DropdownMenuItem(value: "other", child: Text("other")),
 ];
 String dateString(DateTime d) {
   return DateFormat('yyyy-MM-dd').format(d);
@@ -340,7 +343,7 @@ class faculty {
   late String department;
   late String email;
   late Set<dynamic> courses;
-  faculty(name, dep, email, courses) {
+  faculty(email, name, dep, courses) {
     this.name = name;
     this.department = dep;
     this.email = email;
@@ -652,6 +655,11 @@ class formChecks {
     DateTime cur_day =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return _d.isBefore(cur_day);
+  }
+
+  static bool email_check(String email) {
+    RegExp r = RegExp(r'^[A-Za-z0-9._%+-]+@iitrpr\.ac\.in$');
+    return r.hasMatch(email);
   }
 }
 
