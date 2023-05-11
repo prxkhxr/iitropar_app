@@ -201,7 +201,7 @@ class firebaseDatabase {
         FirebaseFirestore.instance.collection('clubs');
     QuerySnapshot querySnapshot = await collectionRef.get();
 
-    // Get data from docs and convert map to List
+    // Get data from dof and convert map to List
     List<dynamic> emails =
         querySnapshot.docs.map((doc) => doc['email']).toList();
     return emails;
@@ -360,6 +360,8 @@ class firebaseDatabase {
 
   static Future<bool> addExtraClass(ExtraClass c) async {
     DocumentReference docRef = FirebaseFirestore.instance
+        .collection("courses")
+        .doc("courses")
         .collection(c.courseID)
         .doc(
             '${c.courseID}-${dateString(c.date).replaceAll('/', '-')}-${TimeString(c.startTime)}-${TimeString(c.endTime)}');
@@ -377,8 +379,11 @@ class firebaseDatabase {
 
   static Future<List<ExtraClass>> getExtraClass(String courseID) async {
     List<ExtraClass> ec = [];
-
-    var snapshots = await FirebaseFirestore.instance.collection(courseID).get();
+    var snapshots = await FirebaseFirestore.instance
+        .collection("courses")
+        .doc("courses")
+        .collection(courseID)
+        .get();
     for (int i = 0; i < snapshots.docs.length; i++) {
       var doc = snapshots.docs[i];
 
@@ -401,6 +406,8 @@ class firebaseDatabase {
 
   static void deleteClass(ExtraClass c) {
     DocumentReference docRef = FirebaseFirestore.instance
+        .collection("courses")
+        .doc("courses")
         .collection(c.courseID)
         .doc(
             '${c.courseID}-${dateString(c.date).replaceAll('/', '-')}-${TimeString(c.startTime)}-${TimeString(c.endTime)}');
