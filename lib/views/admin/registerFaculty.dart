@@ -403,6 +403,17 @@ class AddEventFormState extends State<AddEventForm> {
                             actions: <Widget>[
                               Center(
                                 child: ElevatedButton(
+                                  child: const Text('Upload File'),
+                                  onPressed: () {
+                                    // Close the dialog and call the onPressed function
+                                    _pickFile(ScaffoldMessenger.of(context));
+
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                              Center(
+                                child: ElevatedButton(
                                   style: ButtonStyle(
                                     backgroundColor:
                                         MaterialStateColor.resolveWith(
@@ -420,17 +431,6 @@ class AddEventFormState extends State<AddEventForm> {
                                     nfile.writeAsString(
                                         await rootBundle.loadString(
                                             'assets/facultySample.csv'));
-                                  },
-                                ),
-                              ),
-                              Center(
-                                child: ElevatedButton(
-                                  child: const Text('Upload File'),
-                                  onPressed: () {
-                                    // Close the dialog and call the onPressed function
-                                    _pickFile(ScaffoldMessenger.of(context));
-
-                                    Navigator.of(context).pop();
                                   },
                                 ),
                               ),
