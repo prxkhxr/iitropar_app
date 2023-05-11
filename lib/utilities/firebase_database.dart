@@ -71,9 +71,9 @@ class firebaseDatabase {
 
   static void updateFaculty(faculty f) {
     DocumentReference ref_f =
-        FirebaseFirestore.instance.collection("faculty").doc(f.name);
+        FirebaseFirestore.instance.collection("faculty").doc(f.email);
     ref_f.update({'courses': f.courses}).then((value) {
-      print("faculty courses of ${f.name} updated");
+      print("faculty courses of ${f.email} updated");
     });
   }
 
@@ -169,7 +169,7 @@ class firebaseDatabase {
 
   static void registerFacultyFB(faculty f) {
     DocumentReference ref_event_nr =
-        FirebaseFirestore.instance.collection("faculty").doc(f.name);
+        FirebaseFirestore.instance.collection("faculty").doc(f.email);
     Map<String, dynamic> faculty = {
       "name": f.name,
       "dep": f.department,
@@ -201,7 +201,7 @@ class firebaseDatabase {
         FirebaseFirestore.instance.collection('clubs');
     QuerySnapshot querySnapshot = await collectionRef.get();
 
-    // Get data from docs and convert map to List
+    // Get data from dof and convert map to List
     List<dynamic> emails =
         querySnapshot.docs.map((doc) => doc['email']).toList();
     return emails;
@@ -243,9 +243,9 @@ class firebaseDatabase {
     for (int i = 0; i < len; i++) {
       if (querySnapshot.docs[i]['email'] == email) {
         faculty f = faculty(
+            querySnapshot.docs[i]['email'],
             querySnapshot.docs[i]['name'],
             querySnapshot.docs[i]['dep'],
-            querySnapshot.docs[i]['email'],
             Set.from(querySnapshot.docs[i]['courses']));
         return f;
       }
@@ -262,9 +262,9 @@ class firebaseDatabase {
     var len = querySnapshot.docs.length;
     for (int i = 0; i < len; i++) {
       faculty fc_member = faculty(
+          querySnapshot.docs[i]['email'],
           querySnapshot.docs[i]['name'],
           querySnapshot.docs[i]['dep'],
-          querySnapshot.docs[i]['email'],
           Set.from(querySnapshot.docs[i]['courses']));
       fc.add(fc_member);
     }
@@ -360,6 +360,8 @@ class firebaseDatabase {
 
   static Future<bool> addExtraClass(ExtraClass c) async {
     DocumentReference docRef = FirebaseFirestore.instance
+        .collection("courses")
+        .doc("courses")
         .collection(c.courseID)
         .doc(
             '${c.courseID}-${dateString(c.date).replaceAll('/', '-')}-${TimeString(c.startTime)}-${TimeString(c.endTime)}');
@@ -377,8 +379,11 @@ class firebaseDatabase {
 
   static Future<List<ExtraClass>> getExtraClass(String courseID) async {
     List<ExtraClass> ec = [];
-
-    var snapshots = await FirebaseFirestore.instance.collection(courseID).get();
+    var snapshots = await FirebaseFirestore.instance
+        .collection("courses")
+        .doc("courses")
+        .collection(courseID)
+        .get();
     for (int i = 0; i < snapshots.docs.length; i++) {
       var doc = snapshots.docs[i];
 
@@ -401,6 +406,8 @@ class firebaseDatabase {
 
   static void deleteClass(ExtraClass c) {
     DocumentReference docRef = FirebaseFirestore.instance
+        .collection("courses")
+        .doc("courses")
         .collection(c.courseID)
         .doc(
             '${c.courseID}-${dateString(c.date).replaceAll('/', '-')}-${TimeString(c.startTime)}-${TimeString(c.endTime)}');

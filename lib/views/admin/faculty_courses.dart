@@ -52,9 +52,11 @@ class _FacultyListState extends State<FacultyList> {
               onPressed: () {
                 // Close the dialog and call the onPressed function
                 setState(() {
-                  faculties[index]
-                      .courses
-                      .add(_newCourseController[index].text);
+                  faculties[index].courses.add(_newCourseController[index]
+                      .text
+                      .toString()
+                      .replaceAll(' ', '')
+                      .toUpperCase());
                   _newCourseController[index].clear();
                 });
                 Navigator.of(context).pop();
@@ -276,7 +278,11 @@ class _FacultyListState extends State<FacultyList> {
                                   icon: const Icon(Icons.add),
                                   onPressed: () {
                                     if (allCourses.contains(
-                                        _newCourseController[index].text)) {
+                                        _newCourseController[index]
+                                            .text
+                                            .toString()
+                                            .replaceAll(' ', '')
+                                            .toUpperCase())) {
                                       _addCourse(index);
                                     } else {
                                       ScaffoldMessenger.of(context)
