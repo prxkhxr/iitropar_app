@@ -85,6 +85,8 @@ class AddEventFormState extends State<AddEventForm> {
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Faculty Email is required';
+        } else if (!formChecks.email_check(value)) {
+          return 'Enter valid email ID and IDs not being used';
         }
         return null;
       },
@@ -119,7 +121,8 @@ class AddEventFormState extends State<AddEventForm> {
   }
 
   bool validCourse(String courseCode) {
-    return allCourses.contains(courseCode);
+    String _courseCode = courseCode.replaceAll(' ', '');
+    return allCourses.contains(_courseCode.toUpperCase());
   }
 
   bool validDep(String dep) {
@@ -127,6 +130,39 @@ class AddEventFormState extends State<AddEventForm> {
       if (dep == departments[i].value) return true;
     }
     return false;
+  }
+
+  String getDep(String dep) {
+    dep = dep.toLowerCase();
+    dep = dep.replaceAll(' ', '');
+    if (dep == "cse" ||
+        dep == "csb" ||
+        dep == "ComputerScience&Engineering".toLowerCase())
+      return "Computer Science & Engineering";
+    else if (dep == "eeb" ||
+        dep == "ee" ||
+        dep == "ElectricalEngineering".toLowerCase())
+      return "Electrical Engineering";
+    else if (dep == "cchb" || dep == "ChemicalEngineering".toLowerCase())
+      return "Chemical Engineering";
+    else if (dep == "bme" || dep == "BioMedicalEngineering".toLowerCase())
+      return "BioMedical Engineering";
+    else if (dep == "mme" ||
+        dep == "MetallurgicalandMaterialsEngineering".toLowerCase())
+      return "Metallurgical and Materials Engineering";
+    else if (dep == "ceb" || dep == "CivilEngineering".toLowerCase())
+      return "Civil Engineering";
+    else if (dep == "chemistry" || dep == "chem")
+      return "Chemistry";
+    else if (dep == "physics")
+      return "Physics";
+    else if (dep == "mathematics")
+      return "Mathematics";
+    else if (dep == "HumanitiesandSocialSciences".toLowerCase())
+      return "Humanities and Social Sciences";
+    else if (dep == "MechanicalEngineering".toLowerCase())
+      return "Mechanical Engineering";
+    return "other";
   }
 
   Widget _buildRemoveCourses() {
@@ -155,7 +191,6 @@ class AddEventFormState extends State<AddEventForm> {
 
   Widget _buildFacultyCourses() {
     List<String> courses;
-
     return Column(
       children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -171,7 +206,8 @@ class AddEventFormState extends State<AddEventForm> {
               onPressed: () async {
                 if (validCourse(coursesInput.text)) {
                   setState(() {
-                    facultyCourses.add(coursesInput.text);
+                    facultyCourses.add(
+                        coursesInput.text.toUpperCase().replaceAll(' ', ''));
                   });
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -187,9 +223,9 @@ class AddEventFormState extends State<AddEventForm> {
   void uploadData(List<List<dynamic>> f) async {
     int len = f.length;
     for (int i = 1; i < len; i++) {
-      if (!validDep(f[i][1])) {
-        print("Invalid DEP");
-        continue;
+      String dep = f[i][2];
+      if (!validDep(f[i][2])) {
+        dep = getDep(dep);
       }
       String av = await firebaseDatabase.emailCheck(f[i][2]);
       if (av != "") {
@@ -202,10 +238,10 @@ class AddEventFormState extends State<AddEventForm> {
       int attrs = f[i].length;
       for (int j = 3; j < attrs; j++) {
         if (validCourse(f[i][j].toString())) {
-          courses.add(f[i][j]);
+          courses.add(f[i][j].toString().toUpperCase().replaceAll(' ', ''));
         } //invalid courses are rejected
       }
-      faculty fac = faculty(f[i][0], f[i][1], f[i][2], courses);
+      faculty fac = faculty(f[i][0], f[i][1], dep, courses);
       firebaseDatabase.registerFacultyFB(fac);
     }
   }
@@ -225,7 +261,6 @@ class AddEventFormState extends State<AddEventForm> {
         .transform(utf8.decoder)
         .transform(const CsvToListConverter())
         .toList();
-    print(fields[0]);
     if (!verifyHeader(fields[0])) {
       sm.showSnackBar(
           const SnackBar(content: Text("Header format in csv incorrect!")));
@@ -243,9 +278,9 @@ class AddEventFormState extends State<AddEventForm> {
   }
 
   bool verifyHeader(List<dynamic> header) {
-    if (header[0].toString().toLowerCase() == "facultyname" &&
-        header[1].toString().toLowerCase() == "department" &&
-        header[2].toString().toLowerCase() == "email" &&
+    if (header[0].toString().toLowerCase() == "email" &&
+        header[1].toString().toLowerCase() == "facultyname" &&
+        header[2].toString().toLowerCase() == "department" &&
         header[3].toString().toLowerCase() == "courses") return true;
     return false;
   }
@@ -362,7 +397,7 @@ class AddEventFormState extends State<AddEventForm> {
                                   Image.asset("assets/faculty_register.png"),
                                   const SizedBox(height: 10),
                                   const Text(
-                                      '1.All faculty must have unique email ID and Name'),
+                                      '1.All faculty must have unique email ID'),
                                   const SizedBox(height: 10),
                                   const Text('2.Course Code must be valid.'),
                                   const SizedBox(height: 10),

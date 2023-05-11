@@ -19,7 +19,7 @@ class _MyClassState extends State<MyClass> {
     allClasses = await firebaseDatabase.getExtraClass(selectedCourse);
     filteredEc =
         allClasses.where((ec) => ec.courseID == selectedCourse).toList();
-    if(mounted) {
+    if (mounted) {
       setState(() {});
     }
   }
@@ -94,7 +94,8 @@ class _MyClassState extends State<MyClass> {
                           children: [
                             Expanded(child: Text('Venue: ${ec.venue}')),
                             Expanded(
-                                child: Text('Date: ${dateString(ec.date)}')),
+                                child:
+                                    Text('Date: ${formatDateWord(ec.date)}')),
                           ],
                         ),
                         Row(
@@ -108,7 +109,9 @@ class _MyClassState extends State<MyClass> {
                                     'End Time: ${TimeString(ec.endTime)}')),
                           ],
                         ),
-                        const SizedBox(height: 10,),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [

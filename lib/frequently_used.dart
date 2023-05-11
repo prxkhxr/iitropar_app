@@ -302,6 +302,9 @@ List<DropdownMenuItem<String>> departments = [
   const DropdownMenuItem(
       value: "Humanities and Social Sciences",
       child: Text("Humanities and Social Sciences")),
+  const DropdownMenuItem(
+      value: "Mechanical Engineering", child: Text("Mechanical Engineering")),
+  const DropdownMenuItem(value: "other", child: Text("other")),
 ];
 String dateString(DateTime d) {
   return DateFormat('yyyy-MM-dd').format(d);
@@ -340,7 +343,7 @@ class faculty {
   late String department;
   late String email;
   late Set<dynamic> courses;
-  faculty(name, dep, email, courses) {
+  faculty(email, name, dep, courses) {
     this.name = name;
     this.department = dep;
     this.email = email;
@@ -354,7 +357,7 @@ class Ids {
     "gautamsethia7702@gmail.com",
     "2020csb1073@iitrpr.ac.in",
     "2020csb1111@iitrpr.ac.in",
-    "guptajatin918@gmail.com"
+    "guptachand918@gmail.com"
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
   static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
@@ -517,32 +520,36 @@ class LoadingScreen {
       future: _task!(),
       builder: (context, snapshot) {
         if (snapshot.data == null) {
-          return Expanded(
-            child: Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    //const CircularProgressIndicator(),
-                    Image.asset(
-                      'assets/iitropar_logo.png',
-                      height: 200,
+          return Column(
+            children: [
+              Expanded(
+                child: Scaffold(
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //const CircularProgressIndicator(),
+                        Image.asset(
+                          'assets/iitropar_logo.png',
+                          height: 200,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                          width: 100,
+                          child: LinearProgressIndicator(
+                            minHeight: 2,
+                            backgroundColor: Colors.grey,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+                          ),
+                        ),
+                        Text((_msg != null) ? _msg! : 'Loading...'),
+                      ],
                     ),
-                    const SizedBox(
-                      height: 5,
-                      width: 100,
-                      child: LinearProgressIndicator(
-                        minHeight: 2,
-                        backgroundColor: Colors.grey,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.blueGrey),
-                      ),
-                    ),
-                    Text((_msg != null) ? _msg! : 'Loading...'),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           );
         } else {
           return _builder(context);
@@ -648,6 +655,11 @@ class formChecks {
     DateTime cur_day =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return _d.isBefore(cur_day);
+  }
+
+  static bool email_check(String email) {
+    RegExp r = RegExp(r'^[A-Za-z0-9._%+-]+@iitrpr\.ac\.in$');
+    return r.hasMatch(email);
   }
 }
 

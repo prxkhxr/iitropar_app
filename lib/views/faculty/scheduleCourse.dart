@@ -137,9 +137,16 @@ class _CourseScheduleState extends State<CourseSchedule> {
 
   Widget selectDate() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        ElevatedButton(
-          child: const Text('Pick Event Date'),
+        TextButton(
+          child: Center(
+            child: Text("Date: ${date.day}/${date.month}/${date.year}",
+                style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black)),
+          ),
           onPressed: () {
             showDatePicker(
                     context: context,
@@ -155,10 +162,6 @@ class _CourseScheduleState extends State<CourseSchedule> {
             });
           },
         ),
-        const SizedBox(width: 20),
-        Text("${date.day}/${date.month}/${date.year}",
-            style:
-                const TextStyle(fontSize: 24, fontWeight: FontWeight.normal)),
       ],
     );
   }

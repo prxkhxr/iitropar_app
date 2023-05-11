@@ -752,21 +752,25 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   height: 120.0,
                   child: Column(
                     children: [
-                      ListTile(
-                        leading: const Icon(Icons.event),
-                        title: const Text('Add Event'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _showSingleAddEventDialog();
-                        },
+                      Expanded(
+                        child: ListTile(
+                          leading: const Icon(Icons.event),
+                          title: const Text('Add Event'),
+                          onTap: () {
+                            Navigator.pop(context);
+                            _showSingleAddEventDialog();
+                          },
+                        ),
                       ),
-                      ListTile(
-                        leading: const Icon(Icons.repeat),
-                        title: const Text('Add Recurring Event'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _showRecurringAddEventDialog();
-                        },
+                      Expanded(
+                        child: ListTile(
+                          leading: const Icon(Icons.repeat),
+                          title: const Text('Add Recurring Event'),
+                          onTap: () {
+                            Navigator.pop(context);
+                            _showRecurringAddEventDialog();
+                          },
+                        ),
                       ),
                     ],
                   ),

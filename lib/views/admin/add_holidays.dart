@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:csv/csv.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
@@ -130,7 +134,7 @@ class AddClassFormState extends State<AddClassForm> {
                 return AlertDialog(
                   title: const Text("Confirm"),
                   content: Text(
-                      "Do you really want to add holiday on ${dateinput.text}?"),
+                      "Do you really want to add holiday on ${formatDateWord(stringDate(dateinput.text))}?"),
                   actions: <Widget>[
                     TextButton(
                       child: const Text("Cancel"),
@@ -214,7 +218,7 @@ class AddClassFormState extends State<AddClassForm> {
                                   child: Column(
                                 children: [
                                   Text(
-                                      'Date: ${hols[index].date.day}/${hols[index].date.month}/${hols[index].date.year},  Reason : ${hols[index].desc}'),
+                                      'Date: ${formatDateWord(hols[index].date)},  Reason : ${hols[index].desc}'),
                                   ElevatedButton.icon(
                                     onPressed: () {
                                       // Show the confirmation dialog
@@ -223,8 +227,8 @@ class AddClassFormState extends State<AddClassForm> {
                                         builder: (BuildContext context) {
                                           return AlertDialog(
                                             title: const Text("Confirm"),
-                                            content: const Text(
-                                                "Do you really want to delete this holiday?"),
+                                            content: Text(
+                                                "Do you really want to delete holiday on ${formatDateWord(hols[index].date)} ?"),
                                             actions: <Widget>[
                                               TextButton(
                                                 child: const Text("Cancel"),
@@ -274,6 +278,134 @@ class AddClassFormState extends State<AddClassForm> {
     );
   }
 
+  bool verifyHeader(List<dynamic> csv_head) {
+    if (csv_head.isEmpty) {
+      return false;
+    }
+    if (csv_head[0].toString().toLowerCase() == "date" &&
+        csv_head[1].toString().toLowerCase() == "reason") {
+      return true;
+    }
+    return false;
+  }
+
+  void _pickFile(ScaffoldMessengerState sm) async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+
+    // if no file is picked
+    if (result == null) return;
+    // we will log the name, size and path of the
+    // first picked file (if multiple are selected)
+    String filePath = result.files.first.path!;
+    RegExp date_regex = RegExp(r'^[0-9]{4}/[0-3]?[0-9]/[0-1]?[0-9]$');
+
+    final input = File(filePath).openRead();
+    final fields = await input
+        .transform(utf8.decoder)
+        .transform(const CsvToListConverter())
+        .toList();
+    if (!verifyHeader(fields[0])) {
+      sm.showSnackBar(
+          const SnackBar(content: Text("Header format in csv incorrect!")));
+      return;
+    } else {
+      sm.showSnackBar(
+          const SnackBar(content: Text("Header format in csv correct!")));
+    }
+
+    for (int i = 1; i < fields.length; i++) {
+      bool date_check = true;
+      if (fields[i][1] == "") {
+        sm.showSnackBar(
+            const SnackBar(content: Text("Reason can not be empty.")));
+        continue;
+      }
+      if (date_regex.hasMatch(fields[i][0])) {
+        List<String> date_split = fields[i][0].toString().split('/');
+        int day = int.parse(date_split[2]);
+        int month = int.parse(date_split[1]);
+        int year = int.parse(date_split[0]);
+        if (day < 0 || day > 31) date_check = false;
+        if (month < 0 || month > 12) date_check = false;
+        if (formChecks.beforeCurDate(DateTime(year, month, day))) {
+          sm.showSnackBar(const SnackBar(
+              content:
+                  Text("Can not added holiday of days before current day.")));
+          continue;
+        }
+        DateTime dt = DateTime(year, month, day);
+        if (date_check) {
+          firebaseDatabase.addHolidayFB(
+              DateFormat('yyyy-MM-dd').format(dt), fields[i][1]);
+          continue;
+        }
+      }
+      sm.showSnackBar(SnackBar(
+          content:
+              Text("String ${fields[i][0]} is not in the yyyy/mm/dd format.")));
+    }
+    setState(() {});
+  }
+
+  Widget csvOption(BuildContext context) {
+    return Center(
+        child: ElevatedButton(
+      onPressed: () {
+        // Show an alert dialog with a confirmation prompt
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Given CSV format'),
+              content: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.3,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Image.asset('assets/holidays.png'),
+                    ),
+                    const Text(
+                        '1.Date should be of the format -  yyyy/mm/dd. Ex: 2020/12/12'),
+                    const Text('2.Reason should not be empty'),
+                    const Text('3. Holidays of previous date are not allowed')
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                Center(
+                  child: ElevatedButton(
+                    child: const Text('Upload File'),
+                    onPressed: () {
+                      // Close the dialog and call the onPressed function
+                      _pickFile(ScaffoldMessenger.of(context));
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  child: TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      // Close the dialog and do nothing
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+      ),
+      child: const Text('Upload via CSV'),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -281,6 +413,7 @@ class AddClassFormState extends State<AddClassForm> {
     return Column(
       children: [
         createForm(),
+        csvOption(context),
         alldeclaredHolidays(),
       ],
     );
