@@ -351,9 +351,9 @@ class AddEventFormState extends State<AddEventForm> {
                                       child: const Text('Submit'),
                                       onPressed: () {
                                         faculty f = faculty(
+                                            facultyEmail,
                                             facultyName,
                                             facultyDep,
-                                            facultyEmail,
                                             facultyCourses);
 
                                         firebaseDatabase.registerFacultyFB(f);
