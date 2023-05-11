@@ -126,6 +126,7 @@ class _findSlotsState extends State<findSlots> {
               setState(
                 () {
                   students.add(entryInput.text.toLowerCase());
+                  entryInput.clear();
                 },
               );
               // FocusScopeNode currentFocus = FocusScope.of(context);
@@ -219,6 +220,10 @@ class _findSlotsState extends State<findSlots> {
             setState(() {
               students = Set.from(studentList);
             });
+          } else {
+            setState(() {
+              students = Set();
+            });
           }
         },
       ),
@@ -271,25 +276,23 @@ class _findSlotsState extends State<findSlots> {
         ),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.15,
-          child: Expanded(
-            child: ListView.builder(
-                itemCount: students.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                      leading: IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          setState(() {
-                            students.remove(students.elementAt(index));
-                          });
-                        },
-                      ),
-                      title: entryToName[students.elementAt(index)] == null
-                          ? Text('${students.elementAt(index)})')
-                          : Text(
-                              '${students.elementAt(index)} (${entryToName[students.elementAt(index)]})')); // todo: do via map loaded in frequency used.
-                }),
-          ),
+          child: ListView.builder(
+              itemCount: students.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                    leading: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          students.remove(students.elementAt(index));
+                        });
+                      },
+                    ),
+                    title: entryToName[students.elementAt(index)] == null
+                        ? Text('${students.elementAt(index)})')
+                        : Text(
+                            '${students.elementAt(index)} (${entryToName[students.elementAt(index)]})')); // todo: do via map loaded in frequency used.
+              }),
         ),
       ],
     );
