@@ -75,6 +75,9 @@ class firebaseDatabase {
     ref_f.update({'courses': f.courses}).then((value) {
       print("faculty courses of ${f.email} updated");
     });
+    for (int i = 0; i < f.courses.length; i++) {
+      addCourseCode(f.courses.elementAt(i));
+    }
   }
 
   static void addHolidayFB(String date, String desc) {
@@ -176,6 +179,9 @@ class firebaseDatabase {
       "email": f.email,
       "courses": f.courses
     };
+    for (int i = 0; i < f.courses.length; i++) {
+      addCourseCode(f.courses.elementAt(i));
+    }
     ref_event_nr
         .set(faculty)
         .then((value) => print("Faculty added"))
@@ -358,6 +364,25 @@ class firebaseDatabase {
     }
   }
 
+  static void addCourseCode(String courseCode) {
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection("coursecode").doc(courseCode);
+    Map<String, dynamic> mp = {
+      "coursecode": courseCode,
+    };
+    docRef.set(mp);
+  }
+
+  static Future<List<String>> getCourseCodes() async {
+    List<String> cc = [];
+    var snapshots =
+        await FirebaseFirestore.instance.collection("coursecode").get();
+    for (int i = 0; i < snapshots.docs.length; i++) {
+      cc.add(snapshots.docs[i].id);
+    }
+    return cc;
+  }
+
   static Future<bool> addExtraClass(ExtraClass c) async {
     DocumentReference docRef = FirebaseFirestore.instance
         .collection("courses")
@@ -418,14 +443,22 @@ class firebaseDatabase {
     });
   }
 
-  static void clearSemester() {
-    // CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
-    // usersRef.get().then((querySnapshot) {
-    // querySnapshot.docs.forEach((doc) {
-    //   doc.reference.delete();
-    // });});
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    // firestore.
+  static void clearSemester() async {
+    List<String> collections = ['student_courses', 'faculty'];
+    List<String> courses = await getCourseCodes();
+    for (int i = 0; i < courses.length; i++) {
+      collections.add("courses/courses/${courses[i]}");
+    }
+    for (int i = 0; i < collections.length; i++) {
+      CollectionReference collectionRef =
+          FirebaseFirestore.instance.collection(collections[i]);
+      QuerySnapshot querySnapshot = await collectionRef.get();
+      print(querySnapshot.docs);
+      // Iterate over the documents and delete each one
+      for (QueryDocumentSnapshot docSnapshot in querySnapshot.docs) {
+        await docSnapshot.reference.delete();
+      }
+    }
   }
 
   static void addSemDur(DateTime st, DateTime et) {

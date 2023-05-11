@@ -19,11 +19,13 @@ class _CourseScheduleState extends State<CourseSchedule> {
   late String venue;
   late String description;
   late DateTime date;
-
+  late Set<dynamic> allcourses = Set<dynamic>();
   @override
   void initState() {
     super.initState();
     date = DateTime.now();
+    allcourses = widget.courses;
+    allcourses.add("None");
     selectedCourse = widget.courses.first;
     startTime = widget.st;
     endTime = widget.et;
@@ -77,7 +79,7 @@ class _CourseScheduleState extends State<CourseSchedule> {
                 TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold)),
         DropdownButton<String>(
           value: selectedCourse,
-          items: widget.courses.toList().map((dynamic course) {
+          items: allcourses.toList().map((dynamic course) {
             return DropdownMenuItem<String>(
               value: course,
               child: Text(course),
@@ -195,6 +197,12 @@ class _CourseScheduleState extends State<CourseSchedule> {
               // Submit Button
               ElevatedButton(
                 onPressed: () async {
+                  if (selectedCourse == "None") {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please select a course!")),
+                    );
+                    return;
+                  }
                   if (description == "") {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Add description.")),
@@ -222,6 +230,7 @@ class _CourseScheduleState extends State<CourseSchedule> {
                     );
                     return;
                   }
+
                   ExtraClass c = ExtraClass(
                       courseID: selectedCourse,
                       date: date,
