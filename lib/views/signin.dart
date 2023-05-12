@@ -104,7 +104,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "IIT Connect",
+                        "Calee",
                         style: TextStyle(
                             color: Color(secondaryLight),
                             fontSize: 30,
