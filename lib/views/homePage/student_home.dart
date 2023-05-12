@@ -6,6 +6,7 @@ import 'package:iitropar/frequently_used.dart';
 import 'package:intl/intl.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/database/event.dart';
+import 'package:iitropar/frequently_used.dart';
 
 double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
@@ -217,7 +218,7 @@ class _StudentHomeState extends AbstractHomeState {
   }
 
   Future<bool> loadEvents() async {
-    events = await firebaseDatabase.getAllEvents();
+    events = await firebaseDatabase.getEvents(DateTime.now());
     return true;
   }
 

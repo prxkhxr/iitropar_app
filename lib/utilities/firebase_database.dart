@@ -318,23 +318,6 @@ class firebaseDatabase {
     return events;
   }
 
-  static Future<List<Event>> getAllEvents() async {
-    List<Event> events = [];
-    var snapshots =
-        await FirebaseFirestore.instance.collection('Event.nonrecurring').get();
-    for (int i = 0; i < snapshots.docs.length; i++) {
-      var doc = snapshots.docs[i];
-      Event e = Event(
-          title: doc['eventTitle'],
-          desc: doc['eventDesc'],
-          stime: str2tod(doc['startTime']),
-          etime: str2tod(doc['endTime']),
-          creator: doc['creator']);
-      events.add(e);
-    }
-    return events;
-  }
-
   static Future<String> emailCheck(String email) async {
     var fsnapshots =
         await FirebaseFirestore.instance.collection("faculty").get();
