@@ -29,47 +29,48 @@ class _AddEventState extends State<AddEvent> {
         ),
         body: const AddEventForm());
   }
+
   Widget themeButtonWidget() {
-  return IconButton(
-    onPressed: () {
-      Navigator.pop(context);
-    },
-    icon: const Icon(
-      Icons.arrow_back,
-    ),
-    color: Color(primaryLight),
-    iconSize: 28,
-  );
-}
-
-TextStyle appbarTitleStyle() {
-  return TextStyle(
+    return IconButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      icon: const Icon(
+        Icons.arrow_back,
+      ),
       color: Color(primaryLight),
-      // fontSize: 24,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1.5);
-}
+      iconSize: 28,
+    );
+  }
 
-Row buildTitleBar(String text, BuildContext context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      themeButtonWidget(),
-      Flexible(
-        child: SizedBox(
-          height: 30,
-          child: FittedBox(
-            child: Text(
-              text,
-              style: appbarTitleStyle(),
+  TextStyle appbarTitleStyle() {
+    return TextStyle(
+        color: Color(primaryLight),
+        // fontSize: 24,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.5);
+  }
+
+  Row buildTitleBar(String text, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        themeButtonWidget(),
+        Flexible(
+          child: SizedBox(
+            height: 30,
+            child: FittedBox(
+              child: Text(
+                text,
+                style: appbarTitleStyle(),
+              ),
             ),
           ),
         ),
-      ),
-      signoutButtonWidget(context),
-    ],
-  );
-}
+        signoutButtonWidget(context),
+      ],
+    );
+  }
 }
 
 // Create a Form widget.
@@ -346,48 +347,48 @@ class AddEventFormState extends State<AddEventForm> {
                             print(error);
                           }
                         }
-                      }
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Confirmation'),
-                            content: Text(
-                                "Are you sure you want to add event $eventTitle ?"),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('Cancel'),
-                                onPressed: () {
-                                  // Close the dialog and do nothing
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              ElevatedButton(
-                                child: const Text('Submit'),
-                                onPressed: () {
-                                  firebaseDatabase.addEventFB(
-                                      eventTitle,
-                                      eventType,
-                                      eventDesc,
-                                      eventVenue,
-                                      "${eventDate.day}/${eventDate.month}/${eventDate.year}",
-                                      tod2str(startTime),
-                                      tod2str(endTime),
-                                      imageURL,
-                                      "admin");
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                            Text("Event Added Sucessfully")),
-                                  );
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Confirmation'),
+                              content: Text(
+                                  "Are you sure you want to add event $eventTitle ?"),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    // Close the dialog and do nothing
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                ElevatedButton(
+                                  child: const Text('Submit'),
+                                  onPressed: () {
+                                    firebaseDatabase.addEventFB(
+                                        eventTitle,
+                                        eventType,
+                                        eventDesc,
+                                        eventVenue,
+                                        "${eventDate.day}/${eventDate.month}/${eventDate.year}",
+                                        tod2str(startTime),
+                                        tod2str(endTime),
+                                        imageURL,
+                                        "admin");
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text("Event Added Sucessfully")),
+                                    );
 
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                     },
                     child: const Text('Submit'),
                   ),

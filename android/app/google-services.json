@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "605010269946-22185lsum69adsjjl6kckbp3i2e376g1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.calee.iitropar",
+            "certificate_hash": "6997ec5bab84ce57fd47b3ce75d99aae000aabf8"
+          }
+        },
+        {
           "client_id": "605010269946-3hiivsntdgjhk7e7a7cl9gftil85mui2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
