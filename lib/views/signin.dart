@@ -110,6 +110,20 @@ class _SignInScreenState extends State<SignInScreen> {
                             fontSize: 30,
                             fontWeight: FontWeight.bold),
                       ),
+                      Text(
+                        "Calendar and Events",
+                        style: TextStyle(
+                            color: Color(secondaryLight),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "Management IIT Ropar",
+                        style: TextStyle(
+                            color: Color(secondaryLight),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                 ),
