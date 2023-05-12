@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "605010269946-9ufle14m2eqsgspus4ccq4rumkmccfmf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.calee.iitropar",
+            "certificate_hash": "675007e3245e67ba420d16c73c46ad884d033dbd"
+          }
+        },
+        {
           "client_id": "605010269946-d7ofkj5voatmvjkr47irr1rbcacbde7i.apps.googleusercontent.com",
           "client_type": 3
         }
