@@ -84,6 +84,8 @@ class Loader {
       await loadTimes();
     }
 
+    semesterDur sd = await firebaseDatabase.getSemDur();
+
     for (int i = 0; i < course_id.length; i++) {
       await saveExtraClasses(course_id[i]);
       for (int j = 0; j < 2; j++) {
@@ -125,12 +127,17 @@ class Loader {
             etime: str2tod(etime),
             creator: 'course',
           );
-          await EventDB().addRecurringEvent(
-            e,
-            DateTime(2023),
-            DateTime(2024),
-            mask,
-          );
+          try {
+            await EventDB().addRecurringEvent(
+              e,
+              sd.startDate!,
+              sd.endDate!,
+              mask,
+            );
+          } catch (e) {
+            print(e);
+            continue;
+          }
         }
       }
     }
@@ -252,5 +259,4 @@ class Loader {
       await EventDB().addSingularEvent(e, c.date);
     }
   }
-
 }

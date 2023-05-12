@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -75,24 +77,24 @@ class _NewSemesterState extends State<NewSemester> {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 seeSemesterInfo(context),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Divider(
+                const Divider(
                   color: Colors.grey,
                   thickness: 1,
                 ),
                 updateSemesterDur(context),
-                Divider(
+                const Divider(
                   color: Colors.grey,
                   thickness: 1,
                 ),
                 clear_semester(context),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
               ]),
@@ -108,20 +110,20 @@ class _NewSemesterState extends State<NewSemester> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: Text("Confirm"),
-                  content: Text(
+                  title: const Text("Confirm"),
+                  content: const Text(
                       "Do you really want to clear the semester. This will remove all student courses, faculty courses and classes."),
                   actions: <Widget>[
                     TextButton(
-                      child: Text("Cancel"),
+                      child: const Text("Cancel"),
                       onPressed: () {
                         // Close the dialog
                         Navigator.of(context).pop();
                       },
                     ),
                     TextButton.icon(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        label: Text(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        label: const Text(
                           "Delete",
                           style: TextStyle(
                             color: Colors.red,
@@ -142,10 +144,10 @@ class _NewSemesterState extends State<NewSemester> {
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
           padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-            EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
         ),
-        child: Text(
+        child: const Text(
           "CLEAR SEMESTER",
           style: TextStyle(color: Colors.white),
         ),
@@ -156,14 +158,14 @@ class _NewSemesterState extends State<NewSemester> {
   Widget seeSemesterInfo(BuildContext context) {
     return Column(
       children: [
-        Text(
+        const Text(
           'Current Semester Duration',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Row(
@@ -171,13 +173,13 @@ class _NewSemesterState extends State<NewSemester> {
           children: [
             Column(
               children: [
-                Text(
+                const Text(
                   'START DATE',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   formatDateWord(cur_start_date),
                   style: TextStyle(
@@ -188,13 +190,13 @@ class _NewSemesterState extends State<NewSemester> {
             ),
             Column(
               children: [
-                Text(
+                const Text(
                   'END DATE',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   formatDateWord(cur_end_date),
                   style: TextStyle(
@@ -214,24 +216,24 @@ class _NewSemesterState extends State<NewSemester> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmation'),
+          title: const Text('Confirmation'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Are you sure you want to have \n'),
+              const Text('Are you sure you want to have \n'),
               Text('start date  =  ${formatDateWord(_startDate)}'),
               Text('end date  = ${formatDateWord(_endDate)} ?'),
             ],
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Update'),
+              child: const Text('Update'),
               onPressed: () {
                 // Perform the update operation here
                 firebaseDatabase.addSemDur(_startDate, _endDate);
@@ -252,15 +254,15 @@ class _NewSemesterState extends State<NewSemester> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           'Update Semester Duration',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 10),
-        Text(
+        const SizedBox(height: 10),
+        const Text(
           'START DATE',
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -281,8 +283,8 @@ class _NewSemesterState extends State<NewSemester> {
             ),
           ],
         ),
-        SizedBox(height: 20),
-        Text(
+        const SizedBox(height: 20),
+        const Text(
           'END DATE',
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -303,7 +305,7 @@ class _NewSemesterState extends State<NewSemester> {
             ),
           ],
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
             if (!formChecks.isbeforeDate(_startDate, _endDate)) {
@@ -315,7 +317,7 @@ class _NewSemesterState extends State<NewSemester> {
             }
             _updateSemesterDuration(context);
           },
-          child: Text('Update Semester Duration'),
+          child: const Text('Update Semester Duration'),
         ),
       ],
     );
