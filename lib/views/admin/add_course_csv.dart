@@ -40,8 +40,9 @@ class _addCoursecsvState extends State<addCoursecsv> {
       int num_of_courses = events[i].length;
       for (int j = 2; j < num_of_courses; j++) {
         events[i][j] = events[i][j].toString().replaceAll(' ', '');
-        if (events[i][j] != "")
+        if (events[i][j] != "") {
           courses.add(events[i][j].toString().toUpperCase());
+        }
       }
       firebaseDatabase.addCourseFB(events[i][0], events[i][1], courses);
     }
@@ -132,10 +133,9 @@ class _addCoursecsvState extends State<addCoursecsv> {
               if (result == null) {
                 return;
               }
-              File nfile = File(
-                  p.join(result, '${dateString(DateTime.now())}_sample.csv'));
+              File nfile = File(p.join(result, 'courseSample.csv'));
               nfile.writeAsString(
-                  await rootBundle.loadString('assets/TimeTable.csv'));
+                  await rootBundle.loadString('assets/courseSample.csv'));
             },
           ),
         ]));

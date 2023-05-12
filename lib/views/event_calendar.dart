@@ -210,11 +210,18 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       }
     }
     if (holidaysLoaded) {
-      if (mapofHolidays[DateFormat("yyyy-MM-dd").format(datetime)] != null) {
-        return datetime.add(Duration(days: 1000));
+      if (mapofHolidays[dateString(datetime)] != null) {
+        return datetime.add(const Duration(days: 1000));
       }
     }
     return datetime;
+  }
+
+  String? holidayScript(DateTime date) {
+    if (holidaysLoaded) {
+      return mapofHolidays[dateString(date)];
+    }
+    return null;
   }
 
   _showSingleAddEventDialog() async {
@@ -527,6 +534,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String? holidayResaon = holidayScript(_selectedDate);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -606,90 +614,99 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               height: 0,
             ),
             Divider(
-              height: 0,
+              height: 5,
               thickness: 1,
               color: Color(primaryLight).withOpacity(0.05),
             ),
             Expanded(
-                child: ListView(
-              children: [
-                ..._listOfDayEvents(whatDatetocall(_selectedDate))
-                    .map((myEvents) {
-                  final width = MediaQuery.of(context).size.width;
-                  return Column(
-                    children: [
-                      SizedBox(
-                        height: 50,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 1.25 / 5.5 * width,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(myEvents.startTime(),
-                                      style: TextStyle(
-                                        color: Color(primaryLight),
-                                        fontSize: 14,
-                                      )),
-                                  Text(
-                                    myEvents.endTime(),
-                                    style: TextStyle(
-                                        color: Color(primaryLight)
-                                            .withOpacity(0.6),
-                                        fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const VerticalDivider(
-                              thickness: 3.5,
-                              width: 0,
-                              color: Colors.green /* Colors.green*/,
-                            ),
-                            SizedBox(
-                              width: 0.5 / 5.5 * width,
-                            ),
-                            SizedBox(
-                              width: 3 / 5.5 * width,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    myEvents.title,
-                                    style: TextStyle(
-                                        color: Color(primaryLight),
-                                        fontSize: 16),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(myEvents.desc,
+              child: ListView(
+                children: [
+                  ..._listOfDayEvents(whatDatetocall(_selectedDate))
+                      .map((myEvents) {
+                    final width = MediaQuery.of(context).size.width;
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 1.25 / 5.5 * width,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(myEvents.startTime(),
+                                        style: TextStyle(
+                                          color: Color(primaryLight),
+                                          fontSize: 14,
+                                        )),
+                                    Text(
+                                      myEvents.endTime(),
                                       style: TextStyle(
                                           color: Color(primaryLight)
-                                              .withOpacity(0.6)),
-                                      overflow: TextOverflow.ellipsis),
-                                ],
+                                              .withOpacity(0.6),
+                                          fontSize: 14),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: Container(),
-                            ),
-                            getDeleteButton(myEvents),
-                          ],
+                              const VerticalDivider(
+                                thickness: 3.5,
+                                width: 0,
+                                color: Colors.green /* Colors.green*/,
+                              ),
+                              SizedBox(
+                                width: 0.5 / 5.5 * width,
+                              ),
+                              SizedBox(
+                                width: 3 / 5.5 * width,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      myEvents.title,
+                                      style: TextStyle(
+                                          color: Color(primaryLight),
+                                          fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(myEvents.desc,
+                                        style: TextStyle(
+                                            color: Color(primaryLight)
+                                                .withOpacity(0.6)),
+                                        overflow: TextOverflow.ellipsis),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(),
+                              ),
+                              getDeleteButton(myEvents),
+                            ],
+                          ),
                         ),
-                      ),
-                      Divider(
-                        height: 2,
-                        thickness: 1,
-                        color: Color(primaryLight).withOpacity(0.05),
-                      ),
-                    ],
-                  );
-                })
-              ],
-            ))
+                        Divider(
+                          height: 2,
+                          thickness: 1,
+                          color: Color(primaryLight).withOpacity(0.05),
+                        ),
+                      ],
+                    );
+                  }),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    holidayResaon ?? '',
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(

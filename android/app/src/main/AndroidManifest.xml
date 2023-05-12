@@ -15,7 +15,7 @@
         </intent>
     </queries>
    <application
-        android:label="iitropar"
+        android:label="Calee"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -217,7 +217,7 @@ class _StudentHomeState extends AbstractHomeState {
   }
 
   Future<bool> loadEvents() async {
-    events = await firebaseDatabase.getEvents(DateTime.now());
+    events = await firebaseDatabase.getAllEvents();
     return true;
   }
 

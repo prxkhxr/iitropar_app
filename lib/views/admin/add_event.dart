@@ -48,11 +48,11 @@ class AddEventFormState extends State<AddEventForm> {
   // and allows validation of the form.
 
   final _formKey = GlobalKey<FormState>();
-  late String eventTitle;
-  late String eventType;
-  late String eventDesc;
+  late String eventTitle = "";
+  late String eventType = "";
+  late String eventDesc = "";
   late DateTime eventDate;
-  late String eventVenue;
+  late String eventVenue = "";
   late TimeOfDay startTime;
   late TimeOfDay endTime;
   String? imageURL;
