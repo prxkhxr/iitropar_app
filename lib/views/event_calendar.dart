@@ -67,7 +67,8 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   Widget getDeleteButton(Event m) {
     print(m.creator);
     if (FirebaseAuth.instance.currentUser != null) {
-      if (FirebaseAuth.instance.currentUser!.email == m.creator) {
+      if (FirebaseAuth.instance.currentUser!.email == m.creator ||
+          m.creator == 'guest') {
         return IconButton(
           onPressed: () => _deleteEntireEvent(m),
           icon: const Icon(Icons.delete),
@@ -342,7 +343,10 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      creator: FirebaseAuth.instance.currentUser!.email!,
+                      creator:
+                          (FirebaseAuth.instance.currentUser!.email == null)
+                              ? ('guest')
+                              : (FirebaseAuth.instance.currentUser!.email!),
                     );
                     _insertSingularEvent(s, _selectedDate);
 
@@ -515,7 +519,10 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       desc: descpController.text,
                       stime: startTime,
                       etime: endTime,
-                      creator: 'user',
+                      creator:
+                          (FirebaseAuth.instance.currentUser!.email == null)
+                              ? ('guest')
+                              : (FirebaseAuth.instance.currentUser!.email!),
                     );
                     _insertRecurringEvent(r, startDate, endDate, _selectedDate,
                         ((1 << (startDate.weekday - 1))));
@@ -752,8 +759,8 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   }
 
   Widget themeButtonWidget() {
-  return IconButton(
-    onPressed: () async {
+    return IconButton(
+      onPressed: () async {
         if ((await Ids.resolveUser()).compareTo('student') == 0) {
           var cl = await firebaseDatabase.getCourses(
               FirebaseAuth.instance.currentUser!.email!.split('@')[0]);
@@ -772,47 +779,48 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
           List<String> cl = List.from(fd.courses);
           await Loader.saveCourses(cl);
         }
-        
+
         // setState(() {
 
         // });
         Navigator.pop(context);
-        Navigator.of(context).push(MaterialPageRoute(builder:((context) => const EventCalendarScreen())));
-    },
-    icon: const Icon(
-      Icons.sync_rounded,
-    ),
-    color: Color(primaryLight),
-    iconSize: 28,
-  );
-}
-
-TextStyle appbarTitleStyle() {
-  return TextStyle(
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: ((context) => const EventCalendarScreen())));
+      },
+      icon: const Icon(
+        Icons.sync_rounded,
+      ),
       color: Color(primaryLight),
-      // fontSize: 24,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1.5);
-}
+      iconSize: 28,
+    );
+  }
 
-Row buildTitleBar(String text, BuildContext context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      themeButtonWidget(),
-      Flexible(
-        child: SizedBox(
-          height: 30,
-          child: FittedBox(
-            child: Text(
-              text,
-              style: appbarTitleStyle(),
+  TextStyle appbarTitleStyle() {
+    return TextStyle(
+        color: Color(primaryLight),
+        // fontSize: 24,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.5);
+  }
+
+  Row buildTitleBar(String text, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        themeButtonWidget(),
+        Flexible(
+          child: SizedBox(
+            height: 30,
+            child: FittedBox(
+              child: Text(
+                text,
+                style: appbarTitleStyle(),
+              ),
             ),
           ),
         ),
-      ),
-      signoutButtonWidget(context),
-    ],
-  );
-}
+        signoutButtonWidget(context),
+      ],
+    );
+  }
 }

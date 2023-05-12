@@ -564,6 +564,8 @@ Future<bool> _signout() async {
   if (Ids.role == 'student') {
     await EventDB().deleteOf('course');
     await EventDB().deleteOf('exam');
+  } else if (Ids.role == 'faculty') {
+    await EventDB().deleteOf('course');
   }
   await FirebaseServices().signOut();
   return true;
@@ -609,8 +611,7 @@ Widget signoutButtonWidget(BuildContext context) {
 //           List<String> cl = List.from(fd.courses);
 //           await Loader.saveCourses(cl);
 //         }
-        
-        
+
 //     },
 //     icon: const Icon(
 //       Icons.sync_rounded,
