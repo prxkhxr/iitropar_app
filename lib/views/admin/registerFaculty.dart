@@ -426,8 +426,7 @@ class AddEventFormState extends State<AddEventForm> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text('Given CSV format'),
-                            content: SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.5,
+                            content: SingleChildScrollView(
                               child: Column(
                                 children: [
                                   Image.asset("assets/faculty_register.png"),
