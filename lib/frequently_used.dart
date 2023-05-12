@@ -354,11 +354,12 @@ class faculty {
 
 class Ids {
   static List<String> admins = [
-    "taklubalm@gmail.com",
-    "gautamsethia7702@gmail.com",
-    "2020csb1073@iitrpr.ac.in",
+    // "taklubalm@gmail.com",
+    // "gautamsethia7702@gmail.com",
+    // "2020csb1073@iitrpr.ac.in",
     // "2020csb1111@iitrpr.ac.in",
-    "guptachand918@gmail.com"
+    "prakhar1303@gmail.com"
+    // "guptachand918@gmail.com"
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
   static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
