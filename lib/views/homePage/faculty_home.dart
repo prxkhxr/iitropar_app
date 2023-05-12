@@ -66,85 +66,49 @@ class _FacultyHomeState extends AbstractHomeState {
           const SizedBox(
             height: 10,
           ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Semester Start Date',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 10.0,
-                  ),
-                ),
-                SizedBox(height: 4.0),
-                Text(
-                  '${sm == null ? '' : formatDateWord(sm!.startDate!)}',
-                  style: TextStyle(
-                    fontSize: 10.0,
-                  ),
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  'Semester End Date',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 10.0,
-                  ),
-                ),
-                SizedBox(height: 4.0),
-                Text(
-                  '${sm == null ? '' : formatDateWord(sm!.endDate!)}',
-                  style: TextStyle(
-                    fontSize: 10.0,
-                  ),
-                ),
-              ],
+          SingleChildScrollView(
+            child: SizedBox(
+              height: 150,
+              child: ListView.builder(
+                // shrinkWrap: true,
+                // physics: NeverScrollableScrollPhysics(),
+                itemCount: coursesList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  if (coursesList[index] == "None") return Container();
+                  final colorIndex = index % colors.length;
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              studentsEnrolled(course: coursesList[index]),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        //color: Colors.black,
+                        color: colors[colorIndex],
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          coursesList[index],
+                          style: TextStyle(color: Color(secondaryLight)),
+                          //style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-          SizedBox(
-            height: 150,
-            child: ListView.builder(
-              // shrinkWrap: true,
-              // physics: NeverScrollableScrollPhysics(),
-              itemCount: coursesList.length,
-              itemBuilder: (BuildContext context, int index) {
-                if (coursesList[index] == "None") return Container();
-                final colorIndex = index % colors.length;
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            studentsEnrolled(course: coursesList[index]),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      //color: Colors.black,
-                      color: colors[colorIndex],
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        coursesList[index],
-                        style: TextStyle(color: Color(secondaryLight)),
-                        //style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
+          const Text(
+            "To add new course, contact Admin",
+            overflow: TextOverflow.fade,
           ),
         ],
       ),
@@ -154,6 +118,37 @@ class _FacultyHomeState extends AbstractHomeState {
   @override
   List<Widget> buttons() {
     List<Widget> l = List.empty(growable: true);
+
+    l.add(
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Semester Start Date',
+            ),
+            SizedBox(height: 4.0),
+            Text(
+              '${sm == null ? '' : formatDateWord(sm!.startDate!)}',
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Semester End Date',
+            ),
+            SizedBox(height: 4.0),
+            Text(
+              '${sm == null ? '' : formatDateWord(sm!.endDate!)}',
+            ),
+          ],
+        ),
+      ),
+    );
     l.add(allCourses());
     l.add(
       const SizedBox(
