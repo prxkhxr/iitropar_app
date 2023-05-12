@@ -8,6 +8,8 @@ import 'package:iitropar/views/homePage/faculty_home.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 
+import '../../database/loader.dart';
+
 abstract class AbstractHome extends StatefulWidget {
   const AbstractHome({super.key});
 }
@@ -133,6 +135,47 @@ abstract class AbstractHomeState extends State<AbstractHome> {
       ),
     );
   }
+
+  Widget themeButtonWidget() {
+  return IconButton(
+    onPressed: () {
+    },
+    icon: const Icon(
+      Icons.home,
+    ),
+    color: Color(primaryLight),
+    iconSize: 28,
+  );
+}
+
+TextStyle appbarTitleStyle() {
+  return TextStyle(
+      color: Color(primaryLight),
+      // fontSize: 24,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.5);
+}
+
+Row buildTitleBar(String text, BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      themeButtonWidget(),
+      Flexible(
+        child: SizedBox(
+          height: 30,
+          child: FittedBox(
+            child: Text(
+              text,
+              style: appbarTitleStyle(),
+            ),
+          ),
+        ),
+      ),
+      signoutButtonWidget(context),
+    ],
+  );
+}
 }
 
 class HomePage extends StatefulWidget {

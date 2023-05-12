@@ -12,6 +12,7 @@ import 'package:iitropar/utilities/firebase_services.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:intl/intl.dart';
 
+import 'database/loader.dart';
 import 'database/local_db.dart';
 
 DateTime getTodayDateTime() {
@@ -356,7 +357,7 @@ class Ids {
     "taklubalm@gmail.com",
     "gautamsethia7702@gmail.com",
     "2020csb1073@iitrpr.ac.in",
-    "2020csb1111@iitrpr.ac.in",
+    // "2020csb1111@iitrpr.ac.in",
     "guptachand918@gmail.com"
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
@@ -563,6 +564,8 @@ Future<bool> _signout() async {
   if (Ids.role == 'student') {
     await EventDB().deleteOf('course');
     await EventDB().deleteOf('exam');
+  } else if (Ids.role == 'faculty') {
+    await EventDB().deleteOf('course');
   }
   await FirebaseServices().signOut();
   return true;
@@ -587,45 +590,65 @@ Widget signoutButtonWidget(BuildContext context) {
   );
 }
 
-Widget themeButtonWidget() {
-  return IconButton(
-    onPressed: () {},
-    icon: const Icon(
-      Icons.wb_sunny_rounded,
-    ),
-    color: Color(primaryLight),
-    iconSize: 28,
-  );
-}
+// Widget themeButtonWidget() {
+//   return IconButton(
+//     onPressed: () async {
+//         if ((await Ids.resolveUser()).compareTo('student') == 0) {
+//           var cl = await firebaseDatabase.getCourses(
+//               FirebaseAuth.instance.currentUser!.email!.split('@')[0]);
+//           await Loader.saveCourses(cl);
+//           await Loader.loadMidSem(
+//             DateTime(2023, 2, 27),
+//             const TimeOfDay(hour: 9, minute: 30),
+//             const TimeOfDay(hour: 12, minute: 30),
+//             const TimeOfDay(hour: 14, minute: 30),
+//             const TimeOfDay(hour: 16, minute: 30),
+//             cl,
+//           );
+//         } else if ((await Ids.resolveUser()).compareTo('faculty') == 0) {
+//           var fd = await firebaseDatabase
+//               .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+//           List<String> cl = List.from(fd.courses);
+//           await Loader.saveCourses(cl);
+//         }
 
-TextStyle appbarTitleStyle() {
-  return TextStyle(
-      color: Color(primaryLight),
-      // fontSize: 24,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1.5);
-}
+//     },
+//     icon: const Icon(
+//       Icons.sync_rounded,
+//     ),
+//     color: Color(primaryLight),
+//     iconSize: 28,
+//   );
+// }
 
-Row buildTitleBar(String text, BuildContext context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      themeButtonWidget(),
-      Flexible(
-        child: SizedBox(
-          height: 30,
-          child: FittedBox(
-            child: Text(
-              text,
-              style: appbarTitleStyle(),
-            ),
-          ),
-        ),
-      ),
-      signoutButtonWidget(context),
-    ],
-  );
-}
+// TextStyle appbarTitleStyle() {
+//   return TextStyle(
+//       color: Color(primaryLight),
+//       // fontSize: 24,
+//       fontWeight: FontWeight.bold,
+//       letterSpacing: 1.5);
+// }
+
+// Row buildTitleBar(String text, BuildContext context) {
+//   return Row(
+//     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//     children: [
+//       themeButtonWidget(),
+//       Flexible(
+//         child: SizedBox(
+//           height: 30,
+//           child: FittedBox(
+//             child: Text(
+//               text,
+//               style: appbarTitleStyle(),
+//             ),
+//           ),
+//         ),
+//       ),
+//       signoutButtonWidget(context),
+//     ],
+//   );
+// }
 
 class ExtraClass {
   String venue;

@@ -83,6 +83,46 @@ class _QuickLinksState extends State<QuickLinks> {
     );
   }
 
+  Widget themeButtonWidget() {
+  return IconButton(
+    onPressed: () {},
+    icon: const Icon(
+      Icons.sync_rounded,
+    ),
+    color: Color(primaryLight),
+    iconSize: 28,
+  );
+}
+
+TextStyle appbarTitleStyle() {
+  return TextStyle(
+      color: Color(primaryLight),
+      // fontSize: 24,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.5);
+}
+
+Row buildTitleBar(String text, BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      themeButtonWidget(),
+      Flexible(
+        child: SizedBox(
+          height: 30,
+          child: FittedBox(
+            child: Text(
+              text,
+              style: appbarTitleStyle(),
+            ),
+          ),
+        ),
+      ),
+      signoutButtonWidget(context),
+    ],
+  );
+}
+
   // void _launchURL(String url) async {
   //   Uri uri = Uri.parse(url);
   //   if (await canLaunchUrl(uri)) {

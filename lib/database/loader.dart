@@ -72,6 +72,9 @@ class Loader {
   }
 
   static Future<bool> saveCourses(List<String> course_id) async {
+    
+    EventDB().deleteOf("course");
+    
     //  Preprocess
     for (int i = 0; i < course_id.length; i++) {
       course_id[i] = course_id[i].replaceAll(' ', '');

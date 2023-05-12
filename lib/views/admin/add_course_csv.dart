@@ -140,4 +140,45 @@ class _addCoursecsvState extends State<addCoursecsv> {
           ),
         ]));
   }
+  Widget themeButtonWidget() {
+  return IconButton(
+    onPressed: () {
+      Navigator.pop(context);
+    },
+    icon: const Icon(
+      Icons.arrow_back,
+    ),
+    color: Color(primaryLight),
+    iconSize: 28,
+  );
+}
+
+TextStyle appbarTitleStyle() {
+  return TextStyle(
+      color: Color(primaryLight),
+      // fontSize: 24,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.5);
+}
+
+Row buildTitleBar(String text, BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      themeButtonWidget(),
+      Flexible(
+        child: SizedBox(
+          height: 30,
+          child: FittedBox(
+            child: Text(
+              text,
+              style: appbarTitleStyle(),
+            ),
+          ),
+        ),
+      ),
+      signoutButtonWidget(context),
+    ],
+  );
+}
 }

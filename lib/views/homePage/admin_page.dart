@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 
+import '../../database/loader.dart';
 import '../admin/add_course_csv.dart';
 import '../admin/add_event.dart';
 import '../admin/add_event_csv.dart';
@@ -103,4 +106,44 @@ class _AdminHomePageState extends State<AdminHomePage> {
       ),
     );
   }
+  Widget themeButtonWidget() {
+  return IconButton(
+    onPressed: () {
+    },
+    icon: const Icon(
+      Icons.home,
+    ),
+    color: Color(primaryLight),
+    iconSize: 28,
+  );
+}
+
+TextStyle appbarTitleStyle() {
+  return TextStyle(
+      color: Color(primaryLight),
+      // fontSize: 24,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.5);
+}
+
+Row buildTitleBar(String text, BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      themeButtonWidget(),
+      Flexible(
+        child: SizedBox(
+          height: 30,
+          child: FittedBox(
+            child: Text(
+              text,
+              style: appbarTitleStyle(),
+            ),
+          ),
+        ),
+      ),
+      signoutButtonWidget(context),
+    ],
+  );
+}
 }
