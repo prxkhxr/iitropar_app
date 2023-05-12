@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "605010269946-hq2rrsljc1nvri8a2e0k4a05ifmnq1fo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.calee.iitropar",
+            "certificate_hash": "6018eba61cf39b37c1a5c3b1d8ab0aecfc7cad75"
+          }
+        },
+        {
           "client_id": "605010269946-d7ofkj5voatmvjkr47irr1rbcacbde7i.apps.googleusercontent.com",
           "client_type": 3
         }
