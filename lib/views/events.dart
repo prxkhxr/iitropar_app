@@ -1,11 +1,15 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
+
+import '../database/loader.dart';
 
 //to do build a function to access all the events
 class Events extends StatefulWidget {
@@ -360,4 +364,43 @@ class _EventsState extends State<Events> {
           ],
         )); // Generated code for this Row Widget...
   }
+  Widget themeButtonWidget() {
+  return IconButton(
+    onPressed: () {},
+    icon: const Icon(
+      Icons.sync_rounded,
+    ),
+    color: Color(primaryLight),
+    iconSize: 28,
+  );
+}
+
+TextStyle appbarTitleStyle() {
+  return TextStyle(
+      color: Color(primaryLight),
+      // fontSize: 24,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.5);
+}
+
+Row buildTitleBar(String text, BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      themeButtonWidget(),
+      Flexible(
+        child: SizedBox(
+          height: 30,
+          child: FittedBox(
+            child: Text(
+              text,
+              style: appbarTitleStyle(),
+            ),
+          ),
+        ),
+      ),
+      signoutButtonWidget(context),
+    ],
+  );
+}
 }

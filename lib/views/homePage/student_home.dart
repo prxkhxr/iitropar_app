@@ -203,7 +203,7 @@ class _StudentHomeState extends AbstractHomeState {
                     height: 10,
                   ),
                   SizedBox(
-                    height: 100,
+                    height: 150,
                     child: ListView(
                       scrollDirection: Axis.vertical,
                       children: classes.map(classWidget).toList(),
@@ -231,6 +231,9 @@ class _StudentHomeState extends AbstractHomeState {
             if (events.isEmpty) {
               return const Text('No Events today');
             }
+            while(events.length > 5){
+              events.removeLast();
+            }
             return Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -249,7 +252,7 @@ class _StudentHomeState extends AbstractHomeState {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Events",
+                    "Recent Events",
                     style: TextStyle(
                         color: Color(primaryLight),
                         fontSize: 18,
@@ -259,7 +262,7 @@ class _StudentHomeState extends AbstractHomeState {
                     height: 10,
                   ),
                   SizedBox(
-                    height: 100,
+                    height: 150,
                     child: ListView(
                       scrollDirection: Axis.vertical,
                       children: events.map(classWidget).toList(),

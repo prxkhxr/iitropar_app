@@ -9,6 +9,8 @@ import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 
+import '../database/loader.dart';
+
 class EventCalendarScreen extends StatefulWidget {
   const EventCalendarScreen({super.key});
 
@@ -748,4 +750,69 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
           child: const Icon(Icons.add),
         ));
   }
+
+  Widget themeButtonWidget() {
+  return IconButton(
+    onPressed: () async {
+        if ((await Ids.resolveUser()).compareTo('student') == 0) {
+          var cl = await firebaseDatabase.getCourses(
+              FirebaseAuth.instance.currentUser!.email!.split('@')[0]);
+          await Loader.saveCourses(cl);
+          await Loader.loadMidSem(
+            DateTime(2023, 2, 27),
+            const TimeOfDay(hour: 9, minute: 30),
+            const TimeOfDay(hour: 12, minute: 30),
+            const TimeOfDay(hour: 14, minute: 30),
+            const TimeOfDay(hour: 16, minute: 30),
+            cl,
+          );
+        } else if ((await Ids.resolveUser()).compareTo('faculty') == 0) {
+          var fd = await firebaseDatabase
+              .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+          List<String> cl = List.from(fd.courses);
+          await Loader.saveCourses(cl);
+        }
+        
+        // setState(() {
+
+        // });
+        Navigator.pop(context);
+        Navigator.of(context).push(MaterialPageRoute(builder:((context) => const EventCalendarScreen())));
+    },
+    icon: const Icon(
+      Icons.sync_rounded,
+    ),
+    color: Color(primaryLight),
+    iconSize: 28,
+  );
+}
+
+TextStyle appbarTitleStyle() {
+  return TextStyle(
+      color: Color(primaryLight),
+      // fontSize: 24,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.5);
+}
+
+Row buildTitleBar(String text, BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      themeButtonWidget(),
+      Flexible(
+        child: SizedBox(
+          height: 30,
+          child: FittedBox(
+            child: Text(
+              text,
+              style: appbarTitleStyle(),
+            ),
+          ),
+        ),
+      ),
+      signoutButtonWidget(context),
+    ],
+  );
+}
 }
