@@ -358,7 +358,7 @@ class Ids {
     // "gautamsethia7702@gmail.com",
     // "2020csb1073@iitrpr.ac.in",
     // "2020csb1111@iitrpr.ac.in",
-    "guptajatin918@gmail.com"
+    "guptachand918@gmail.com"
     // "guptachand918@gmail.com"
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
