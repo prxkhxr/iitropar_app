@@ -81,7 +81,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   Future<bool> getCD() async {
     listofCD = await firebaseDatabase.getChangedDays();
-    print(listofCD[0].day_to_followed);
+   // print(listofCD[0].day_to_followed);
     for (int i = 0; i < listofCD.length; i++) {
       switch (listofCD[i].day_to_followed) {
         case "Monday":

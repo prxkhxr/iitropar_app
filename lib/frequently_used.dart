@@ -358,7 +358,7 @@ class Ids {
     // "gautamsethia7702@gmail.com",
     // "2020csb1073@iitrpr.ac.in",
     // "2020csb1111@iitrpr.ac.in",
-    "prakhar1303@gmail.com"
+    "guptajatin918@gmail.com"
     // "guptachand918@gmail.com"
   ];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
@@ -411,47 +411,47 @@ class Menu {
   static Map<String, List<MenuItem>> menu = {
     'Monday': [
       MenuItem('Breakfast',
-          'Aloo Sabji, Paratha, Sprouts, Bread-Butter-Jam, Milk-Tea-Coffee'),
-      MenuItem('Lunch', 'Veg Biryani, Chana Masala, Chapati, Salad'),
+          'Mix Paratha, Chutney, Sprouts, Bread-Butter-Jam, Milk-Tea-Coffee'),
+      MenuItem('Lunch', 'Veg Biryani, Chana Masala, Mix-Raita, Chapati, Salad'),
       MenuItem('Dinner',
-          'Seasonal Vegetable Curry, Chana Dal, Rice-Chapati, Salad, Rasmalai')
+          'Arbi/Soya Badi , Chana Dal, Rice-Chapati, Salad, Rasmalai')
     ],
     'Tuesday': [
       MenuItem('Breakfast',
           'Uttapam, Sambar, Coconut Chutney, Cornflakes, Bread-Butter-Jam, Milk-Tea-Coffee'),
       MenuItem(
           'Lunch', 'Aloo Gobi, Dal makhani, Jeera Rice, Chapati, Curd, Salad'),
-      MenuItem('Dinner', 'Besan Gatte, Dal Tadka, Rice-Chapati, Salad, Jalebi')
+      MenuItem('Dinner', 'Lauki Chana, Dal Tadka, Rice-Chapati, Salad, Jalebi')
     ],
     'Wednesday': [
       MenuItem('Breakfast',
-          'Mix Parantha, Fruit/Boiled Eggs, Green Chutney, Bread-Butter-Jam, Milk-Tea-Coffee'),
+          'Puri, Black Chana, Fruit/Boiled Eggs, Bread-Butter-Jam, Milk-Tea-Coffee'),
       MenuItem(
-          'Lunch', 'Black Chana, Puri, Mix Dal, Curd,  Rice-Chapati, Salad'),
+           'Lunch', 'Kadi-Pakoda, Alu Jeera, Jeera rice, Papad, Chapati, Salad'),
       MenuItem('Dinner',
           'Kadai Chicken/Matar Paneer, Green Moong Dal, Rice-Chapati, Salad, Laddu')
     ],
     'Thursday': [
       MenuItem('Breakfast',
-          'Puri, White Chole, Dalia(Sweet), Sprouts, Bread-Butter-Jam, Milk-Tea-Coffee'),
+          'Aloo Parantha, Chutney, Dalia(Sweet), Sprouts, Bread-Butter-Jam, Milk-Tea-Coffee'),
       MenuItem(
-          'Lunch', 'Kadi-Pakoda, Alu Jeera, Jeera rice, Papad, Chapati, Salad'),
+          'Lunch', 'Lauki Kofta, Mix Dal, Curd, Rice-Chapati, Salad'),
       MenuItem('Dinner',
-          'Ajwain Parantha, Chole, Cabbage Peas, Rice, Salad, Ice-Cream')
+          'Ajwain Parantha, Chole, Bhindi/Cabbage Peas, Rice, Salad, Ice-Cream')
     ],
     'Friday': [
       MenuItem('Breakfast',
           'Seviyan, Upma, Sweet Corn, Bread-Butter-Jam, Milk-Tea-Coffee'),
       MenuItem('Lunch', 'Mix Veg, Masoor Dal, Curd, Rice-Chapati, Salad'),
       MenuItem('Dinner',
-          'Chole Paneer, Chicken do pyaza, Chana Dal, Rice-Chapati, Salad, Gulab Jamun')
+          'Kadai Paneer, Chicken do pyaza, Chana Dal, Rice-Chapati, Salad, Gulab Jamun')
     ],
     'Saturday': [
       MenuItem('Breakfast',
-          'Ajwain Parantha, Black Chana, Fruit/boiled-egg, Bread-Butter-Jam, Milk-Tea-Coffee'),
+          'Pav Bhaji, Fruit/Omlette, Bread-Butter-Jam, Milk-Tea-Coffee'),
       MenuItem('Lunch',
           'Chole Bhature, Aloo Capsicum, Jeera Rice, Boondi-Raita, Chapati, Salad, Chutney'),
-      MenuItem('Dinner', 'Lauki Sabji, Dal Tadka, Rice, Salad, Suji Halwa')
+      MenuItem('Dinner', 'Aloo Matar Sabji, Dal Tadka, Rice, Salad, Suji Halwa')
     ],
     'Sunday': [
       MenuItem('Breakfast',
