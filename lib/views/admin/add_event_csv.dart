@@ -52,14 +52,14 @@ class _addEventcsvState extends State<addEventcsv> {
     int len = events.length;
     for (int i = 1; i < len; i++) {
       firebaseDatabase.addEventFB(
-          events[i][0],
-          events[i][1],
-          events[i][2],
-          events[i][3],
-          events[i][4],
-          events[i][5],
-          events[i][6],
-          events[i][7],
+          events[i][0].toString().trim(),
+          events[i][1].toString().trim(),
+          events[i][2].toString().trim(),
+          events[i][3].toString().trim(),
+          events[i][4].toString().trim(),
+          events[i][5].toString().trim(),
+          events[i][6].toString().trim(),
+          events[i][7].toString().trim(),
           "admin");
     }
   }
@@ -71,7 +71,6 @@ class _addEventcsvState extends State<addEventcsv> {
     if (result == null) return;
     // we will log the name, size and path of the
     // first picked file (if multiple are selected)
-    print(result.files.first.name);
     filePath = result.files.first.path!;
 
     final input = File(filePath!).openRead();
@@ -79,7 +78,6 @@ class _addEventcsvState extends State<addEventcsv> {
         .transform(utf8.decoder)
         .transform(const CsvToListConverter())
         .toList();
-    print(fields[0]);
     if (!verifyHeader(fields[0])) {
       sm.showSnackBar(
           const SnackBar(content: Text("Header format in csv incorrect!")));
@@ -97,14 +95,14 @@ class _addEventcsvState extends State<addEventcsv> {
 
   bool verifyHeader(List<dynamic> header) {
     if (header.length != 8) return false;
-    if (header[0].toString() != "eventTitle" ||
-        header[1].toString() != "eventType" ||
-        header[2].toString() != "eventDesc" ||
-        header[3].toString() != "eventVenue" ||
-        header[4].toString() != "date" ||
-        header[5].toString() != "startTime" ||
-        header[6].toString() != "endTime" ||
-        header[7].toString() != "imgURL") return false;
+    if (header[0].toString().trim() != "eventTitle" ||
+        header[1].toString().trim() != "eventType" ||
+        header[2].toString().trim() != "eventDesc" ||
+        header[3].toString().trim() != "eventVenue" ||
+        header[4].toString().trim() != "date" ||
+        header[5].toString().trim() != "startTime" ||
+        header[6].toString().trim() != "endTime" ||
+        header[7].toString().trim() != "imgURL") return false;
 
     return true;
   }
@@ -165,45 +163,46 @@ class _addEventcsvState extends State<addEventcsv> {
           ),
         ]));
   }
+
   Widget themeButtonWidget() {
-  return IconButton(
-    onPressed: () {
-      Navigator.pop(context);
-    },
-    icon: const Icon(
-      Icons.arrow_back,
-    ),
-    color: Color(primaryLight),
-    iconSize: 28,
-  );
-}
-
-TextStyle appbarTitleStyle() {
-  return TextStyle(
+    return IconButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      icon: const Icon(
+        Icons.arrow_back,
+      ),
       color: Color(primaryLight),
-      // fontSize: 24,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1.5);
-}
+      iconSize: 28,
+    );
+  }
 
-Row buildTitleBar(String text, BuildContext context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      themeButtonWidget(),
-      Flexible(
-        child: SizedBox(
-          height: 30,
-          child: FittedBox(
-            child: Text(
-              text,
-              style: appbarTitleStyle(),
+  TextStyle appbarTitleStyle() {
+    return TextStyle(
+        color: Color(primaryLight),
+        // fontSize: 24,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.5);
+  }
+
+  Row buildTitleBar(String text, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        themeButtonWidget(),
+        Flexible(
+          child: SizedBox(
+            height: 30,
+            child: FittedBox(
+              child: Text(
+                text,
+                style: appbarTitleStyle(),
+              ),
             ),
           ),
         ),
-      ),
-      signoutButtonWidget(context),
-    ],
-  );
-}
+        signoutButtonWidget(context),
+      ],
+    );
+  }
 }

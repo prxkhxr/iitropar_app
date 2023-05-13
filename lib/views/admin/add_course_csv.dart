@@ -39,9 +39,9 @@ class _addCoursecsvState extends State<addCoursecsv> {
       List<dynamic> courses = [];
       int num_of_courses = events[i].length;
       for (int j = 2; j < num_of_courses; j++) {
-        events[i][j] = events[i][j].toString().replaceAll(' ', '');
+        events[i][j] = events[i][j].toString().trim().replaceAll(' ', '');
         if (events[i][j] != "") {
-          courses.add(events[i][j].toString().toUpperCase());
+          courses.add(events[i][j].toString().toUpperCase().trim());
         }
       }
       firebaseDatabase.addCourseFB(events[i][0], events[i][1], courses);
@@ -57,7 +57,6 @@ class _addCoursecsvState extends State<addCoursecsv> {
     if (result == null) return;
     // we will log the name, size and path of the
     // first picked file (if multiple are selected)
-    print(result.files.first.name);
     filePath = result.files.first.path!;
 
     final input = File(filePath!).openRead();
@@ -65,7 +64,6 @@ class _addCoursecsvState extends State<addCoursecsv> {
         .transform(utf8.decoder)
         .transform(const CsvToListConverter())
         .toList();
-    print(fields[0]);
     if (!verifyHeader(fields[0])) {
       sm.showSnackBar(
           const SnackBar(content: Text("Header format in csv incorrect!")));
@@ -80,9 +78,9 @@ class _addCoursecsvState extends State<addCoursecsv> {
   }
 
   bool verifyHeader(List<dynamic> header) {
-    return (header[0].toString().toLowerCase() ==
+    return (header[0].toString().toLowerCase().trim() ==
             "entryNumber".toLowerCase()) &&
-        (header[1].toString().toLowerCase() == "name");
+        (header[1].toString().toLowerCase().trim() == "name");
   }
 
   @override
@@ -140,45 +138,46 @@ class _addCoursecsvState extends State<addCoursecsv> {
           ),
         ]));
   }
+
   Widget themeButtonWidget() {
-  return IconButton(
-    onPressed: () {
-      Navigator.pop(context);
-    },
-    icon: const Icon(
-      Icons.arrow_back,
-    ),
-    color: Color(primaryLight),
-    iconSize: 28,
-  );
-}
-
-TextStyle appbarTitleStyle() {
-  return TextStyle(
+    return IconButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      icon: const Icon(
+        Icons.arrow_back,
+      ),
       color: Color(primaryLight),
-      // fontSize: 24,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1.5);
-}
+      iconSize: 28,
+    );
+  }
 
-Row buildTitleBar(String text, BuildContext context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      themeButtonWidget(),
-      Flexible(
-        child: SizedBox(
-          height: 30,
-          child: FittedBox(
-            child: Text(
-              text,
-              style: appbarTitleStyle(),
+  TextStyle appbarTitleStyle() {
+    return TextStyle(
+        color: Color(primaryLight),
+        // fontSize: 24,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.5);
+  }
+
+  Row buildTitleBar(String text, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        themeButtonWidget(),
+        Flexible(
+          child: SizedBox(
+            height: 30,
+            child: FittedBox(
+              child: Text(
+                text,
+                style: appbarTitleStyle(),
+              ),
             ),
           ),
         ),
-      ),
-      signoutButtonWidget(context),
-    ],
-  );
-}
+        signoutButtonWidget(context),
+      ],
+    );
+  }
 }

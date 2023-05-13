@@ -32,47 +32,48 @@ class _addHolidayState extends State<addHoliday> {
         ),
         body: const AddClassForm());
   }
+
   Widget themeButtonWidget() {
-  return IconButton(
-    onPressed: () {
-      Navigator.pop(context);
-    },
-    icon: const Icon(
-      Icons.arrow_back,
-    ),
-    color: Color(primaryLight),
-    iconSize: 28,
-  );
-}
-
-TextStyle appbarTitleStyle() {
-  return TextStyle(
+    return IconButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      icon: const Icon(
+        Icons.arrow_back,
+      ),
       color: Color(primaryLight),
-      // fontSize: 24,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1.5);
-}
+      iconSize: 28,
+    );
+  }
 
-Row buildTitleBar(String text, BuildContext context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      themeButtonWidget(),
-      Flexible(
-        child: SizedBox(
-          height: 30,
-          child: FittedBox(
-            child: Text(
-              text,
-              style: appbarTitleStyle(),
+  TextStyle appbarTitleStyle() {
+    return TextStyle(
+        color: Color(primaryLight),
+        // fontSize: 24,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.5);
+  }
+
+  Row buildTitleBar(String text, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        themeButtonWidget(),
+        Flexible(
+          child: SizedBox(
+            height: 30,
+            child: FittedBox(
+              child: Text(
+                text,
+                style: appbarTitleStyle(),
+              ),
             ),
           ),
         ),
-      ),
-      signoutButtonWidget(context),
-    ],
-  );
-}
+        signoutButtonWidget(context),
+      ],
+    );
+  }
 }
 
 // Create a Form widget.
@@ -354,8 +355,8 @@ class AddClassFormState extends State<AddClassForm> {
     if (csv_head.isEmpty) {
       return false;
     }
-    if (csv_head[0].toString().toLowerCase() == "date" &&
-        csv_head[1].toString().toLowerCase() == "reason") {
+    if (csv_head[0].toString().toLowerCase().trim() == "date" &&
+        csv_head[1].toString().toLowerCase().trim() == "reason") {
       return true;
     }
     return false;
@@ -408,7 +409,8 @@ class AddClassFormState extends State<AddClassForm> {
         DateTime dt = DateTime(year, month, day);
         if (date_check) {
           firebaseDatabase.addHolidayFB(
-              DateFormat('yyyy-MM-dd').format(dt), fields[i][1]);
+              DateFormat('yyyy-MM-dd').format(dt).trim(),
+              fields[i][1].toString().trim());
           continue;
         }
       }
