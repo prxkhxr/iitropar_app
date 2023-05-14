@@ -1,0 +1,928 @@
+set namespaceSeparator ::
+
+class "iitropar::database::event.dart::Event" {
+  +String title
+  +String desc
+  +TimeOfDay stime
+  +TimeOfDay etime
+  +String creator
+  +int? id
+  +String startTime()
+  +String endTime()
+  +String displayTime()
+  +int compareTo()
+}
+
+"iitropar::database::event.dart::Event" o-- "flutter::src::material::time.dart::TimeOfDay"
+
+class "iitropar::database::loader.dart::Loader" {
+  {static} +Map<String, String>? courseToSlot
+  {static} +Map<String, List<String>>? slotToTime
+  {static} +String convertTo24()
+  {static} +Future<void> loadSlots()
+  {static} +Future<void> loadTimes()
+  {static} +Future<bool> saveCourses()
+  {static} +Future<void> loadMidSem()
+  {static} +Future<void> loadEndSem()
+  {static} +Future<List<ExtraClass>> loadExtraClasses()
+  {static} +Future<void> saveExtraClasses()
+}
+
+class "iitropar::database::local_db.dart::EventDB" {
+  {static} -Database? _db
+  {static} -bool _firstRun
+  {static} -int _next
+  {static} -Mutex _lock
+  -Future<List<Event>> _fetchSingularEvents()
+  -Future<List<Event>> _fetchRecurringEvents()
+  -Future<int> _addEvent()
+  -Future<void> _addEventMeta()
+  -Event _convertToEvent()
+  +void printAll()
+  {static} +Future<void> startInstance()
+  +Future<void> addSingularEvent()
+  +Future<void> addRecurringEvent()
+  +Future<List<Event>> deletedForDay()
+  +Future<void> deleteForDay()
+  +Future<void> delete()
+  +Future<int> deleteOf()
+  +Future<List<Event>> fetchEvents()
+  +Future<List<Event>> fetchOf()
+  -int _getID()
+  {static} +bool firstRun()
+  +Future<Event> fillID()
+}
+
+"iitropar::database::local_db.dart::EventDB" o-- "sqflite_common::sqlite_api.dart::Database"
+"iitropar::database::local_db.dart::EventDB" o-- "mutex::mutex.dart::Mutex"
+
+class "iitropar::frequently_used.dart::holidays" {
+  +DateTime date
+  +String desc
+}
+
+class "iitropar::frequently_used.dart::semesterDur" {
+  +DateTime? startDate
+  +DateTime? endDate
+}
+
+class "iitropar::frequently_used.dart::changedDay" {
+  +DateTime date
+  +String day_to_followed
+}
+
+class "iitropar::frequently_used.dart::faculty" {
+  +String name
+  +String department
+  +String email
+  +Set<dynamic> courses
+}
+
+class "iitropar::frequently_used.dart::Ids" {
+  {static} +List<String> admins
+  {static} +Future<List<dynamic>> fclub
+  {static} +Future<List<dynamic>> faculty
+  {static} +String role
+  {static} +bool assigned
+  {static} +String name
+  {static} +String dep
+  {static} +Future<String> resolveUser()
+  {static} -Future<String> _emailCheck()
+}
+
+class "iitropar::frequently_used.dart::MenuItem" {
+  +String name
+  +String description
+}
+
+class "iitropar::frequently_used.dart::Menu" {
+  {static} +Map<String, List<MenuItem>> menu
+}
+
+class "iitropar::frequently_used.dart::LoadingScreen" {
+  {static} -Future<bool> Function()? _task
+  {static} -String? _msg
+  {static} -Widget Function(BuildContext) _builder
+  {static} +bool isLoaded
+  {static} +void setPrompt()
+  {static} +void setTask()
+  {static} +void setBuilder()
+  {static} +Widget build()
+}
+
+"iitropar::frequently_used.dart::LoadingScreen" o-- "null::Future<bool> Function()"
+"iitropar::frequently_used.dart::LoadingScreen" o-- "null::Widget Function(BuildContext)"
+
+class "iitropar::frequently_used.dart::ExtraClass" {
+  +String venue
+  +String description
+  +String courseID
+  +DateTime date
+  +TimeOfDay startTime
+  +TimeOfDay endTime
+}
+
+"iitropar::frequently_used.dart::ExtraClass" o-- "flutter::src::material::time.dart::TimeOfDay"
+
+class "iitropar::frequently_used.dart::formChecks" {
+  {static} +bool isbeforeDate()
+  {static} +bool beforeCurDate()
+  {static} +bool email_check()
+}
+
+class "iitropar::main.dart::App" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "iitropar::main.dart::App"
+
+class "iitropar::testroute.dart::TestRoute" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "iitropar::testroute.dart::TestRoute"
+
+class "iitropar::utilities::firebase_database.dart::firebaseDatabase" {
+  {static} +void addEventFB()
+  {static} +Future<List<dynamic>> getStudents()
+  {static} +Future<List<List<dynamic>>> getStudentsWithName()
+  {static} +void updateFaculty()
+  {static} +void addHolidayFB()
+  {static} +Future<List<holidays>> getHolidayFB()
+  {static} +void switchTimetableFB()
+  {static} +void deleteChDay()
+  {static} +void deleteHol()
+  {static} +Future<List<changedDay>> getChangedDays()
+  {static} +void addCourseFB()
+  {static} +void registerFacultyFB()
+  {static} +void registerClubFB()
+  {static} +Future<List<dynamic>> getClubIds()
+  {static} +Future<List<dynamic>> getFacultyIDs()
+  {static} +Future<String> getClubName()
+  {static} +Future<faculty> getFacultyDetail()
+  {static} +Future<List<faculty>> getFaculty()
+  {static} +Future<List<String>> getCourses()
+  {static} +Future<List<Event>> getEvents()
+  {static} +Future<String> emailCheck()
+  {static} +Future<changedDay?> getChangedDay()
+  {static} +Future<bool> checkIfDocExists()
+  {static} +void addCourseCode()
+  {static} +Future<List<String>> getCourseCodes()
+  {static} +Future<bool> addExtraClass()
+  {static} +Future<List<ExtraClass>> getExtraClass()
+  {static} +void deleteClass()
+  {static} +void clearSemester()
+  {static} +void addSemDur()
+  {static} +Future<semesterDur> getSemDur()
+  {static} +Future<Map<String, String>> getNameMapping()
+}
+
+class "iitropar::utilities::firebase_services.dart::FirebaseServices" {
+  -FirebaseAuth _auth
+  -GoogleSignIn _googleSignIn
+  +dynamic signInWithGoogle()
+  +dynamic signOut()
+}
+
+"iitropar::utilities::firebase_services.dart::FirebaseServices" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"iitropar::utilities::firebase_services.dart::FirebaseServices" o-- "google_sign_in::google_sign_in.dart::GoogleSignIn"
+
+class "iitropar::views::admin::add_course_csv.dart::addCoursecsv" {
+  +State<addCoursecsv> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::add_course_csv.dart::addCoursecsv"
+
+class "iitropar::views::admin::add_course_csv.dart::_addCoursecsvState" {
+  -List<List<dynamic>> _data
+  +String? filePath
+  +bool checkData()
+  +void uploadData()
+  -void _pickFile()
+  +bool verifyHeader()
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::add_course_csv.dart::_addCoursecsvState"
+
+class "iitropar::views::admin::add_event.dart::AddEvent" {
+  +State<AddEvent> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::add_event.dart::AddEvent"
+
+class "iitropar::views::admin::add_event.dart::_AddEventState" {
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::add_event.dart::_AddEventState"
+
+class "iitropar::views::admin::add_event.dart::AddEventForm" {
+  +AddEventFormState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::add_event.dart::AddEventForm"
+
+class "iitropar::views::admin::add_event.dart::AddEventFormState" {
+  -GlobalKey<FormState> _formKey
+  +String eventTitle
+  +String eventType
+  +String eventDesc
+  +DateTime eventDate
+  +String eventVenue
+  +TimeOfDay startTime
+  +TimeOfDay endTime
+  +String? imageURL
+  +XFile? file
+  +double toDouble()
+  +String formatTimeOfDay()
+  -Widget _buildEventTitle()
+  -Widget _buildEventType()
+  -Widget _buildEventDesc()
+  -Widget _buildEventVenue()
+  -Widget _buildEventDate()
+  -Widget _buildStartTime()
+  -Widget _buildEndTime()
+  +Widget build()
+}
+
+"iitropar::views::admin::add_event.dart::AddEventFormState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"       
+"iitropar::views::admin::add_event.dart::AddEventFormState" o-- "flutter::src::material::time.dart::TimeOfDay"
+"iitropar::views::admin::add_event.dart::AddEventFormState" o-- "cross_file::src::types::interface.dart::XFile"
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::add_event.dart::AddEventFormState"
+
+class "iitropar::views::admin::add_event_csv.dart::addEventcsv" {
+  +State<addEventcsv> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::add_event_csv.dart::addEventcsv"
+
+class "iitropar::views::admin::add_event_csv.dart::_addEventcsvState" {
+  -List<List<dynamic>> _data
+  +String? filePath
+  +bool checkData()
+  +void uploadData()
+  -void _pickFile()
+  +bool verifyHeader()
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::add_event_csv.dart::_addEventcsvState"
+
+class "iitropar::views::admin::add_holidays.dart::addHoliday" {
+  +State<addHoliday> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::add_holidays.dart::addHoliday"
+
+class "iitropar::views::admin::add_holidays.dart::_addHolidayState" {
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::add_holidays.dart::_addHolidayState"
+
+class "iitropar::views::admin::add_holidays.dart::AddClassForm" {
+  +AddClassFormState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::add_holidays.dart::AddClassForm"
+
+class "iitropar::views::admin::add_holidays.dart::AddClassFormState" {
+  +TextEditingController dateinput
+  +TextEditingController descinput
+  +List<holidays> hols
+  -GlobalKey<FormState> _formKey
+  +Widget dateWidget()
+  +Widget descWidget()
+  +Future<bool> getHols()
+  +Widget submitWidget()
+  +Widget createForm()
+  +Widget alldeclaredHolidays()
+  +bool verifyHeader()
+  -void _pickFile()
+  +Widget csvOption()
+  +Widget build()
+}
+
+"iitropar::views::admin::add_holidays.dart::AddClassFormState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"iitropar::views::admin::add_holidays.dart::AddClassFormState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"    
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::add_holidays.dart::AddClassFormState"
+
+class "iitropar::views::admin::change_time_table.dart::changeTimetable" {
+  +State<changeTimetable> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::change_time_table.dart::changeTimetable"      
+
+class "iitropar::views::admin::change_time_table.dart::_changeTimetableState" {
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::change_time_table.dart::_changeTimetableState"
+
+class "iitropar::views::admin::change_time_table.dart::AddForm" {
+  +AddFormState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::change_time_table.dart::AddForm"
+
+class "iitropar::views::admin::change_time_table.dart::AddFormState" {
+  +TextEditingController dateinput
+  +String selected_day
+  +List<changedDay> chgs
+  +bool hasUpdated
+  -GlobalKey<FormState> _formKey
+  +dynamic AddClassFormState()
+  +Widget dateWidget()
+  +Widget dayWidget()
+  +Future<bool> getchgs()
+  +Widget previous()
+  +Widget submitWidget()
+  +Widget createForm()
+  +Widget build()
+}
+
+"iitropar::views::admin::change_time_table.dart::AddFormState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"iitropar::views::admin::change_time_table.dart::AddFormState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"    
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::change_time_table.dart::AddFormState"
+
+class "iitropar::views::admin::faculty_courses.dart::FacultyList" {
+  +_FacultyListState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::faculty_courses.dart::FacultyList"
+
+class "iitropar::views::admin::faculty_courses.dart::_FacultyListState" {
+  +List<faculty> faculties
+  +bool hasLoad
+  -List<TextEditingController> _newCourseController
+  +String dep_search
+  +void getFaculties()
+  -void _addCourse()
+  -void _deleteCourse()
+  +void sendDataToFB()
+  +Widget submitButton()
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::faculty_courses.dart::_FacultyListState"
+
+class "iitropar::views::admin::registerClub.dart::registerClub" {
+  +State<registerClub> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::registerClub.dart::registerClub"
+
+class "iitropar::views::admin::registerClub.dart::_registerClubState" {
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::registerClub.dart::_registerClubState"
+
+class "iitropar::views::admin::registerClub.dart::AddEventForm" {
+  +AddEventFormState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::registerClub.dart::AddEventForm"
+
+class "iitropar::views::admin::registerClub.dart::AddEventFormState" {
+  -GlobalKey<FormState> _formKey
+  +String clubTitle
+  +String clubDesc
+  +String clubEmail
+  -Widget _buildclubTitle()
+  -Widget _buildclubDesc()
+  -Widget _buildclubEmail()
+  +Widget build()
+}
+
+"iitropar::views::admin::registerClub.dart::AddEventFormState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"    
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::registerClub.dart::AddEventFormState"
+
+class "iitropar::views::admin::registerFaculty.dart::registerFaculty" {
+  +State<registerFaculty> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::registerFaculty.dart::registerFaculty"        
+
+class "iitropar::views::admin::registerFaculty.dart::_registerFacultyState" {
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::registerFaculty.dart::_registerFacultyState"
+
+class "iitropar::views::admin::registerFaculty.dart::AddEventForm" {
+  +AddEventFormState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::registerFaculty.dart::AddEventForm"
+
+class "iitropar::views::admin::registerFaculty.dart::AddEventFormState" {
+  -GlobalKey<FormState> _formKey
+  +String facultyName
+  +String facultyDep
+  +String facultyEmail
+  +Set<String> facultyCourses
+  -List<List<dynamic>> _data
+  +String? filePath
+  +TextEditingController coursesInput
+  -Widget _buildFacultyName()
+  -Widget _buildFacultyEmail()
+  -Widget _buildFacultyDep()
+  +bool validCourse()
+  +bool validDep()
+  +String getDep()
+  -Widget _buildRemoveCourses()
+  -Widget _buildFacultyCourses()
+  +void uploadData()
+  -void _pickFile()
+  +bool verifyHeader()
+  +Widget build()
+}
+
+"iitropar::views::admin::registerFaculty.dart::AddEventFormState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>" 
+"iitropar::views::admin::registerFaculty.dart::AddEventFormState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::registerFaculty.dart::AddEventFormState"
+
+class "iitropar::views::admin::start_sem.dart::NewSemester" {
+  +State<NewSemester> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::admin::start_sem.dart::NewSemester"
+
+class "iitropar::views::admin::start_sem.dart::_NewSemesterState" {
+  -DateTime _startDate
+  -DateTime _endDate
+  +DateTime cur_start_date
+  +DateTime cur_end_date
+  -void _selectStartDate()
+  -void _selectEndDate()
+  +void initDate()
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+  +Widget clear_semester()
+  +Widget seeSemesterInfo()
+  -void _updateSemesterDuration()
+  +Widget updateSemesterDur()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::admin::start_sem.dart::_NewSemesterState"
+
+class "iitropar::views::club::add_club_event.dart::addClubEvent" {
+  +String clubName
+  +State<addClubEvent> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::club::add_club_event.dart::addClubEvent"
+
+class "iitropar::views::club::add_club_event.dart::_addClubEventState" {
+  +String clubName
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::club::add_club_event.dart::_addClubEventState"
+
+class "iitropar::views::club::add_club_event.dart::AddEventForm" {
+  +String clubName
+  +AddEventFormState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::club::add_club_event.dart::AddEventForm"
+
+class "iitropar::views::club::add_club_event.dart::AddEventFormState" {
+  +String clubName
+  -GlobalKey<FormState> _formKey
+  +String eventTitle
+  +String eventType
+  +String eventDesc
+  +DateTime eventDate
+  +String eventVenue
+  +TimeOfDay startTime
+  +TimeOfDay endTime
+  +String? imageURL
+  +XFile? file
+  -Widget _buildEventTitle()
+  -Widget _buildEventDesc()
+  -Widget _buildEventVenue()
+  -Widget _buildEventDate()
+  -Widget _buildStartTime()
+  -Widget _buildEndTime()
+  +Widget build()
+}
+
+"iitropar::views::club::add_club_event.dart::AddEventFormState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"   
+"iitropar::views::club::add_club_event.dart::AddEventFormState" o-- "flutter::src::material::time.dart::TimeOfDay"
+"iitropar::views::club::add_club_event.dart::AddEventFormState" o-- "cross_file::src::types::interface.dart::XFile"
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::club::add_club_event.dart::AddEventFormState"
+
+class "iitropar::views::events.dart::Events" {
+  +State<Events> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::events.dart::Events"
+
+class "iitropar::views::events.dart::_EventsState" {
+  -DateTime? _selectedDate
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::events.dart::_EventsState"
+
+class "iitropar::views::event_calendar.dart::EventCalendarScreen" {
+  +State<EventCalendarScreen> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::event_calendar.dart::EventCalendarScreen"
+
+class "iitropar::views::event_calendar.dart::_EventCalendarScreenState" {
+  -DateTime _focused
+  -DateTime _selectedDate
+  +TimeOfDay startTime
+  +TimeOfDay endTime
+  +DateTime startDate
+  +DateTime endDate
+  +Map<String, List<Event>> mySelectedEvents
+  +Map<String, List<dynamic>> weeklyEvents
+  +List<holidays> listofHolidays
+  +Map<String, String> mapofHolidays
+  +bool holidaysLoaded
+  +List<changedDay> listofCD
+  +Map<String, int> mapofCD
+  +bool CDLoaded
+  +EventDB edb
+  +TextEditingController titleController
+  +TextEditingController descpController
+  +TextEditingController typeController
+  +void initState()
+  +Future<bool> getHols()
+  +Widget getDeleteButton()
+  +Future<bool> getCD()
+  +dynamic loadLocalDB()
+  +dynamic loadEvents()
+  +dynamic updateEvents()
+  +dynamic updateEventsRecurring()
+  -void _insertSingularEvent()
+  -void _insertRecurringEvent()
+  -void _deleteEntireEvent()
+  +String formatTimeOfDay()
+  +double toDouble()
+  -List<Event> _listOfDayEvents()
+  +bool isHoliday()
+  +DateTime whatDatetocall()
+  +String? holidayScript()
+  -dynamic _showSingleAddEventDialog()
+  -dynamic _showRecurringAddEventDialog()
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"iitropar::views::event_calendar.dart::_EventCalendarScreenState" o-- "flutter::src::material::time.dart::TimeOfDay"
+"iitropar::views::event_calendar.dart::_EventCalendarScreenState" o-- "iitropar::database::local_db.dart::EventDB"
+"iitropar::views::event_calendar.dart::_EventCalendarScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::event_calendar.dart::_EventCalendarScreenState"
+
+class "iitropar::views::faculty::findSlot.dart::findSlots" {
+  +Set<dynamic> courses
+  +State<findSlots> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::faculty::findSlot.dart::findSlots"
+
+class "iitropar::views::faculty::findSlot.dart::_findSlotsState" {
+  +Set<dynamic> courses
+  +String? current_course
+  +Set<String> students
+  +int slotLength
+  +bool inputFormat
+  +DateTime date
+  +TextEditingController entryInput
+  +Map<String, String> entryToName
+  +List<int> conflicts
+  +dynamic getMapping()
+  +bool verifyHeader()
+  +Future<bool> checkEntryNumber()
+  +void getStudentsCSV()
+  -void _pickFile()
+  +Widget addSingleStudent()
+  +Widget getCSVscreen()
+  +Widget selectCourses()
+  +Widget getStudents()
+  +Widget showSelectedStudents()
+  +Widget getSlot()
+  +Widget getDate()
+  +Widget submitButton()
+  +Future<bool> getConflicts()
+  +Widget build()
+}
+
+"iitropar::views::faculty::findSlot.dart::_findSlotsState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"   
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::faculty::findSlot.dart::_findSlotsState"
+
+class "iitropar::views::faculty::scheduleCourse.dart::CourseSchedule" {
+  +Set<dynamic> courses
+  +TimeOfDay st
+  +TimeOfDay et
+  +_CourseScheduleState createState()
+}
+
+"iitropar::views::faculty::scheduleCourse.dart::CourseSchedule" o-- "flutter::src::material::time.dart::TimeOfDay"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::faculty::scheduleCourse.dart::CourseSchedule"        
+
+class "iitropar::views::faculty::scheduleCourse.dart::_CourseScheduleState" {
+  +String selectedCourse
+  +TimeOfDay startTime
+  +TimeOfDay endTime
+  +String venue
+  +String description
+  +DateTime date
+  +Set<dynamic> allcourses
+  +void initState()
+  -Future<void> _showStartTimePicker()
+  -Future<void> _showEndTimePicker()
+  -void _onVenueChanged()
+  -void _onDescriptionChanged()
+  +Widget selectCourse()
+  +Widget selectTime()
+  +Widget selectVenue()
+  +Widget selectDescription()
+  +Widget selectDate()
+  +double toDouble()
+  +Widget build()
+}
+
+"iitropar::views::faculty::scheduleCourse.dart::_CourseScheduleState" o-- "flutter::src::material::time.dart::TimeOfDay"
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::faculty::scheduleCourse.dart::_CourseScheduleState"
+
+class "iitropar::views::faculty::seeSlots.dart::ConflictSlot" {
+  +TimeOfDay start
+  +TimeOfDay end
+  +int conflicts
+}
+
+"iitropar::views::faculty::seeSlots.dart::ConflictSlot" o-- "flutter::src::material::time.dart::TimeOfDay"
+
+class "iitropar::views::faculty::seeSlots.dart::seeSlots" {
+  +int slotLength
+  +List<int> conflicts
+  +State<seeSlots> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::faculty::seeSlots.dart::seeSlots"
+
+class "iitropar::views::faculty::seeSlots.dart::GradientColorGenerator" {
+  {static} +Color getColorFromGradient()
+}
+
+class "iitropar::views::faculty::seeSlots.dart::_seeSlotsState" {
+  +int slotLength
+  +List<int> conflicts
+  +Widget createWid()
+  +Widget viewSlots()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::faculty::seeSlots.dart::_seeSlotsState"
+
+class "iitropar::views::faculty::showClasses.dart::MyClass" {
+  +Set<dynamic> courses
+  +State<MyClass> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::faculty::showClasses.dart::MyClass"
+
+class "iitropar::views::faculty::showClasses.dart::_MyClassState" {
+  +List<ExtraClass> filteredEc
+  +String selectedCourse
+  +List<ExtraClass> allClasses
+  +Set<dynamic> allcourses
+  +dynamic getAllClasses()
+  +void initState()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::faculty::showClasses.dart::_MyClassState"
+
+class "iitropar::views::faculty::studentsEnrolled.dart::studentsEnrolled" {
+  +String course
+  +State<studentsEnrolled> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::faculty::studentsEnrolled.dart::studentsEnrolled"    
+
+class "iitropar::views::faculty::studentsEnrolled.dart::_studentsEnrolledState" {
+  +List<List<dynamic>> studentList
+  +void initState()
+  -void _getStudents()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::faculty::studentsEnrolled.dart::_studentsEnrolledState"       
+
+class "iitropar::views::homePage::admin_page.dart::AdminHomePage" {
+  +State<AdminHomePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::homePage::admin_page.dart::AdminHomePage"
+
+class "iitropar::views::homePage::admin_page.dart::_AdminHomePageState" {
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::homePage::admin_page.dart::_AdminHomePageState"
+
+class "iitropar::views::homePage::club_home.dart::ClubHome" {
+  +State<AbstractHome> createState()
+}
+
+"iitropar::views::homePage::home_page.dart::AbstractHome" <|-- "iitropar::views::homePage::club_home.dart::ClubHome"
+
+class "iitropar::views::homePage::club_home.dart::_ClubHomeState" {
+  +String clubName
+  +List<Widget> buttons()
+}
+
+"iitropar::views::homePage::home_page.dart::AbstractHomeState" <|-- "iitropar::views::homePage::club_home.dart::_ClubHomeState"     
+
+class "iitropar::views::homePage::faculty_home.dart::FacultyHome" {
+  +State<AbstractHome> createState()
+}
+
+"iitropar::views::homePage::home_page.dart::AbstractHome" <|-- "iitropar::views::homePage::faculty_home.dart::FacultyHome"
+
+class "iitropar::views::homePage::faculty_home.dart::_FacultyHomeState" {
+  +semesterDur? sm
+  +List<Color> colors
+  +void getSemesterDur()
+  +Widget allCourses()
+  +List<Widget> buttons()
+}
+
+"iitropar::views::homePage::faculty_home.dart::_FacultyHomeState" o-- "iitropar::frequently_used.dart::semesterDur"
+"iitropar::views::homePage::home_page.dart::AbstractHomeState" <|-- "iitropar::views::homePage::faculty_home.dart::_FacultyHomeState"
+
+abstract class "iitropar::views::homePage::home_page.dart::AbstractHome" {
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::homePage::home_page.dart::AbstractHome"
+
+abstract class "iitropar::views::homePage::home_page.dart::AbstractHomeState" {
+  +faculty f
+  +void getDetails()
+  +CircleAvatar getUserImage()
+  +String getUserName()
+  +List<Widget> buttons()
+  +Widget getText()
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+}
+
+"iitropar::views::homePage::home_page.dart::AbstractHomeState" o-- "iitropar::frequently_used.dart::faculty"
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::homePage::home_page.dart::AbstractHomeState"
+
+class "iitropar::views::homePage::home_page.dart::HomePage" {
+  +State<HomePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::homePage::home_page.dart::HomePage"
+
+class "iitropar::views::homePage::home_page.dart::_HomePageState" {
+  {static} +String user
+  +Future<bool> resolveUser()
+  +Widget userScreen()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::homePage::home_page.dart::_HomePageState"
+
+class "iitropar::views::homePage::student_home.dart::StudentHome" {
+  +State<AbstractHome> createState()
+}
+
+"iitropar::views::homePage::home_page.dart::AbstractHome" <|-- "iitropar::views::homePage::student_home.dart::StudentHome"
+
+class "iitropar::views::homePage::student_home.dart::_StudentHomeState" {
+  +bool isClassLoad
+  +List<Event> classes
+  +List<Event> events
+  +Future<bool> loadClasses()
+  +Widget classWidget()
+  +Widget todayClasses()
+  +Widget getSchedule()
+  +Future<bool> loadEvents()
+  +Widget getEvents()
+  +Widget todayEvents()
+  +Widget intermediateText()
+  +List<Widget> buttons()
+}
+
+"iitropar::views::homePage::home_page.dart::AbstractHomeState" <|-- "iitropar::views::homePage::student_home.dart::_StudentHomeState"
+
+class "iitropar::views::landing_page.dart::RootPage" {
+  {static} -bool _signin
+  {static} +void signin()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "iitropar::views::landing_page.dart::RootPage"
+
+class "iitropar::views::mess.dart::MessMenuPage" {
+  +State<MessMenuPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::mess.dart::MessMenuPage"
+
+class "iitropar::views::mess.dart::_MessMenuPageState" {
+  -List<String> _daysOfWeek
+  -Map<String, List<MenuItem>> _menu
+  -int _selectedDayIndex
+  {static} +List<Tab> myTabs
+  -void _onDaySelected()
+  -List<MenuItem> _getMenuItemsForSelectedDay()
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+  -Widget _buildMenuList()
+  +String mealOpen()
+  +String checkTime()
+  +List<String> parseString()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::mess.dart::_MessMenuPageState"
+"flutter::src::widgets::ticker_provider.dart::SingleTickerProviderStateMixin" <|-- "iitropar::views::mess.dart::_MessMenuPageState" 
+
+class "iitropar::views::PBTabView.dart::MainLandingPage" {
+  +Widget build()
+  -List<Widget> _buildScreens()
+  -List<PersistentBottomNavBarItem> _navbarItems()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "iitropar::views::PBTabView.dart::MainLandingPage"
+
+class "iitropar::views::quicklinks.dart::QuickLinks" {
+  +State<QuickLinks> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::quicklinks.dart::QuickLinks"
+
+class "iitropar::views::quicklinks.dart::_QuickLinksState" {
+  +Map<String, Map<String, String>> quickLinks
+  +Widget build()
+  +Widget themeButtonWidget()
+  +TextStyle appbarTitleStyle()
+  +Row buildTitleBar()
+  -void _launchURL()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::quicklinks.dart::_QuickLinksState"
+
+class "iitropar::views::signin.dart::SignInScreen" {
+  +State<SignInScreen> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "iitropar::views::signin.dart::SignInScreen"
+
+class "iitropar::views::signin.dart::_SignInScreenState" {
+  +Image logoWidget()
+  -void _signin()
+  -void _moveToHome()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "iitropar::views::signin.dart::_SignInScreenState"
