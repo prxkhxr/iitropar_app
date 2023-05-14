@@ -238,10 +238,37 @@ class _CourseScheduleState extends State<CourseSchedule> {
                       endTime: endTime,
                       description: description,
                       venue: venue);
-                  bool hasSubmit = await firebaseDatabase.addExtraClass(c);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Confirm"),
+                        content: Text(
+                            "Do you really want to Scheduled class on ${formatDateWord(c.date)}?"),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text("Cancel"),
+                            onPressed: () {
+                              // Close the dialog
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text("add"),
+                            onPressed: () async {
+                             bool hasSubmit = await firebaseDatabase.addExtraClass(c);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Event Added Succesfully")),
                   );
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  
                 },
                 child: const Text('Submit'),
               ),

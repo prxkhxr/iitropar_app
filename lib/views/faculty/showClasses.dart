@@ -121,8 +121,33 @@ class _MyClassState extends State<MyClass> {
                             ElevatedButton.icon(
                               onPressed: () {
                                 // TODO: Implement delete functionality here
-                                firebaseDatabase.deleteClass(ec);
-                                setState(() {});
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Confirm"),
+                                      content: Text(
+                                          "Do you really want to Delete class Scheduled on ${formatDateWord(ec.date)}?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text("Cancel"),
+                                          onPressed: () {
+                                            // Close the dialog
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text("Delete"),
+                                          onPressed: () {
+                                            firebaseDatabase.deleteClass(ec);
+                                            setState(() {});
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               },
                               icon: const Icon(Icons.delete),
                               label: const Text('Delete'),
