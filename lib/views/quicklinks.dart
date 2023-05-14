@@ -25,14 +25,35 @@ class _QuickLinksState extends State<QuickLinks> {
       'Guest House': 'https://www.iitrpr.ac.in/guest-house/',
       'Bus Timings':
           'https://docs.google.com/document/d/1oFeyY-JxaXzPH0hWT1HTMEA_nOtyz1g1w2XYEwTC9_Y/edit/',
+          'Hostel': 'https://www.iitrpr.ac.in/hostels',
+          'Download Forms':'https://www.iitrpr.ac.in/downloads/forms.html',
+
     },
     'Student Activities': {
       'क्षितिज – The Horizon': 'https://www.iitrpr.ac.in/kshitij/',
       'TBIF': 'https://www.tbifiitrpr.org/',
       'BOST': 'https://bost-19.github.io/',
+
     },
-    'Boards and Councils': {
-      'BOST': 'https://bost-19.github.io/',
+    'Departments': {
+      'Biomedical': 'http://www.iitrpr.ac.in/cbme',
+      'Chemical': 'https://www.iitrpr.ac.in/chemical',
+      'Chemistry': 'https://www.iitrpr.ac.in/chemistry',
+      'Civil': 'https://www.iitrpr.ac.in/civil',
+      'CSE': 'https://cse.iitrpr.ac.in/',
+      'Electrical': 'https://ee.iitrpr.ac.in/',
+      'HSS': 'https://www.iitrpr.ac.in/hss/',
+      'Mathematical': 'https://www.iitrpr.ac.in/math/',
+      'Physics': 'http://www.iitrpr.ac.in/physics/',
+      'Mechanical': 'https://mech.iitrpr.ac.in/',
+      'Metallurgical': 'https://mme.iitrpr.ac.in/',
+    },
+    'Our Team': {
+        'Dr Puneet Goyal(Mentor)' : 'https://sites.google.com/view/goyalpuneet/',
+        'Jugal Chapatwala(Backend Developer)': 'https://www.linkedin.com/in/jugal-chapatwala-636143179/',
+        'Gautam Sethia(Backend Developer)' : 'https://www.linkedin.com/in/gautamsethia7/',
+        'Jatin Gupta(Frontend Developer)': 'https://www.linkedin.com/in/jatingupta1792/',
+        'Prakhar Saxena(Frontend Developer)': 'https://www.linkedin.com/in/prakhar-saxena-148a10209/'
     }
   };
 
