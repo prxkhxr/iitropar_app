@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+3
 
 environment:
-  sdk: '>=2.19.1 <3.0.0'
+  sdk: '>=3.2.4 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -28,23 +28,24 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  cloud_firestore:
+  cloud_firestore: ^4.15.4
   image_picker: ^0.8.7
-  firebase_storage: ^11.0.15
+  firebase_storage: ^11.6.5
   flutter:
     sdk: flutter
   table_calendar: ^3.0.9
   intl: ^0.18.0-nullsafety.2
-  firebase_core: ^2.6.1 
-  firebase_auth: ^4.2.8
-  google_sign_in: ^6.0.0
+  firebase_core: ^2.25.4 
+  firebase_auth: ^4.17.4
+  google_sign_in: ^6.2.1
   file_picker: ^5.3.0
   csv: ^5.0.1
-  sqflite: ^2.2.4+1
+  sqflite: ^2.3.2
   persistent_bottom_nav_bar: ^5.0.2
   url_launcher: ^6.1.10
   path:
   mutex: ^3.0.1
+  firebase_database: ^10.4.5
 
 
 dependency_overrides:

@@ -4,10 +4,13 @@ import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/views/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:iitropar/database/local_db.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await EventDB.startInstance();
   bool signin = false;
   if (EventDB.firstRun() || FirebaseAuth.instance.currentUser == null) {
